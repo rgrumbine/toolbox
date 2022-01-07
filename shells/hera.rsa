@@ -1,0 +1,3 @@
+#sshg3 +x theia
+#ssh -Y -l Robert.Grumbine hera-rsa.princeton.rdhpcs.noaa.gov
+ssh -Y -l Robert.Grumbine hera-rsa.boulder.rdhpcs.noaa.gov

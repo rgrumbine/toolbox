@@ -1,0 +1,29 @@
+#!/bin/sh
+
+dcombase=/gpfs/dell1/nco/ops/
+
+arcdir=/u/Robert.Grumbine/noscrub/acnfs
+if [ ! -d $arcdir ] ; then
+  mkdir -p $arcdir
+fi
+cd $arcdir
+
+set -xe
+if [ $# -eq 0 ] ; then
+  tag=${tag:-`date +"%Y%m%d"`}
+else
+  tag=$1
+fi
+yy=`echo $tag | cut -c1-4`
+
+#scp Robert.Grumbine@prodwcoss:$dcombase/dcom/prod/$tag/wgrdbul/hycom-cice*gz .
+cp $dcombase/dcom/prod/$tag/wgrdbul/hycom-cice*gz .
+chmod a+r hycom-cice_ARCu0.08_${tag}00.tar.gz 
+
+#if [ ! -f  hycom-cice_ARCu0.08_${tag}00.tar.gz ] ; then
+#  scp Robert.Grumbine@devwcoss:/dcom/us007003/$tag/wgrdbul/hycom-cice*gz .
+#fi
+  
+#if [ -f hycom-cice_ARCu0.08_${tag}00.tar.gz ] ; then
+#  scp -p hycom-cice_ARCu0.08_${tag}00.tar.gz rmg3@emc-lw-rgrumbi:/export/opcnfs/CanIce/acnfs/
+#fi

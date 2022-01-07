@@ -1,0 +1,2 @@
+ssh -p10001 Robert.Grumbine@38.32.106.106
+#scp -P10001 $file Robert.Grumbine@38.32.106.106:$path/$file

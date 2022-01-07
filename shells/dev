@@ -1,0 +1,3 @@
+#!/bin/sh
+#ssh -Y -l Robert.Grumbine devwcoss
+ssh -Y -l Robert.Grumbine devbastion.ncep.noaa.gov

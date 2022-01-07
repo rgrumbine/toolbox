@@ -1,0 +1,3 @@
+cd ~/noscrub
+wget --mirror ftp://osisaf.met.no/archive/ice/conc/2020/
+wget --mirror ftp://osisaf.met.no/archive/ice/conc/2021/
