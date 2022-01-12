@@ -22,55 +22,38 @@ fin = Dataset("grid_cice_NEMS_mx025.nc","r")
 nx = len(fin.dimensions["ni"])
 ny = len(fin.dimensions["nj"])
 print(nx, ny)
-#extract longitude, latitude, sst
+#extract longitude, latitude, kmt
 # -- node properties
 # note that these are lat-lon of U points
 lons = fin.variables["ulon"][:,:]
 lats = fin.variables["ulat"][:,:]
+lons *= (180./pi)
+lats *= (180./pi)
 # ocean fraction at T centers
-sst  = fin.variables["kmt"][:,:]
-
-print("lons: ",lons.max(), lons.min() )
-print("lats: ",lats.max(), lats.min() )
-print("sst: ",sst.max(), sst.min(), flush=True )
-
-exit(0)
+kmt  = fin.variables["kmt"][:,:]
 
 #--------------------------------------------------------------
+print("lons: ",lons.max(), lons.min() )
+print("lats: ",lats.max(), lats.min() )
+print("kmt: ",kmt.max(), kmt.min(), flush=True )
 
+#exit(0)
+
+#--------------------------------------------------------------
 #faster (~50 seconds) to used masked arrays than doubly nested loop (250 seconds)
-lmask = ma.masked_array(lons > 2.*360.+180.)
-lin = lmask.nonzero()
-for k in range(0, len(lin[0])):
-  i = lin[1][k]
-  j = lin[0][k]
-  lons[j,i] -= 3.*360.
-print("lons: ",lons.max(), lons.min() )
+#lmask = ma.masked_array(lons > 2.*360.+180.)
 
-lmask = ma.masked_array(lons > 1.*360.+180.)
-lin = lmask.nonzero()
-for k in range(0, len(lin[0])):
-  i = lin[1][k]
-  j = lin[0][k]
-  lons[j,i] -= 2.*360.
-print("lons: ",lons.max(), lons.min() )
-
-#most (10.6 million of 14.7 million) rtofs points have lons > 180, so subtract 360 and 
-# then correct the smaller number that are < -180 as a result
-lons -= 360.
+#ufs cice grid is -300 to 60, so don't need as many lon checks
 lmask = ma.masked_array(lons < -180.)
 lin = lmask.nonzero()
-print("180 lons ",len(lin), len(lin[0]))
+#debug print("180 lons ",len(lin), len(lin[0]), flush=True)
 for k in range(0, len(lin[0])):
   i = lin[1][k]
   j = lin[0][k]
   lons[j,i] += 1.*360.
 print("lons: ",lons.max(), lons.min() )
 
-#for i in range(0,nx):
-#  print(i,lats[ny-1,i], lons[ny-1,i], lats[ny-2,i], lons[ny-2,i])
 #exit(0)
-
 #----------------------------------------------------------------
 #print("nx,ny,nx*ny:",nx,ny,nx*ny)
 def find(lons, lats, lonin, latin):
@@ -103,6 +86,7 @@ def find(lons, lats, lonin, latin):
   #print("dmin:",imin, jmin, dmin, dxmin, dymin)
   return (imin,jmin)
 
+#useful for checking where seam is
 #tlat = 74.0
 #for iii in range (0, 400):
 #  ilon = -107.9 + 0.01*iii
@@ -111,7 +95,7 @@ def find(lons, lats, lonin, latin):
 
 #start in Bering strait
 (i_bering, j_bering) = find(lons, lats, -168.59, 65.68) #Bering Strait
-#(i_bering, j_bering) = find(lons, lats, -126, 71.0) # S of banks island
+#(i_bering, j_bering) = find(lons, lats, -126.0, 71.0) # S of banks island
 #(i_bering, j_bering) = find(lons, lats, -124.0, 75.1) # N of banks island
 #(i_bering, j_bering) = find(lons, lats, -103.0, 74.35) # Central passage
 print("bering:",i_bering,j_bering)
@@ -126,21 +110,24 @@ print("finish",i_finish, j_finish)
 
 # Construct nodes -- limit area to keep run time manageable:
 latmin = 65.0
-latmax = 88.0
+latmax = 82.0
 #lonmin = 185.0-360.
 #lonmax = 290.0-360.
-lonmin = -175.0
-lonmax =  -70.0
+#-170 if starting from bering strait, -130 for the banks island paths
+lonmin = -170.0
+#lonmin = -130.0
+lonmax =  -72.0
 xmask = ma.masked_outside(lons, lonmin, lonmax)
 xin = xmask.nonzero()
-#print(len(xin), len(xin[0]))
+#debug print(len(xin), len(xin[0]), flush=True)
 xmask = ma.logical_and(xmask, ma.masked_outside(lats, latmin, latmax))
 xin = xmask.nonzero()
-#print(len(xin), len(xin[0]))
+#debug print(len(xin), len(xin[0]), flush=True)
 
-xmask = ma.logical_and(xmask, sst < 1000.)
+#xmask = ma.logical_and(xmask, sst < 1000.)
+xmask = ma.logical_and(xmask, kmt > 0.)
 xin = xmask.nonzero()
-#print(len(xin), len(xin[0]))
+print("final set of points to consider",len(xin), len(xin[0]),flush=True)
 
 #exit(0)
 
@@ -154,9 +141,9 @@ for k in range(0, len(xin[0])):
   j = xin[0][k]
   if (k%15000 == 0):
     print("adding nodes, k = ",k, flush=True)
-  #debug print("node:",k,i,j,lats[j,i], lons[j,i], sst[j,i], flush=True)
+  #debug print("node:",k,i,j,lats[j,i], lons[j,i], kmt[j,i], flush=True)
   nodemap[j,i] = int(k)
-  G.add_node(k, i = i, j =j, lat = lats[j,i], lon = lons[j,i], sst=sst[j,i] )
+  G.add_node(k, i = i, j =j, lat = lats[j,i], lon = lons[j,i], kmt=kmt[j,i] )
 print("Done adding nodes, k=",k, flush=True)
 #exit(0)
 
@@ -272,24 +259,24 @@ for k in range(0,len(path)):
 print("    </Document>",file=kmlout)
 print("</Folder>",file=kmlout)
 print("</kml>",file=kmlout)
+kmlout.close()
       
 exit(0)
 
 #-----------------------------------------------------
-#exit(0)
-
 #Prohibitive run time on 1/12th grid
+#> 15 minutes on ufs 1.0 grid (banks-reduced domain)
 
 print("finding all simple paths",flush=True)
 paths = netx.all_simple_paths(G,start,finish)
 
 k = 0
 for x in paths :
-  print(len(x))
+  print(k,'path length ',len(x))
   k += 1
 print("number of paths = ",k)
 
 print(paths)
 
-# count number of paths which pass through each grid cell
-counts = np.zeros((ny, nx),dtype="int")
+## count number of paths which pass through each grid cell
+#counts = np.zeros((ny, nx),dtype="int")
