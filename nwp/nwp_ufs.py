@@ -7,25 +7,34 @@ import netCDF4
 from netCDF4 import Dataset
 
 #--------------------------------------------------------------
+#RTOFS:
 #fin = Dataset("../dcom/rtofs_glo_2ds_f000_prog.nc","r")
-fin = Dataset("../dcom/rtofs_glo_2ds_f000_diag.nc","r")
 #fin = Dataset("../dcom/rtofs_glo_2ds_f000_ice.nc","r")
-nx = len(fin.dimensions["X"])
-ny = len(fin.dimensions["Y"])
+#fin = Dataset("../dcom/rtofs_glo_2ds_f000_diag.nc","r")
+#nx = len(fin.dimensions["X"])
+#ny = len(fin.dimensions["Y"])
+#lons = fin.variables["Longitude"][:,:]
+#lats = fin.variables["Latitude"][:,:]
+#sst  = fin.variables["ssh"][0,:,:]
+
+#UFS:
+fin = Dataset("grid_cice_NEMS_mx025.nc","r")
+nx = len(fin.dimensions["ni"])
+ny = len(fin.dimensions["nj"])
 print(nx, ny)
 #extract longitude, latitude, sst
 # -- node properties
-lons = fin.variables["Longitude"][:,:]
-lats = fin.variables["Latitude"][:,:]
-#sst  = fin.variables["sst"][0,:,:]
-#sst  = fin.variables["ice_thickness"][0,:,:]
-sst  = fin.variables["ssh"][0,:,:]
+# note that these are lat-lon of U points
+lons = fin.variables["ulon"][:,:]
+lats = fin.variables["ulat"][:,:]
+# ocean fraction at T centers
+sst  = fin.variables["kmt"][:,:]
 
 print("lons: ",lons.max(), lons.min() )
 print("lats: ",lats.max(), lats.min() )
 print("sst: ",sst.max(), sst.min(), flush=True )
 
-#exit(0)
+exit(0)
 
 #--------------------------------------------------------------
 
@@ -36,7 +45,7 @@ for k in range(0, len(lin[0])):
   i = lin[1][k]
   j = lin[0][k]
   lons[j,i] -= 3.*360.
-#print("lons: ",lons.max(), lons.min() )
+print("lons: ",lons.max(), lons.min() )
 
 lmask = ma.masked_array(lons > 1.*360.+180.)
 lin = lmask.nonzero()
@@ -44,19 +53,19 @@ for k in range(0, len(lin[0])):
   i = lin[1][k]
   j = lin[0][k]
   lons[j,i] -= 2.*360.
-#print("lons: ",lons.max(), lons.min() )
+print("lons: ",lons.max(), lons.min() )
 
 #most (10.6 million of 14.7 million) rtofs points have lons > 180, so subtract 360 and 
 # then correct the smaller number that are < -180 as a result
 lons -= 360.
 lmask = ma.masked_array(lons < -180.)
 lin = lmask.nonzero()
-#print("180 lons ",len(lin), len(lin[0]))
+print("180 lons ",len(lin), len(lin[0]))
 for k in range(0, len(lin[0])):
   i = lin[1][k]
   j = lin[0][k]
   lons[j,i] += 1.*360.
-#print("lons: ",lons.max(), lons.min() )
+print("lons: ",lons.max(), lons.min() )
 
 #for i in range(0,nx):
 #  print(i,lats[ny-1,i], lons[ny-1,i], lats[ny-2,i], lons[ny-2,i])
