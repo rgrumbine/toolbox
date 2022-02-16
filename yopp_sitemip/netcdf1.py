@@ -82,24 +82,23 @@ fyopp.close()
 #exit(0)
 
 #-------------------------------------------
+#loop over time -- f000 to f240
 #open grib for reading:
 grbs = pygrib.open("gfs.t00z.sfluxgrbf000.grib2")
 print("grbs = ",grbs)
 
 # x is the short grib index line, extract names here
+#Do at time 0 only
 k = 0
 snames = []
 for x in grbs:
   print(x.shortName, x.name)
   snames.append(x.shortName)
   k += 1
-
-print(len(snames))
+#print(len(snames))
 
 #exit(0)
 
-#fails: print("len(grbs) =",len(grbs))
-    
 grbs.seek(0)
 k = 1
 for grb in grbs:
@@ -107,6 +106,7 @@ for grb in grbs:
   print(k, snames[k-1])
 
   # RG: Assumes that all grids in file are regular lat-lon and same size and shape as first field.
+  #for time 0, first variable, only:
   if (k == 1):
     lats, lons = grb.latlons()
     #RG: Can we get variable names?
@@ -135,4 +135,4 @@ for grb in grbs:
   k += 1
 
 #close netcdf files
-print("k = ",k)
+print("nvars = ",k)
