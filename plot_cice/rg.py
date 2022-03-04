@@ -41,7 +41,7 @@ lats = range(-90,90)
 data = np.zeros((len(lats),len(lons)))
 print(len(lons), len(lats))
 
-#for i in range(0,360):
-#  data[:,i] = lats[:] + i
+for i in range(0,360):
+  data[:,i] = lats[:] 
 
 plot_world_map(lons, lats, data)
