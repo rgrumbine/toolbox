@@ -1,0 +1,14 @@
+#!/bin/sh
+
+fname=files3
+fout=alpha
+
+find $* -type f -exec md5 {} \; > $fname
+sort -k 4 $fname > $fout
+python3 ~/md5.py $fout > a
+echo deal with special characters
+sleep 3
+vi a
+sh a > b
+grep 'can rm ' b > c
+
