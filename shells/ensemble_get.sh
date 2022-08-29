@@ -1,12 +1,18 @@
-#!/bin/sh
+#!/bin/bash --login
+#PBS -N gefsget
+#PBS -o outname
+#PBS -j oe
+#PBS -A XFER-DEV
+#PBS -q dev_transfer
+#PBS -l walltime=6:00:00
+#PBS -l select=1:ncpus=1
+
+cd /u/robert.grumbine/noscrub/gefs/thinner
 
 set -x
-module load HPSS/5.0.2.5
 
-#tag=20191001
-#end=20200225
-tag=20200815
-end=20201025
+tag=20220602
+end=20220627
 base=`pwd`
 j=0
 #Up to 07/##/2018
@@ -15,6 +21,9 @@ j=0
 #pathbase=gpfs_hps_nco_ops_com_naefs_prod_gefs
 #After 2020/02/25
 pathbase=com_naefs_prod_gefs
+
+#After 2022/06/27
+#pathbase=com_naefs_v6.1_gefs
 
 # 75 is ~2 Tb for .5 GEFS
 while [ $j -lt 75 -a \( $tag -le $end \) ]
@@ -46,3 +55,4 @@ do
   tag=`expr $tag + 1`
   tag=`dtgfix3 $tag`
 done
+
