@@ -1,3 +1,6 @@
+#!/bin/sh
+
+#lightweight check that necessary python modules are available
 
 module load intel/19.1.3.304
 module load python/3.8.6
