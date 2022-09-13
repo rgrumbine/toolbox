@@ -5,7 +5,9 @@ import datetime
 
 import numpy as np
   
-import pygrib
+#import pygrib
+#wcoss2:
+import ncepgrib2 as pygrib
 import netCDF4 as nc
 
 #RG library (also wants ijpt, latpt, const)
@@ -80,10 +82,12 @@ for fhr in range (0,121,1):
 
 #debug exit(0)
 
-hh="000"
+hh="001"
 fname = base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2"
 print("fname = ",fname)
-grbs = pygrib.open(base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2")
+
+fname="gfs/gfs.t00z.sfluxgrbf"+hh+".grib2"
+grbs = pygrib.open(fname)
 print("grbs = ",grbs, flush=True)
 
 #debug exit(0)
