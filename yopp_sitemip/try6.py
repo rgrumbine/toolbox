@@ -5,9 +5,7 @@ import datetime
 
 import numpy as np
   
-#import pygrib
-#wcoss2:
-import ncepgrib2 as pygrib
+import pygrib
 import netCDF4 as nc
 
 #RG library (also wants ijpt, latpt, const)
@@ -85,9 +83,7 @@ for fhr in range (0,121,1):
 hh="001"
 fname = base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2"
 print("fname = ",fname)
-
-fname="gfs/gfs.t00z.sfluxgrbf"+hh+".grib2"
-grbs = pygrib.open(fname)
+grbs = pygrib.open(base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2")
 print("grbs = ",grbs, flush=True)
 
 #debug exit(0)
@@ -102,9 +98,12 @@ z2 = get_ll_info(grbs)
 grbs.seek(0)
 k = 0
 snames = []
+fullnames = []
 for x in grbs:
-  print(x.shortName, x.name)
+  #print(x.shortName, x.name, x.level, x)
+  print(x.shortName, x.name, x.level, x.typeOfLevel)
   snames.append(x.shortName)
+  fullnames.append(x.name)
   k += 1
 print("nvars = ",k, flush=True)
 
@@ -112,17 +111,16 @@ grbs.seek(0)
 k = 1
 for grb in grbs:
   x = grb.values
-  print(k, snames[k-1])
+  print(k, x.max(), x.min(), grb.level, snames[k-1], fullnames[k-1], flush=True)
 
   #replace alpha with actual ij starting points and ranges
   for patch in range(0,npatches):
     y = x[5+patch:15+patch,3+patch:13+patch]
-    print("patch = ",patch, y)
+    #debug print("patch = ",patch, y, flush=True)
     # find grib name -- x.shortName
     # translate grib name to netcdf name -- dictionary
     # write to netcdf file
 
-  #debug print(k, x.max(), x.min(), flush=True )
   k += 1
 
 #close netcdf files
