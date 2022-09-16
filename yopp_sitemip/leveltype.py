@@ -22,7 +22,7 @@ cyc="00"
 tag="20210726"
 base="./gfs."+tag+"/"+cyc+"/atmos/"
 
-hh="000"
+hh="001"
 fname = base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2"
 print("fname = ",fname)
 grbs = pygrib.open(base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2")
@@ -71,7 +71,7 @@ k = 0
 for x in grbs:
   print(x.shortName, x.name, x.level, x.typeOfLevel, x.paramId)
   for npatch in range(0,len(sites)):
-    sites[npatch].addvar(x.name, x.level, x.typeOfLevel)
+    sites[npatch].addvar(x)  #RG: need to check for successful addition of var
   k += 1
 print("nvars = ",k, flush=True)
 
@@ -82,12 +82,11 @@ for grb in grbs:
   x = grb.values
   print(k, x.max(), x.min(), grb.level, grb.shortName, grb.name, grb.topLevel, grb.bottomLevel, grb.paramId, flush=True)
 
-  #replace alpha with actual ij starting points and ranges
   for patch in range(0,npatches):
-    y = x[5+patch:15+patch,3+patch:13+patch]
+    #y = x[5+patch:15+patch,3+patch:13+patch]
     #debug print("patch = ",patch, y, flush=True)
     # write to netcdf file
-    #sites[patch].outvals(y)
+    sites[patch].extractvar(grb)
     #sites[patch].addtime
 
   k += 1
