@@ -86,7 +86,7 @@ for grb in grbs:
     #y = x[5+patch:15+patch,3+patch:13+patch]
     #debug print("patch = ",patch, y, flush=True)
     # write to netcdf file
-    sites[patch].extractvar(grb)
+    sites[patch].extractvar(x) #vastly faster to do this than pass grb message
     #sites[patch].addtime
 
   k += 1
