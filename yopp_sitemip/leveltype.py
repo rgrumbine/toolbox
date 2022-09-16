@@ -57,11 +57,11 @@ print("found ",npatches," patches to work with/on", len(sites) )
 #----------------------------------------------------------------
 
 #loop over time -- f000 to f120 by 1, 123 to 240 by 3
-for fhr in range (0,121,1):
-  hh="{:03d}".format(fhr)
-  fname = base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2"
-  grbs = pygrib.open(base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2")
-  print("grbs = ",grbs, flush=True)
+#for fhr in range (0,121,1):
+#  hh="{:03d}".format(fhr)
+#  fname = base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2"
+#  grbs = pygrib.open(base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2")
+#  print("grbs = ",grbs, flush=True)
 
 
 #----------------------------------------------------------------
@@ -71,8 +71,7 @@ k = 0
 for x in grbs:
   print(x.shortName, x.name, x.level, x.typeOfLevel, x.paramId)
   for npatch in range(0,len(sites)):
-    sites[npatch].addvar(x.name)
-
+    sites[npatch].addvar(x.name, x.level, x.typeOfLevel)
   k += 1
 print("nvars = ",k, flush=True)
 
@@ -87,9 +86,9 @@ for grb in grbs:
   for patch in range(0,npatches):
     y = x[5+patch:15+patch,3+patch:13+patch]
     #debug print("patch = ",patch, y, flush=True)
-    # find grib name -- x.shortName
-    # translate grib name to netcdf name -- dictionary
     # write to netcdf file
+    #sites[patch].outvals(y)
+    #sites[patch].addtime
 
   k += 1
 
