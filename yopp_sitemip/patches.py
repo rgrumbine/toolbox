@@ -74,9 +74,11 @@ class patches:
       self.lon.units = 'degrees_east'
       self.lon.long_name = 'longitude'
       self.time = self.ncfile.createVariable('time', np.float64, ('time',))
+      #self.ncfile.setncattr_string("attr_string","value")
+      self.ncfile.setncattr("attr_string","value")
     #debug print("addvar: ", grb.shortName,flush=True)
     try:
-      tmp = self.ncfile.createVariable(grb.shortName, np.float32, ('lat','lon'), fill_value=9.e35)
+      tmp = self.ncfile.createVariable(grb.shortName, np.float32, ('time', 'lat','lon'), fill_value=9.e35)
     except:
       #debug print("could not create variable, name probably already in use ",grb.shortName,flush=True)
       return
