@@ -85,8 +85,9 @@ class patches:
     self.count += 1
 
   def extractvar(self, allvalues):
-    #bulk of the time is in this (260/274)
     #Remember x,y are reversed from fortran
+    #Vastly slower to use grb.values than to pass the decoded whole 
+    #    grid and extract from it
     #y = grb.values[ self.j-self.range_y:self.j+self.range_y+1, self.i-self.range_x: self.i+self.range_x+1 ]
     y = allvalues[ self.j-self.range_y:self.j+self.range_y+1, self.i-self.range_x: self.i+self.range_x+1 ]
     #debug print("extract shape: ",y.shape,self.i, self.j, self.range_x, self.range_y, flush=True)
