@@ -7,12 +7,13 @@
 #PBS -l walltime=6:00:00
 #PBS -l select=1:ncpus=1
 
-cd /u/robert.grumbine/noscrub/gefs/thinner
+cd $HOME/noscrub/gefs/
 
 set -x
 
-tag=20220602
-end=20220627
+tag=20220823
+end=20220905
+end=`date +"%Y%m%d"`
 base=`pwd`
 j=0
 #Up to 07/##/2018
@@ -20,10 +21,10 @@ j=0
 #Afterwards, up to 2020/02/25
 #pathbase=gpfs_hps_nco_ops_com_naefs_prod_gefs
 #After 2020/02/25
-pathbase=com_naefs_prod_gefs
+#pathbase=com_naefs_prod_gefs
 
-#After 2022/06/27
-#pathbase=com_naefs_v6.1_gefs
+#2022/06/27 -- present
+pathbase=com_naefs_v6.1_gefs
 
 # 75 is ~2 Tb for .5 GEFS
 while [ $j -lt 75 -a \( $tag -le $end \) ]
