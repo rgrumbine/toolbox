@@ -94,7 +94,7 @@ class patches:
                    self.i-self.range_x : self.i+self.range_x+1 ]
 
     if (self.i*self.j != 0) :
-      #print("extract shape: ",y.shape,self.i, self.j, self.range_x, 
+      #debug print("extract shape: ",y.shape,self.i, self.j, self.range_x, 
       #   self.range_y, flush=True)
    
       #manage vname, time slicing:

@@ -69,29 +69,30 @@ print("nvars = ",k, flush=True)
 
 #----------------------------------------------------------------
 #loop over time -- f000 to f120 by 1, 123 to 240 by 3
-#for ftime in range (0,121,1):
-#  hh="{:03d}".format(ftime)
-#  fname = base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2"
-#  grbs = pygrib.open(base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2")
-#debug print("grbs = ",grbs, flush=True)
+for ftime in range (0,121,1):
+#for ftime in range (0,3,1):
+  hh="{:03d}".format(ftime)
+  fname = base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2"
+  grbs = pygrib.open(base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2")
+  #debug print("grbs = ",grbs, flush=True)
+  print("hh, fname:",hh, fname, flush=True)
 
-grbs.seek(0)
-k = 1
-ftime = int(hh)
-for grb in grbs:
-#for grb in grbs(typeOfLevel="depthBelowLandLayer"):
-  x = grb.values
-  #debug print(k, x.max(), x.min(), grb.level, grb.shortName, grb.name, 
-  #       grb.topLevel, grb.bottomLevel, grb.paramId, grb.forecastTime, flush=True)
-
-  # add to netcdf file
-  for patch in range(0,npatches):
-    #debug print("k, patch = ",k,patch, flush=True)
-
-    sites[patch].extractvar(ftime, x, grb.shortName) 
-    #sites[patch].addtime(ftime)
-
-  k += 1
+  grbs.seek(0)
+  k = 1
+  for grb in grbs:
+  #for grb in grbs(typeOfLevel="depthBelowLandLayer"):
+    x = grb.values
+    #debug print(k, x.max(), x.min(), grb.level, grb.shortName, grb.name, 
+    #       grb.topLevel, grb.bottomLevel, grb.paramId, grb.forecastTime, flush=True)
+  
+    # add to netcdf file
+    for patch in range(0,npatches):
+      #debug print("k, patch = ",k,patch, flush=True)
+  
+      sites[patch].extractvar(ftime, x, grb.shortName) 
+      #sites[patch].addtime(ftime)
+  
+    k += 1
 
 #---------------------------------------------------------------
 #close netcdf files
