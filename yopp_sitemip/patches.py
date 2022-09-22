@@ -45,7 +45,7 @@ class patches:
     if (self.i < 0 or self.j < 0):
       print("invlocate issue ",self.lat, self.lon, z.firstlat, z.firstlon, z.dlat, z.dlon, flush=True)
       exit(1)
-    print(self.name, "i,j = ",self.lat, self.lon, self.i, self.j, flush=True)
+      print(self.name, "i,j = ",self.lat, self.lon, self.i, self.j, flush=True)
     self.var = []
 
 
@@ -86,14 +86,20 @@ class patches:
     self.var[self.count].long_name = grb.name
     self.count += 1
 
-  def extractvar(self, allvalues):
+  def extractvar(self, ftime, allvalues, vname):
     #Remember x,y are reversed from fortran
     #Vastly slower to use grb.values than to pass the decoded whole 
     #    grid and extract from it
-    #y = grb.values[ self.j-self.range_y:self.j+self.range_y+1, self.i-self.range_x: self.i+self.range_x+1 ]
-    y = allvalues[ self.j-self.range_y:self.j+self.range_y+1, self.i-self.range_x: self.i+self.range_x+1 ]
-    #debug print("extract shape: ",y.shape,self.i, self.j, self.range_x, self.range_y, flush=True)
-    #RG: adding time from grb.fcst_hr
+    y = allvalues[ self.j-self.range_y : self.j+self.range_y+1, 
+                   self.i-self.range_x : self.i+self.range_x+1 ]
+
+    if (self.i*self.j != 0) :
+      #print("extract shape: ",y.shape,self.i, self.j, self.range_x, 
+      #   self.range_y, flush=True)
+   
+      #manage vname, time slicing:
+      self.ncfile.variables[vname][ftime,:,:] = y
+      #RG: adding time from grb.forecastTime
 
   def close(self):
     # close netcdf file associated w. patch

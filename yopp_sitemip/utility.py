@@ -42,8 +42,8 @@ def get_ll_info(y):
   delta_lon = dx[0]
   nlon = lats.shape[1]
   nlat = lats.shape[0]
-  print("dx max min: ",nlon, firstlon, delta_lon, dx.max(), dx.min(),dx.max() - dx.min() )
-  print("dy max min: ",nlat, firstlat, delta_lat, dy.max(), dy.min(),dy.max() - dy.min() )
+  #debug print("dx max min: ",nlon, firstlon, delta_lon, dx.max(), dx.min(),dx.max() - dx.min() , flush=True)
+  #debug print("dy max min: ",nlat, firstlat, delta_lat, dy.max(), dy.min(),dy.max() - dy.min() , flush=True)
   z = llgrid(nx = nlon, ny = nlat, firstlon=firstlon, firstlat = firstlat, dlon = delta_lon, dlat = delta_lat )
   return z
 
