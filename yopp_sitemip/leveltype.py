@@ -18,8 +18,10 @@ from patches import *
 
 #---------------------------------------------------------------
 #open grib file for reading and initializing the netcdf:
-cyc="00"
-tag="20210726"
+#cyc="00"
+#tag="20210726"
+cyc=sys.argv[1]
+tag=sys.argv[2]
 base="./gfs."+tag+"/"+cyc+"/atmos/"
 
 # Use hr 001 as it has more variables than hr 000
@@ -43,7 +45,7 @@ sites = []
 for line in sreader:
   x = patches(z,line)
   sites.append(x)
-  fout = "patch"+"{:d}".format(k)
+  fout = "patch"+"{:d}".format(k) + "." + tag + cyc
   sites[k].pncopen(fout, tag, cyc);
 
   k += 1
