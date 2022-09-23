@@ -22,6 +22,8 @@ from patches import *
 #tag="20210726"
 cyc=sys.argv[1]
 tag=sys.argv[2]
+
+#This structure depends on date
 base="./gfs."+tag+"/"+cyc+"/atmos/"
 
 # Use hr 001 as it has more variables than hr 000
@@ -37,7 +39,7 @@ z = get_ll_info(grbs)
 
 #---------------------------------------------------------------
 # Work with the YOPP Site locations
-fyopp  = open("loc4.csv","r")
+fyopp  = open("yopp_sites.csv","r")
 sreader = csv.reader(fyopp, delimiter=",")
 k = 0
 sites = []
@@ -45,7 +47,8 @@ sites = []
 for line in sreader:
   x = patches(z,line)
   sites.append(x)
-  fout = "patch"+"{:d}".format(k) + "." + tag + cyc
+  #fout = "patch"+"{:d}".format(k) + "." + tag + cyc
+  fout = sites[k].name+"_GFS_NCEP_"+tag+cyc+".nc"
   sites[k].pncopen(fout, tag, cyc);
 
   k += 1
@@ -72,7 +75,7 @@ print("nvars = ",k, flush=True)
 #----------------------------------------------------------------
 #loop over time -- f000 to f120 by 1, 123 to 240 by 3
 for ftime in range (0,121,1):
-#for ftime in range (0,3,1):
+#for ftime in range (0,2,1):
   hh="{:03d}".format(ftime)
   fname = base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2"
   grbs = pygrib.open(base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2")
