@@ -48,7 +48,9 @@ do
     do
       #current: 20210726 htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn > ${fn}.list
 
-      htar -xvf ${d}/${name_base}.${tag}${cyc}.$fn > ${fn}.list
+      #old: 20180201
+      htar -xvf ${d}/${name_base}.${tag}${cyc}.$fn 
+
       #echo htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn 
     done
 
@@ -65,4 +67,13 @@ do
   tag=`expr $tag + 1`
   tag=`$HOME/bin/dtgfix3 $tag`
 done
-which python3
+#which python3
+exit
+
+HTAR: -rw-rw-r--  nwprod/prod  191135402 2018-02-01 03:23  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf00.grib2
+HTAR: -rw-rw-r--  nwprod/prod       6273 2018-02-01 03:23  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf00.grib2.idx
+HTAR: -rw-rw-r--  nwprod/prod  209974863 2018-02-01 03:26  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf06.grib2
+HTAR: -rw-rw-r--  nwprod/prod       6917 2018-02-01 03:26  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf06.grib2.idx
+HTAR: -rw-rw-r--  nwprod/prod  210218088 2018-02-01 03:28  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf12.grib2
+HTAR: -rw-rw-r--  nwprod/prod       7031 2018-02-01 03:28  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf12.grib2.idx
+HTAR: -rw-rw-r--  nwprod/prod  208378399 2018-02-01 03:30  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf18.grib2
