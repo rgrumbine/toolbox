@@ -22,9 +22,9 @@ end=20220831
 
 
 #Arctic SOP1:
-start=20180201
+start=20180203
 #end=20180331
-end=20180201
+end=20180228
 
 tag=$start
 . python_load
@@ -47,19 +47,20 @@ do
     for fn in sfluxgrb.tar pgrb2_0p25.tar 
     do
       #current: 20210726 htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn > ${fn}.list
+      #echo htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn 
 
       #old: 20180201
       htar -xvf ${d}/${name_base}.${tag}${cyc}.$fn 
-
-      #echo htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn 
     done
+    mv gfs.t${cyc}z.pgrb* gpfs/hps/nco/ops/com/gfs/prod/gfs.$tag 
 
     #######
-    # do the extraction to .nc
-    # python3 leveltype.py $cyc $tag
+    # do the extraction to .nc:
+    #   python3 leveltype.py $cyc $tag
+    # push the patches to PSL, ECMWF
+    #   to_yopp
     #######
     # remove the huge gfs files
-    # push the patches to PSL, ECMWF
     #######
 
   done
@@ -68,12 +69,4 @@ do
   tag=`$HOME/bin/dtgfix3 $tag`
 done
 #which python3
-exit
 
-HTAR: -rw-rw-r--  nwprod/prod  191135402 2018-02-01 03:23  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf00.grib2
-HTAR: -rw-rw-r--  nwprod/prod       6273 2018-02-01 03:23  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf00.grib2.idx
-HTAR: -rw-rw-r--  nwprod/prod  209974863 2018-02-01 03:26  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf06.grib2
-HTAR: -rw-rw-r--  nwprod/prod       6917 2018-02-01 03:26  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf06.grib2.idx
-HTAR: -rw-rw-r--  nwprod/prod  210218088 2018-02-01 03:28  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf12.grib2
-HTAR: -rw-rw-r--  nwprod/prod       7031 2018-02-01 03:28  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf12.grib2.idx
-HTAR: -rw-rw-r--  nwprod/prod  208378399 2018-02-01 03:30  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf18.grib2
