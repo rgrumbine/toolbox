@@ -1,0 +1,16 @@
+./cislakes.sh -- kb/wk
+./nic_edge.sh -- kb/day
+
+iabp? -- $DCOM/prod/...
+
+./osisaf      --  76 Mb/day
+./get_cafs.sh --  0.5 Gb/day
+
+./gefs_get.sh, ./gefs_thin.sh, ./gefs_clean.sh -- 1 Gb/day
+
+./reget.2yr.sh -- 2Gb/day
+
+rtofs_cice_copy.sh -- 27 Gb/day
+./giops.sh         -- 28 Gb/day 
+viirs              -- 32 Gb/day
+
