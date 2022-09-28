@@ -10,7 +10,7 @@ time ./nic_edge.sh #-- kb/day
 
 time ./osisaf      # --  76 Mb/day
 time ./get_cafs.sh # -- 500 Mb/day
-#nsidc
+time ./nsidc       # updates only about quarterly
 
 #submit jobs that reference hpss to q so that data transfer nodes+queues can be used
 qsub ./reget.2yr.sh # -- 2Gb/day
