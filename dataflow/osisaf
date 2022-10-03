@@ -1,6 +1,6 @@
 #!/bin/sh
 
 cd $HOME/noscrub/verification/
-wget --mirror ftp://osisaf.met.no/archive/ice/conc/2022/
+wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2022/
 #wget --mirror ftp://osisaf.met.no/archive/ice/conc/2021/
 #wget --mirror ftp://osisaf.met.no/archive/ice/conc/2020/

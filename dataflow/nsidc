@@ -1,4 +1,3 @@
-
 #!/bin/sh
 
 set -e
@@ -15,6 +14,7 @@ do
 done
 
 exit
+
 nsidc0001_polar_stereo_tbs 
 # Added images directories give addl 70 Gb to this: NOAA/G02135 
 
