@@ -8,7 +8,7 @@ base=$HOME/noscrub/model_intercompare/rtofs_cice/
 tag=20220920
 end=`date +"%Y%m%d"`
 end=`expr $end - 1`
-end=`$HOME?bin/dtgfix3 $end`
+end=`$HOME/bin/dtgfix3 $end`
 
 while [ $tag -lt $end ]
 do
