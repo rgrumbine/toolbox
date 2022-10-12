@@ -7,6 +7,10 @@
 #PBS -l walltime=6:00:00
 #PBS -l select=1:ncpus=1
 
+
+if [ ! -d $HOME/noscrub/gefs/ ] ; then
+	mkdir -p $HOME/noscrub/gefs
+fi
 cd $HOME/noscrub/gefs/
 
 set -x

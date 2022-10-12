@@ -1,6 +1,12 @@
 #!/bin/sh
 
-cd $HOME/noscrub/model_intercompare/giops/
+
+models=$HOME/noscrub/model_intercompare/
+if [ ! -d $models/giops ] ; then
+        mkdir -p $models/giops
+fi      
+cd $models/giops
+
 
 tag=`date +"%Y%m%d"`
   tag=`expr $tag - 1`
