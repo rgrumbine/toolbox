@@ -1,6 +1,11 @@
 #!/bin/sh
 
 set -e
+j=`date +"%j"`
+x=`expr $j % 30 `
+if [ $x -ne 0 ] ; then
+	exit 0
+fi
 
 #approximately 4 min run time if not much to update
 cd $HOME/noscrub/verification
