@@ -18,19 +18,23 @@ from patches import *
 
 #---------------------------------------------------------------
 #open grib file for reading and initializing the netcdf:
-#cyc="00"
-#tag="20210726"
 cyc=sys.argv[1]
 tag=sys.argv[2]
 
 #This structure depends on date
-base="./gfs."+tag+"/"+cyc+"/atmos/"
+#Newer:
+#base="./gfs."+tag+"/"+cyc+"/atmos/"
+#Older than -- 
+base="./gpfs/hps/nco/ops/com/gfs/prod/gfs."+tag
 
 # Use hr 001 as it has more variables than hr 000
 hh="001"
-fname = base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2"
-print("fname = ",fname)
-grbs = pygrib.open(base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2")
+# Older periods are 6 hours from 0 to 240, %02d format
+hh="06"
+
+fname = base+"/gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2"
+#debug print("fname = ",fname, flush=True)
+grbs = pygrib.open(fname)
 #debug print("grbs = ",grbs, flush=True)
 
 # RG: Assumes that all grids in file are regular lat-lon and same size 
@@ -55,7 +59,7 @@ for line in sreader:
 
 npatches = k
 fyopp.close()
-print("found ",npatches," patches to work with/on", len(sites) )
+print("found ",npatches," patches to work with/on", len(sites) , flush=True)
 
 #----------------------------------------------------------------
 #  Grid specified now and all patches opened up for writing
@@ -74,18 +78,18 @@ print("nvars = ",k, flush=True)
 
 #----------------------------------------------------------------
 #loop over time -- f000 to f120 by 1, 123 to 240 by 3
-for ftime in range (0,121,1):
-#for ftime in range (0,2,1):
-  hh="{:03d}".format(ftime)
-  fname = base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2"
-  grbs = pygrib.open(base+"gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2")
+#older: f00 to f96, f106 to f240 by 6
+#for ftime in range (0,121,1):
+for ftime in range (0,121,6):
+  hh="{:02d}".format(ftime)
+  fname = base+"/gfs.t"+cyc+"z.sfluxgrbf"+hh+".grib2"
+  grbs = pygrib.open(fname)
   #debug print("grbs = ",grbs, flush=True)
   print("hh, fname:",hh, fname, flush=True)
 
   grbs.seek(0)
   k = 1
   for grb in grbs:
-  #for grb in grbs(typeOfLevel="depthBelowLandLayer"):
     x = grb.values
     #debug print(k, x.max(), x.min(), grb.level, grb.shortName, grb.name, 
     #       grb.topLevel, grb.bottomLevel, grb.paramId, grb.forecastTime, flush=True)
