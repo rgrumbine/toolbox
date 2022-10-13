@@ -1,5 +1,6 @@
 #!/bin/sh
 
+#-------------------------- Reference -------------------------------
 #Arctic SOP1:
 start=20180201
 end=20180331
@@ -20,11 +21,12 @@ end=20201012
 start=20220415
 end=20220831
 
+#-------------------------- END Reference -------------------------------
 
 #Arctic SOP1:
-start=20180203
+start=20180201
 #end=20180331
-end=20180228
+end=20180201
 
 tag=$start
 . python_load
@@ -36,34 +38,39 @@ do
   yrmo=`echo $tag | cut -c1-6`
 
   d=/NCEPPROD/hpssprod/runhistory/rh${yy}/${yrmo}/$tag
-  #for cyc in 00 06 12 18
-  for cyc in 00 
-  do
+  out=gpfs/hps/nco/ops/com/gfs/prod/gfs.$tag
+  #out=... for newer times
 
-    #current: 20210726 name_base=com_gfs_prod_gfs
-    #for fn in gfs_flux.tar gfs_pgrb2.tar gfs_pgrb2b.tar 
-
-    name_base=gpfs_hps_nco_ops_com_gfs_prod_gfs
-    for fn in sfluxgrb.tar pgrb2_0p25.tar 
+  if [ ! -d $out ] ; then
+    #for cyc in 00 06 12 18
+    for cyc in 00 
     do
-      #current: 20210726 htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn > ${fn}.list
-      #echo htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn 
 
-      #old: 20180201
-      htar -xvf ${d}/${name_base}.${tag}${cyc}.$fn 
+      #current: 20210726 name_base=com_gfs_prod_gfs
+      #for fn in gfs_flux.tar gfs_pgrb2.tar gfs_pgrb2b.tar 
+
+      name_base=gpfs_hps_nco_ops_com_gfs_prod_gfs
+      for fn in sfluxgrb.tar pgrb2_0p25.tar 
+      do
+        #current: 20210726 htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn > ${fn}.list
+        #echo htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn 
+  
+        #old: 20180201
+        htar -xvf ${d}/${name_base}.${tag}${cyc}.$fn 
+      done
+      mv gfs.t${cyc}z.pgrb* $out
     done
-    mv gfs.t${cyc}z.pgrb* gpfs/hps/nco/ops/com/gfs/prod/gfs.$tag 
+  fi
 
-    #######
-    # do the extraction to .nc:
-    #   python3 leveltype.py $cyc $tag
-    # push the patches to PSL, ECMWF
-    #   to_yopp
-    #######
-    # remove the huge gfs files
-    #######
-
-  done
+  #######
+  # do the extraction to .nc:
+  #   python3 sflux_toyopp.py $cyc $tag
+  #   python3 pgrb2_toyopp.py $cyc $tag
+  # push the patches to PSL, ECMWF
+  #   to_yopp
+  #######
+  # remove the huge gfs files
+  #######
 
   tag=`expr $tag + 1`
   tag=`$HOME/bin/dtgfix3 $tag`

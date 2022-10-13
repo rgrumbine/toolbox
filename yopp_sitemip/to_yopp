@@ -3,12 +3,15 @@
 #use .netrc 
 
 echo cd gfs > l
-echo put alert* >> l
+#echo put alert* >> l
+echo mput *.nc >> l
 echo quit >> l
 cat l | ftp ftp.ecmwf.int
 
-echo put alert* > l
+#echo put alert* > l
+echo mput *.nc >> l
 echo quit >> l
 cat l | ftp ftp1.psl.noaa.gov
 
 rm l
+rm *.nc
