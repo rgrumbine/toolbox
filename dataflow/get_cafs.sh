@@ -1,6 +1,12 @@
 #!/bin/sh
 
-cd ~/noscrub/model_intercompare/cafs/
+models=$HOME/noscrub/model_intercompare/
+if [ ! -d $models/cafs ] ; then
+	mkdir $models/cafs
+fi
+cd $models/cafs
+
+
 base=`pwd`
 tag=20220101
 while [ $tag -lt `date +"%Y%m%d"` ]

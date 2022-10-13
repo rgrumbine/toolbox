@@ -1,11 +1,22 @@
 #!/bin/sh
 
-cd $HOME/noscrub/model_intercompare/giops/
 
-mm=09
-for d in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+models=$HOME/noscrub/model_intercompare/
+if [ ! -d $models/giops ] ; then
+        mkdir -p $models/giops
+fi      
+cd $models/giops
+
+
+tag=`date +"%Y%m%d"`
+  tag=`expr $tag - 1`
+  tag=`$HOME/bin/dtgfix3 $tag`
+  tag=`expr $tag - 1`
+  tag=`$HOME/bin/dtgfix3 $tag`
+
+while [ $tag -ge 20220801 ]
 do
-  tag=2022${mm}$d
+
   if [ ! -d giops.$tag ] ; then
     base=/lfs/h1/ops/dev/dcom/$tag/wgrbbul/cmc_giops
     if [ -d $base ] ; then
@@ -14,4 +25,6 @@ do
       echo no directory for $tag
     fi
   fi
+  tag=`expr $tag - 1`
+  tag=`$HOME/bin/dtgfix3 $tag`
 done
