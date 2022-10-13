@@ -66,6 +66,8 @@ do
   # do the extraction to .nc:
   #   python3 sflux_toyopp.py $cyc $tag
   #   python3 pgrb2_toyopp.py $cyc $tag
+  #   tar czf ncep_gfs.$tag.tgz *.nc
+  #   rm *.nc
   # push the patches to PSL, ECMWF
   #   to_yopp
   #######

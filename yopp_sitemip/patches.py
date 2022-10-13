@@ -80,6 +80,9 @@ class patches:
 
     self.time = self.ncfile.createVariable('time', np.float64, ('time',))
     self.time.units = 'hours'
+##RG Trial
+#    self.time[:] = np.arange(0,121,6)
+#no effect -- superceded by way vars are added per time level
 
     self.yopp_header(fname)
 
