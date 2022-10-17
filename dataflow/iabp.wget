@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#The Level2 and C files are updated only infrequently
+frequency=1
+
+j=`date +"%j"`
+x=`expr $j % $frequency `
+if [ $x -eq 0 ] ; then
+  cd $HOME/noscrub/verification/
+  wget -N --no-remove-listing -r -l 1  https://iabp.apl.uw.edu/WebData/LEVEL2/
+  wget -N --no-remove-listing -r -l 1  https://iabp.apl.uw.edu/Data_Products/C/
+
+  #wget -nv --mirror https://iabp.apl.uw.edu/WebData/LEVEL2/
+  #wget -nv --mirror https://iabp.apl.uw.edu/DataProducts/C
+
+fi
