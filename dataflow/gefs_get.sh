@@ -7,6 +7,7 @@
 #PBS -l walltime=6:00:00
 #PBS -l select=1:ncpus=1
 
+echo entered gefs_get.sh
 
 if [ ! -d $HOME/noscrub/gefs/ ] ; then
 	mkdir -p $HOME/noscrub/gefs
@@ -15,11 +16,13 @@ cd $HOME/noscrub/gefs/
 
 set -x
 
-tag=20220823
-end=20220905
+tag=20221001
+#end=20220905
 end=`date +"%Y%m%d"`
 base=`pwd`
 j=0
+
+
 #Up to 07/##/2018
 #pathbase=com_gens_prod_gefs
 #Afterwards, up to 2020/02/25
@@ -61,3 +64,4 @@ do
   tag=`dtgfix3 $tag`
 done
 
+echo leaving gefs_get.sh

@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo entered giops.sh
+
+set -x
 
 models=$HOME/noscrub/model_intercompare/
 if [ ! -d $models/giops ] ; then
@@ -28,3 +31,5 @@ do
   tag=`expr $tag - 1`
   tag=`$HOME/bin/dtgfix3 $tag`
 done
+
+echo leaving giops.sh

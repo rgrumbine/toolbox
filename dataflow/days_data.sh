@@ -20,7 +20,6 @@ qsub ./reget.2yr.sh # -- 2Gb/day
 qsub ./gefs_get.sh   #  ./gefs_thin.sh, ./gefs_clean.sh -- 1 Gb/day
 time   ./gefs_thin.sh   # this winds up cleaning yesterday and before, 
                         # since the queue won't respond instantly
-
 #sice
 #ims
 
@@ -28,5 +27,3 @@ time   ./gefs_thin.sh   # this winds up cleaning yesterday and before,
 time ./rtofs_cice_copy.sh # -- 27 Gb/day
 time ./giops.sh           # -- 28 Gb/day 
 #viirs -- 32 Gb/day
--rwxr-xr-x 1 robert.grumbine couple 398 Oct 17 17:57 iabp_dcomdev
--rwxr-xr-x 1 robert.grumbine emc    460 Oct 17 17:51 iabp.wget

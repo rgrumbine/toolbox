@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo entered cislakes.sh
+
 cd ~/noscrub/lakes
 wget ftp://ice-glaces.ec.gc.ca/*.txt
 chmod a-w *lakeice.txt
@@ -12,3 +14,5 @@ chmod a-w *lakeice.txt
 #user: primary
 #password: statistics
 #files -- DDMMYYYY_lakeice.txt 
+
+echo leaving cislakes.sh

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo entered get_cafs.sh
+
 models=$HOME/noscrub/model_intercompare/
 if [ ! -d $models/cafs ] ; then
 	mkdir $models/cafs
@@ -28,6 +30,9 @@ do
   tag=`expr $tag + 1`
   tag=`/u/robert.grumbine/bin/dtgfix3 $tag`
 done
+
+echo leaving get_cafs.sh
+
 exit
 
 total 573116
