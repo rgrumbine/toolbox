@@ -4,12 +4,12 @@
 
 echo cd gfs > l
 #echo put alert* >> l
-echo put ncep_gfs.trial.tgz >> l
+echo put ncep_gfs_sflux.20180201.tgz >> l
 echo quit >> l
 cat l | ftp ftp.ecmwf.int
 
 #echo put alert* > l
-echo put ncep_gfs.trial.tgz >> l
+echo put ncep_gfs_sflux.20180201.tgz >> l
 echo quit >> l
 cat l | ftp ftp1.psl.noaa.gov
 

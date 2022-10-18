@@ -24,9 +24,9 @@ end=20220831
 #-------------------------- END Reference -------------------------------
 
 #Arctic SOP1:
-start=20180201
+start=20180202
 #end=20180331
-end=20180201
+end=20180202
 
 tag=$start
 . python_load
@@ -64,12 +64,14 @@ do
 
   #######
   # do the extraction to .nc:
-  #   python3 sflux_toyopp.py $cyc $tag
-  #   python3 pgrb2_toyopp.py $cyc $tag
-  #   tar czf ncep_gfs.$tag.tgz *.nc
-  #   rm *.nc
+      python3 sflux_toyopp.py $cyc $tag
+      tar czf ncep_gfs_sflux.$tag.tgz *.nc
+      mv *.nc $HOME/clim_data/yopp
+      python3 pgrb2_toyopp.py $cyc $tag
+      tar czf ncep_gfs_pgrb.$tag.tgz *.nc
+      mv *.nc $HOME/clim_data/yopp
   # push the patches to PSL, ECMWF
-  #   to_yopp
+      to_yopp $tag
   #######
   # remove the huge gfs files
   #######
