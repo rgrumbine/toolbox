@@ -1,17 +1,20 @@
 #!/bin/sh
 
-#use .netrc 
+if [ $# -ne 1 ] ; then
+  echo need exactly 1 argument -- 8 digit date of files
+  exit 1
+fi
+tag=$1
 
 echo cd gfs > l
-#echo put alert* >> l
-echo put ncep_gfs_sflux.20180201.tgz >> l
+echo put ncep_gfs_sflux.${tag}.tgz >> l
+echo put ncep_gfs_pgrb.${tag}.tgz >> l
 echo quit >> l
 cat l | ftp ftp.ecmwf.int
 
-#echo put alert* > l
-echo put ncep_gfs_sflux.20180201.tgz >> l
+echo put ncep_gfs_sflux.${tag}.tgz >> l
+echo put ncep_gfs_pgrb.${tag}.tgz >> l
 echo quit >> l
 cat l | ftp ftp1.psl.noaa.gov
 
 rm l
-#rm *.tgz
