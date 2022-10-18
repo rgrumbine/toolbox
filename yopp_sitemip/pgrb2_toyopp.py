@@ -17,7 +17,7 @@ from utility import *
 from patches import *
 
 #---------------------------------------------------------------
-#pgrb2 Short Names to extract
+#pgrb2, pgrb2b Short Names to extract
 snames = [ 'gh', 't', 'u', 'v', 'w', 'r' ]
 #debug: print('short names being extracted on isobaric levels: ",snames, flush=True)
 
@@ -33,9 +33,20 @@ tag=sys.argv[2]
 base="./gpfs/hps/nco/ops/com/gfs/prod/gfs."+tag
 
 hh="000"
+setup = False
 
-fname = base+"/gfs.t"+cyc+"z.pgrb2.0p25.f"+hh
-#debug print("fname = ",fname,flush=True)
+# pgrb2, pgrb2b
+f2 = base+"/gfs.t"+cyc+"z.pgrb2b.0p25.f"+hh
+f1 = base+"/gfs.t"+cyc+"z.pgrb2.0p25.f"+hh
+for fname in ( f1, f2):
+  #debug 
+  print("fname = ",fname,flush=True)
+  setup = True
+
+if (setup):
+  exit(0)
+else:
+  exit(1)
 
 grbs = pygrib.open(fname)
 #debug print("grbs = ",grbs, flush=True)
@@ -60,8 +71,8 @@ sites = []
 for line in sreader:
   x = patches(z,line)
   sites.append(x)
-  fout = sites[k].name+"_GFS_NCEP_"+tag+cyc+".nc"
-  sites[k].pncopen(fout, tag, cyc);
+  fout = sites[k].name+"_GFS_NCEP_pgrb_"+tag+cyc+".nc"
+  sites[k].pncopen3(fout, tag, cyc);
 
   k += 1
 
@@ -73,16 +84,18 @@ print("found ",npatches," patches to work with/on", len(sites) )
 #  Grid specified now and all patches opened up for writing
 #----------------------------------------------------------------
 #  Add the variables
-#Do at time 0 only -- nothing special about time 0 for the pgrb2 files
 #
-#Code experiment:
-#grbs.seek(0)
-#k = 0
-#for s in snames:
-#  print("short name = ",s, flush=True)
-#  select_grbs = grbindex(shortName = s, typeOfLevel='isobaricInhPa')
-#  k += 1
-#print(k," variables to work with/on", flush=True)
+grbs.seek(0)
+k = 0
+for s in snames:
+  print("short name = ",s, flush=True)
+  select_grbs = grbindex(shortName = s, typeOfLevel='isobaricInhPa')
+  for npatch in range(0,len(sites)):
+    sites[npatch].addvar3(select_grbs[0])
+
+  k += 1
+#debug print(k," variables to work with/on", flush=True)
+#exit(0)
 #
 #grbs.seek(0)
 #k = 0
@@ -133,11 +146,8 @@ for ftime in range (0,2,1):
     
       ## add to netcdf file
       for patch in range(0,npatches):
-        #debug 
-        print("k, patch = ",k,patch, flush=True)
-      # 
-      #   sites[patch].extractvar(ftime, x, grb.shortName) 
-      #   sites[patch].addtime(ftime)
+        #debug print("k, patch = ",k,patch, flush=True)
+        sites[patch].extractvar3(ftime, x, grb.shortName, grb.level)
   
     k += 1
 

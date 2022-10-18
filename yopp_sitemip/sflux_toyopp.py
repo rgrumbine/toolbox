@@ -52,7 +52,7 @@ for line in sreader:
   x = patches(z,line)
   sites.append(x)
   #fout = "patch"+"{:d}".format(k) + "." + tag + cyc
-  fout = sites[k].name+"_GFS_NCEP_"+tag+cyc+".nc"
+  fout = sites[k].name+"_GFS_NCEP_sflux_"+tag+cyc+".nc"
   sites[k].pncopen(fout, tag, cyc);
 
   k += 1
