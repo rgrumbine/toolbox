@@ -1,7 +1,15 @@
-#!/bin/sh
+#!/bin/bash --login
 
 #General retrieval of data sets for the day, in approximate order of increasing size
 # Robert Grumbine 26 September 2022
+
+module list
+
+cd $HOME/rgdev/toolbox/dataflow
+if [ $? -ne 0 ] ; then
+	echo could not cd to dataflow directory
+	exit 1
+fi
 
 time ./cislakes.sh #-- kb/wk
 time ./nic_edge.sh #-- kb/day
