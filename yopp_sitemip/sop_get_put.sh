@@ -43,9 +43,9 @@ module list
 cd $HOME/rgdev/toolbox/yopp_sitemip
 
 #Arctic SOP1:
-start=20180206
+start=20180216
 #end=20180331
-end=20180215
+end=20180228
 
 tag=$start
 
