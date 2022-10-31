@@ -1,0 +1,6 @@
+#!/bin/sh
+#execute by . ./python_load.wcoss2
+
+module load intel
+module load python
+export PYTHONPATH=$PYTHONPATH:$HOME/rgdev/mmablib/py
