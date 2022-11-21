@@ -19,7 +19,7 @@ from patches import *
 #---------------------------------------------------------------
 #pgrb2, pgrb2b Short Names to extract
 snames = [ 'gh', 't', 'u', 'v', 'w', 'r' ]
-#debug: print('short names being extracted on isobaric levels: ",snames, flush=True)
+#debug: print("short names being extracted on isobaric levels: ",snames, flush=True)
 
 
 #open grib file for reading and initializing the netcdf:
