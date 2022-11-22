@@ -15,6 +15,7 @@ from grid import *
 
 #Local utilities:
 from utility import *
+from grib_netcdf import *
 
 #---------------------------------------------------------------
 # Work with the YOPP Site locations
@@ -137,32 +138,51 @@ class patches:
 
     self.yopp_header(fname)
 
-    
-    
 
 # RG: need to manage name repeats.
   def addvar3(self, grb):
     #debug print("addvar3: ", grb.shortName,flush=True)
+    if (grb.shortName in ishk):
+      sname = grib_to_netcdf[grb.shortName][short_index]
+      lname = grib_to_netcdf[grb.shortName][long_index]
+      stdname = grib_to_netcdf[grb.shortName][yopp_index]
+    else:
+      sname = grb.shortName 
+      stdname = grb.name 
+      lname   = grb.name 
+
     try:
       #RG: this is the only line that differs from addvar
-      tmp = self.ncfile.createVariable(grb.shortName, np.float32, ('time', 'level', 'lat','lon'), fill_value=9.e35)
+      tmp = self.ncfile.createVariable(sname, np.float32, ('time', 'level', 'lat','lon'), fill_value=9.e35)
     except:
       #debug 
-      print("could not create variable, name probably already in use ",grb.shortName,flush=True)
+      print("could not create variable, name probably already in use ",sname,flush=True)
       return
     self.var.append(tmp)
-    self.var[self.count].long_name = grb.name
+    self.var[self.count].long_name = lname
+    self.var[self.count].standard_name = stdname
     self.count += 1
 
   def addvar(self, grb):
     #debug print("addvar: ", grb.shortName,flush=True)
+    if (grb.shortName in ishk):
+      sname = grib_to_netcdf[grb.shortName][short_index]
+      lname = grib_to_netcdf[grb.shortName][long_index]
+      stdname = grib_to_netcdf[grb.shortName][yopp_index]
+    else:
+      sname = grb.shortName 
+      stdname = grb.name 
+      lname   = grb.name 
+
     try:
-      tmp = self.ncfile.createVariable(grb.shortName, np.float32, ('time', 'lat','lon'), fill_value=9.e35)
+      tmp = self.ncfile.createVariable(sname, np.float32, ('time', 'lat','lon'), fill_value=9.e35)
     except:
-      #debug print("could not create variable, name probably already in use ",grb.shortName,flush=True)
+      #debug 
+      print("could not create variable, name probably already in use ",sname,flush=True)
       return
     self.var.append(tmp)
-    self.var[self.count].long_name = grb.name
+    self.var[self.count].long_name = lname
+    self.var[self.count].standard_name = stdname
     self.count += 1
 
   def extractvar3(self, ftime, allvalues, vname, level):

@@ -3,9 +3,10 @@
 #list[short, standard name, ncname] = grib_to_netcdf["grib_short_name"]
 
 #Indices to naming list
-short    = int(0)
-standard = int(1)
-yopp     = int(2)
+short_index    = int(0)
+standard_index = int(1)
+long_index     = int(1)
+yopp_index     = int(2)
 
 # Begin dictionary -----------------------------------------------------------------
 grib_to_netcdf = {
@@ -49,9 +50,42 @@ grib_to_netcdf = {
 }
 
 # End dictionary -----------------------------------------------------------------
+ishk = [
+"u" ,
+"v" ,
+"gh",
 
+# 2d vars (sflux output from GFS)
+"10u"  ,
+"10v"  ,
+"2t"   ,
+"al"   ,
+"ci"   ,
+"dlwrf",
+"dswrf",
+"gflux",
+"hpbl" ,
+"icetk",
+"lhtfl",
+"prate",
+"q"    ,
+"sde"  ,
+"sdwe" ,
+"sp"   ,
+"tcc"  ,
+"uflx" ,
+"vflx" ,
+"uswrf",
+"uswrf",
+"ulwrf",
+"ulwrf",
+"t"  ,
+"w"  ,
+"r"  
+]
 
 # list of grib2 short names in sflux, but not HK (42) ------------------------------
+#Partial list
 nothk = [
 "acond",
 "cduvb",
@@ -68,28 +102,35 @@ nothk = [
 "evcw",
 "fldcp",
 "fricv",
+"lftx",
 "lsm",
 "nbdsf",
 "nddsf",
 "orog",
 "pevpr",
+"pres",
 "pwat",
 "qmax",
 "qmin",
 "sbsno",
+"sfexc",
 "shtfl",
+"slt",
 "sltyp",
+"snohf",
 "snowc",
 "soill",
 "soilw",
 "ssrun",
 "ssw",
+"sr",
 "st",
 "SUNSD",
 "tmax",
 "tmin",
 "trans",
 "u-gwd",
+"v-gwd",
 "vbdsf",
 "vddsf",
 "veg",
@@ -100,12 +141,14 @@ nothk = [
 
 #--------------------------------------------------------------
 # Demonstration code
-#print(grib_to_netcdf["w"][short])
-#print(grib_to_netcdf["w"][standard])
-#print(grib_to_netcdf["w"][yopp])
+#print(grib_to_netcdf["w"][short_index])
+#print(grib_to_netcdf["w"][standard_index])
+#print(grib_to_netcdf["w"][yopp_index])
 #
 #print(grib_to_netcdf["10u"])
 #
 #print("trans" in nothk)
 #print("w" in nothk)
-
+#
+#print("trans" in ishk)
+#print("w" in ishk)

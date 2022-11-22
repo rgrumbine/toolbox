@@ -93,12 +93,17 @@ for ftime in range (0,121,6):
     x = grb.values
     #debug print(k, x.max(), x.min(), grb.level, grb.shortName, grb.name, 
     #       grb.topLevel, grb.bottomLevel, grb.paramId, grb.forecastTime, flush=True)
-  
+ 
+    if (grb.shortName not in ishk):
+      sname = grb.shortName
+    else:
+      sname = grib_to_netcdf[grb.shortName][short_index]
+ 
     # add to netcdf file
     for patch in range(0,npatches):
       #debug print("k, patch = ",k,patch, flush=True)
   
-      sites[patch].extractvar(ftime, x, grb.shortName) 
+      sites[patch].extractvar(ftime, x, sname) 
       #sites[patch].addtime(ftime)
   
     k += 1

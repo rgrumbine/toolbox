@@ -15,6 +15,7 @@ from grid import *
 #Local utilities:
 from utility import *
 from patches import *
+from grib_netcdf import *
 
 #---------------------------------------------------------------
 #pgrb2, pgrb2b Short Names to extract
@@ -118,12 +119,19 @@ for fname in ( f1, f2):
       for grb in select_grbs:
         x = grb.values
         #debug print(k, x.max(), x.min(), grb.level, grb.shortName, grb.name, 
-        #debug grb.topLevel, grb.bottomLevel, grb.paramId, grb.forecastTime, flush=True)
+        #  grb.topLevel, grb.bottomLevel, grb.paramId, grb.forecastTime, flush=True)
       
         ## add to netcdf file
+        if (grb.shortName in ishk):
+          sname = grib_to_netcdf[grb.shortName][short_index]
+          lname = grib_to_netcdf[grb.shortName][yopp_index]
+        else:
+          sname = grb.shortName
+          lname = grb.name
+
         for patch in range(0,npatches):
           #debug print("k, patch = ",k,patch, flush=True)
-          sites[patch].extractvar3(ftime, x, grb.shortName, grb.level)
+          sites[patch].extractvar3(ftime, x, sname, grb.level)
   
       k += 1
 
