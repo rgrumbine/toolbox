@@ -39,9 +39,10 @@ grib_to_netcdf = {
 "uswrf" : [ "rsus",  "Upward surface short-wave radiation", "surface_upwelling_shortwave_flux_in_air" ],
 "ulwrf" : [ "rlut",  "Top-of-atmosphere outgoing long wave radiation", "toa_outgoing_longwave_flux" ],
 "ulwrf" : [ "rlus",  "Upward surface long-wave radiation", "surface_upwelling_longwave_flux_in_air" ],
+
 #"sr" : (does EMC distinguish between the two?) 
-##grib2_name : [ z0h ,  "Surface roughness for heat", "surface_roughness_length_for_heat_in_air" ],
-##grib2_name : [ z0m ,  "Surface roughness for momentum", "surface_roughness_length_for_momentum_in_air" ],
+##grib2_name : [ "z0h" ,  "Surface roughness for heat", "surface_roughness_length_for_heat_in_air" ],
+"sr" : [ "z0m" ,  "Surface roughness for momentum", "surface_roughness_length_for_momentum_in_air" ],
 
 # 3d vars (pgrb2 and pgrb2b output from GFS)
 "t"  : ["ta",  "Temperature", "air_temperature"],

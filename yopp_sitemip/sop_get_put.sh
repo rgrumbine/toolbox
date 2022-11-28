@@ -43,9 +43,9 @@ module list
 cd $HOME/rgdev/toolbox/yopp_sitemip
 
 #Arctic SOP1:
-start=20180216
+start=20180202
 #end=20180331
-end=20180228
+end=20180216
 
 tag=$start
 
@@ -87,11 +87,16 @@ do
 
     for cyc in 00 
     do
-      python3 sflux_toyopp.py $cyc $tag
+      time python3 sflux_toyopp.py $cyc $tag
       tar czf ncep_gfs_sflux.$tag$cyc.tgz *.nc
       mv *.nc $YOPP_archive_dir
-      python3 pgrb2_toyopp.py $cyc $tag
+
+      time python3 pgrb2_toyopp.py $cyc $tag
       tar czf ncep_gfs_pgrb.$tag$cyc.tgz *.nc
+      mv *.nc $YOPP_archive_dir
+
+      time python3 pgrb2_surface.py $cyc $tag
+      tar czf ncep_gfs_pgrb_surf.$tag$cyc.tgz *.nc
       mv *.nc $YOPP_archive_dir
   # push the patches to PSL, ECMWF -- interactive only
       #./to_yopp $tag$cyc

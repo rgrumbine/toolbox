@@ -163,9 +163,9 @@ class patches:
     self.var[self.count].standard_name = stdname
     self.count += 1
 
-  def addvar(self, grb):
+  def addvar(self, grb, usehk = True):
     #debug print("addvar: ", grb.shortName,flush=True)
-    if (grb.shortName in ishk):
+    if (grb.shortName in ishk and usehk ):
       sname = grib_to_netcdf[grb.shortName][short_index]
       lname = grib_to_netcdf[grb.shortName][long_index]
       stdname = grib_to_netcdf[grb.shortName][yopp_index]
