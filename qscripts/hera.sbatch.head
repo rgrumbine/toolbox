@@ -1,0 +1,13 @@
+#!/bin/csh -f
+#SBATCH -J p8_all
+#SBATCH -e p8_all.err
+#SBATCH -o p8_all.out
+#  #SBATCH -t 7:55:00
+#SBATCH -t 0:25:00
+#SBATCH -q batch
+#SBATCH -A marine-cpu
+#  #SBATCH -A fv3-cpu
+#SBATCH -N 1
+#SBATCH --mail-type FAIL
+#SBATCH --mail-user USER@system
+
