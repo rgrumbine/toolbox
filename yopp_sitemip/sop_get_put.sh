@@ -1,5 +1,17 @@
-#!/bin/sh
+#!/bin/sh --login
+#SBATCH -J yopp
+#SBATCH -e yopp.err
+#SBATCH -o yopp.out
+#SBATCH -t 7:55:00
+#  #SBATCH -t 0:29:00
+#SBATCH -q batch
+#SBATCH -A marine-cpu
+#  #SBATCH -A fv3-cpu
+#SBATCH -N 1
+#SBATCH --mail-type FAIL
+#SBATCH --mail-user USER@system
 
+#-------------------------- Reference -------------------------------
 #Arctic SOP1:
 start=20180201
 end=20180331
@@ -20,15 +32,31 @@ end=20201012
 start=20220415
 end=20220831
 
+#-------------------------- END Reference -------------------------------
+module load hpss/hpss
+module load hpc/1.2.0 intel/2022.1.2 hpc-intel/2022.1.2
+module load impi/2022.1.2 hpc-impi/2022.1.2
+module load hdf5/1.10.6 wgrib2/2.0.8 netcdf/4.7.0
+. python_load
+module list
+
+export YDIR=$HOME/rgdev/toolbox/yopp_sitemip
+export PYTHONPATH=$PYTHONPATH:$YDIR
+export pid=$$
+mkdir $HOME/scratch/yopp.$pid
+cd $HOME/scratch/yopp.$pid
+ln -s $YDIR/gpfs .
+cp -p $YDIR/*.py .
+cp -p $YDIR/*.csv .
 
 #Arctic SOP1:
-start=20180201
+start=20180305
+end=20180320
 #end=20180331
-end=20180201
 
 tag=$start
-. python_load
 
+set -xe
 while [ $tag -le $end ]
 do
   #GFS archives:
@@ -36,44 +64,55 @@ do
   yrmo=`echo $tag | cut -c1-6`
 
   d=/NCEPPROD/hpssprod/runhistory/rh${yy}/${yrmo}/$tag
-  #for cyc in 00 06 12 18
-  for cyc in 00 
-  do
+  out=$YDIR/gpfs/hps/nco/ops/com/gfs/prod/gfs.$tag
+  #out=... for newer times
 
-    #current: 20210726 name_base=com_gfs_prod_gfs
-    #for fn in gfs_flux.tar gfs_pgrb2.tar gfs_pgrb2b.tar 
-
-    name_base=gpfs_hps_nco_ops_com_gfs_prod_gfs
-    for fn in sfluxgrb.tar pgrb2_0p25.tar 
+  if [ ! -d $out ] ; then
+    #for cyc in 00 06 12 18
+    for cyc in 00 
     do
-      #current: 20210726 htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn > ${fn}.list
 
-      #old: 20180201
-      htar -xvf ${d}/${name_base}.${tag}${cyc}.$fn 
+      #current: 20210726 name_base=com_gfs_prod_gfs
+      #for fn in gfs_flux.tar gfs_pgrb2.tar gfs_pgrb2b.tar 
 
-      #echo htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn 
+      name_base=gpfs_hps_nco_ops_com_gfs_prod_gfs
+      for fn in sfluxgrb.tar pgrb2_0p25.tar 
+      do
+        #current: 20210726 htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn > ${fn}.list
+        #echo htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn 
+  
+        #old: 20180201
+        htar -xvf ${d}/${name_base}.${tag}${cyc}.$fn 
+      done
+      mv gfs.t${cyc}z.pgrb* $out
     done
+  fi
 
-    #######
-    # do the extraction to .nc
-    # python3 leveltype.py $cyc $tag
-    #######
-    # remove the huge gfs files
-    # push the patches to PSL, ECMWF
-    #######
+  #######
+  # do the extraction to .nc:
+    export YOPP_archive_dir=$HOME/clim_data/yopp
 
-  done
+    for cyc in 00 
+    do
+      time python3 $YDIR/sflux_toyopp.py $cyc $tag
+      tar czf ncep_gfs_sflux.$tag$cyc.tgz *.nc
+      mv *.nc $YOPP_archive_dir
+
+      time python3 $YDIR/pgrb2_toyopp.py $cyc $tag
+      tar czf ncep_gfs_pgrb.$tag$cyc.tgz *.nc
+      mv *.nc $YOPP_archive_dir
+
+      time python3 $YDIR/pgrb2_surface.py $cyc $tag
+      tar czf ncep_gfs_pgrb_surf.$tag$cyc.tgz *.nc
+      mv *.nc $YOPP_archive_dir
+  # push the patches to PSL, ECMWF -- interactive only
+      #./to_yopp $tag$cyc
+      mv ncep_gfs*.*.tgz $YOPP_archive_dir
+    done
+  #######
+  # remove the huge gfs files
+  #######
 
   tag=`expr $tag + 1`
   tag=`$HOME/bin/dtgfix3 $tag`
 done
-#which python3
-exit
-
-HTAR: -rw-rw-r--  nwprod/prod  191135402 2018-02-01 03:23  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf00.grib2
-HTAR: -rw-rw-r--  nwprod/prod       6273 2018-02-01 03:23  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf00.grib2.idx
-HTAR: -rw-rw-r--  nwprod/prod  209974863 2018-02-01 03:26  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf06.grib2
-HTAR: -rw-rw-r--  nwprod/prod       6917 2018-02-01 03:26  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf06.grib2.idx
-HTAR: -rw-rw-r--  nwprod/prod  210218088 2018-02-01 03:28  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf12.grib2
-HTAR: -rw-rw-r--  nwprod/prod       7031 2018-02-01 03:28  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf12.grib2.idx
-HTAR: -rw-rw-r--  nwprod/prod  208378399 2018-02-01 03:30  /gpfs/hps/nco/ops/com/gfs/prod/gfs.20180201/gfs.t00z.sfluxgrbf18.grib2
