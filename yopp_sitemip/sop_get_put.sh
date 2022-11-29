@@ -40,12 +40,19 @@ module load hdf5/1.10.6 wgrib2/2.0.8 netcdf/4.7.0
 . python_load
 module list
 
-cd $HOME/rgdev/toolbox/yopp_sitemip
+export YDIR=$HOME/rgdev/toolbox/yopp_sitemip
+export PYTHONPATH=$PYTHONPATH:$YDIR
+export pid=$$
+mkdir $HOME/scratch/yopp.$pid
+cd $HOME/scratch/yopp.$pid
+ln -s $YDIR/gpfs .
+cp -p $YDIR/*.py .
+cp -p $YDIR/*.csv .
 
 #Arctic SOP1:
-start=20180202
+start=20180305
+end=20180320
 #end=20180331
-end=20180216
 
 tag=$start
 
@@ -57,7 +64,7 @@ do
   yrmo=`echo $tag | cut -c1-6`
 
   d=/NCEPPROD/hpssprod/runhistory/rh${yy}/${yrmo}/$tag
-  out=gpfs/hps/nco/ops/com/gfs/prod/gfs.$tag
+  out=$YDIR/gpfs/hps/nco/ops/com/gfs/prod/gfs.$tag
   #out=... for newer times
 
   if [ ! -d $out ] ; then
@@ -87,15 +94,15 @@ do
 
     for cyc in 00 
     do
-      time python3 sflux_toyopp.py $cyc $tag
+      time python3 $YDIR/sflux_toyopp.py $cyc $tag
       tar czf ncep_gfs_sflux.$tag$cyc.tgz *.nc
       mv *.nc $YOPP_archive_dir
 
-      time python3 pgrb2_toyopp.py $cyc $tag
+      time python3 $YDIR/pgrb2_toyopp.py $cyc $tag
       tar czf ncep_gfs_pgrb.$tag$cyc.tgz *.nc
       mv *.nc $YOPP_archive_dir
 
-      time python3 pgrb2_surface.py $cyc $tag
+      time python3 $YDIR/pgrb2_surface.py $cyc $tag
       tar czf ncep_gfs_pgrb_surf.$tag$cyc.tgz *.nc
       mv *.nc $YOPP_archive_dir
   # push the patches to PSL, ECMWF -- interactive only
