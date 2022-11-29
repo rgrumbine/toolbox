@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo entered rtofs_cice_copy.sh 
+
 module load prod_envir
 
 ops=$COMROOT/rtofs/v2.3/
@@ -21,3 +23,5 @@ do
   tag=`expr $tag + 1`
   tag=`$HOME/bin/dtgfix3 $tag`
 done
+
+echo leaving rtofs_cice_copy.sh 

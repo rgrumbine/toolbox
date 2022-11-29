@@ -1,6 +1,6 @@
 #!/bin/bash --login
-#PBS -N reget22b
-#PBS -o reget22b
+#PBS -N reget22
+#PBS -o reget22
 #PBS -j oe
 #PBS -A XFER-DEV
 #PBS -q dev_transfer
@@ -17,7 +17,8 @@ set -x
 #name change 26 Feb 2020
 #  what is now dcom_prod was dcom_us007003
 
-end_date=20180101
+end_date=20220601
+
 start_date=`date +"%Y%m%d"`
 start_date=`expr $start_date - 1`
 start_date=`$HOME/bin/dtgfix3 $start_date`

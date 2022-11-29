@@ -35,15 +35,11 @@ import pyproj
 import shutil 
 import tarfile
 
-import ncepgrib2
-
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
-
-exit(0)
-
-#import pygrib -- replaced/substituted by ncepgrib2
+#import ncepgrib2
+import pygrib # -- on wcoss2 replaced/substituted by ncepgrib2
 
 import networkx as netx
 
@@ -51,6 +47,9 @@ from docx import Document
 from docx.shared import Inches
 from pptx import Presentation
 
+exit(0)
+
+#Relict -- replace with pyproj et al.
 import mpl_toolkits.basemap as basemap
 from mpl_toolkits.basemap import Basemap
 from mpl_toolkits.basemap import shiftgrid
