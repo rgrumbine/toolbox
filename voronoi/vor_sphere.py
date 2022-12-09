@@ -34,8 +34,9 @@ for line in fin:
     tlat = float(words[7])
     tlon = float(words[8])
     has_pressure = (float(words[9]) != -999)
-    #all valid data:  if (tlat > -90 and tlon > -999 ):        # lat of -90 is also used for unknown
-    if (tlat > 50. and tlon > -100 and tlon < 100):
+    #all valid data:  
+    if (tlat > -90 and tlon > -999 ):        # lat of -90 is also used for unknown
+    #if (tlat > 50. and tlon > -100 and tlon < 100):
       #debug: print(tlat, tlon, has_pressure)
       #regularize lons + add to accumulator
       if (tlon > 180.):
