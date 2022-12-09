@@ -1,8 +1,9 @@
 #!/bin/sh --login
 #set -xe
 set -e
+echo entered gefs_clean.sh
 
-tag=20220501
+tag=20221001
 end=`date +"%Y%m%d"`
 #end=20220609
 
@@ -20,3 +21,5 @@ do
   tag=`expr $tag + 1`
   tag=`$HOME/bin/dtgfix3 $tag`
 done
+echo leaving gefs_clean.sh
+

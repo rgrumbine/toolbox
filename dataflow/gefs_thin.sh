@@ -2,6 +2,8 @@
 #set -xe
 set -e
 
+echo entered gefs_thin.sh
+
 module load intel
 module load libjpeg
 module load grib_util
@@ -11,7 +13,7 @@ cd $HOME/noscrub/gefs/
 
 
 cyc=00
-tag=20220601
+tag=20221001
 end=`date +"%Y%m%d"`
 #end=20220810
 
@@ -50,3 +52,5 @@ do
 done
 
 $HOME/rgdev/toolbox/dataflow/gefs_clean.sh
+
+echo leaving gefs_thin.sh
