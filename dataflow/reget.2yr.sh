@@ -32,7 +32,7 @@ fi
 
 set -x
 
-date=$start_date
+export date=$start_date
 while [ $date -ge $end_date ]; do
 
   dcom_dir=${base}/prod/$date

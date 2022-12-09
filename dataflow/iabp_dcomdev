@@ -2,9 +2,12 @@
 
 set -xe
 
+if [ ! -d  $HOME/noscrub/verification/iabp ] ; 
+	mkdir -p $HOME/noscrub/verification/iabp 
+fi
 cd $HOME/noscrub/verification/iabp
 
-tag=20221001
+tag=20221101
 end=`date +"%Y%m%d"`
 end=`expr $end - 1`
 end=`$HOME/bin/dtgfix3 $end`

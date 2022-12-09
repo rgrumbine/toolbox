@@ -9,13 +9,16 @@ cd $HOME/rgdev/edges/
 base=/lfs/h1/ops/dev/dcom/
 
 #tag=`date +"%Y%m%d"`
-tag=20221001
+tag=20221101
 #ls -l ${base}/${tag}/seaice/pda/?edge*
 #exit
 
 while [ $tag -le `date +"%Y%m%d"` ]
 do
-  cp -p ${base}/${tag}/seaice/pda/?edge_20* .
+  if [ -f ${base}/${tag}/seaice/pda/?edge_20* ] ; then
+    cp -p ${base}/${tag}/seaice/pda/?edge_20* .
+  fi
+
   tag=`expr $tag + 1`
   tag=`$HOME/bin/dtgfix3 $tag`
 done
