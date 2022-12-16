@@ -2,7 +2,7 @@
 
 set -xe
 
-if [ ! -d  $HOME/noscrub/verification/iabp ] ; 
+if [ ! -d  $HOME/noscrub/verification/iabp ] ; then 
 	mkdir -p $HOME/noscrub/verification/iabp 
 fi
 cd $HOME/noscrub/verification/iabp
