@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -xe
+set -x
 
 if [ ! -d  $HOME/noscrub/verification/iabp ] ; then 
 	mkdir -p $HOME/noscrub/verification/iabp 
