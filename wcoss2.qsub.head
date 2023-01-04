@@ -1,0 +1,9 @@
+#PBS -N atest
+#PBS -o atest
+#PBS -j oe
+#PBS -A ICE-DEV
+#PBS -q dev
+#PBS -l walltime=0:01:00
+#PBS -l select=1:ncpus=1
+#
+echo hello from ice-dev

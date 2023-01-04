@@ -7,6 +7,7 @@
 #PBS -l walltime=6:00:00
 #PBS -l select=1:ncpus=1
 
+echo entered gefs_get.sh
 
 if [ ! -d $HOME/noscrub/gefs/ ] ; then
 	mkdir -p $HOME/noscrub/gefs
@@ -15,11 +16,13 @@ cd $HOME/noscrub/gefs/
 
 set -x
 
-tag=20220823
-end=20220905
+tag=20221201
+#end=20220905
 end=`date +"%Y%m%d"`
 base=`pwd`
 j=0
+
+
 #Up to 07/##/2018
 #pathbase=com_gens_prod_gefs
 #Afterwards, up to 2020/02/25
@@ -31,7 +34,8 @@ j=0
 pathbase=com_naefs_v6.1_gefs
 
 # 75 is ~2 Tb for .5 GEFS
-while [ $j -lt 75 -a \( $tag -le $end \) ]
+#while [ $j -lt 75 -a \( $tag -le $end \) ]
+while [ $tag -le $end ]
 #for tag in 20170910 20171012 20171013 20171027 20171108 20171109 20171110 20180119 20180612 20180613   
 do
   yy=`echo $tag | cut -c1-4`
@@ -61,3 +65,4 @@ do
   tag=`dtgfix3 $tag`
 done
 
+echo leaving gefs_get.sh

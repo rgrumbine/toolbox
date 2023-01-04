@@ -1,0 +1,41 @@
+#!/bin/sh
+
+set -x
+
+freq=1
+j=`date +"%j"`
+x=`expr $j % $freq `
+echo x is $x
+
+if [ $x -ne 0 ] ; then
+    exit 0
+fi
+
+cd $HOME/noscrub/verification
+base=ftp://sidads.colorado.edu/pub/DATASETS/
+
+wget -nv --mirror $base/NOAA/G02156/netcdf/4km/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2004/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2005/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2006/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2007/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2008/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2009/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2010/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2011/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2012/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2013/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2014/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2015/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2016/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2017/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2018/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2019/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2020/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2021/
+#wget -nv --mirror $base/NOAA/G02156/netcdf/4km/2022/
+
+#for dname in nsidc0051_gsfc_nasateam_seaice 
+#do
+#  wget -nv --mirror ${base}/$dname
+#done

@@ -17,7 +17,8 @@ set -x
 #name change 26 Feb 2020
 #  what is now dcom_prod was dcom_us007003
 
-end_date=20220101
+end_date=20220601
+
 start_date=`date +"%Y%m%d"`
 start_date=`expr $start_date - 1`
 start_date=`$HOME/bin/dtgfix3 $start_date`
@@ -32,7 +33,7 @@ fi
 
 set -x
 
-date=$start_date
+export date=$start_date
 while [ $date -ge $end_date ]; do
 
   dcom_dir=${base}/prod/$date
