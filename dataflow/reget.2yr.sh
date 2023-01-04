@@ -18,6 +18,7 @@ set -x
 #  what is now dcom_prod was dcom_us007003
 
 end_date=20220601
+
 start_date=`date +"%Y%m%d"`
 start_date=`expr $start_date - 1`
 start_date=`$HOME/bin/dtgfix3 $start_date`
