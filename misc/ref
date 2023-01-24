@@ -1,0 +1,16 @@
+Timing for retrieval of SOP1 06z GFS:
+111.77user 5467.57system 15:22:13elapsed 10%CPU 
+
+
+For some reason, htar is failing from batch jobs:
+alias htar='htar -T 4'
+	/apps/hpss/htar
+
+Currently Loaded Modules:
+  1) hpss/hpss              5) hpc/1.2.0            9) hpc-impi/2022.1.2  13) netcdf/4.7.0
+  2) imagemagick/7.0.8-53   6) intel/2022.1.2      10) esmf/8.3.0b09
+  3) wgrib/1.8.1.0b         7) hpc-intel/2022.1.2  11) hdf5/1.10.6
+  4) grads/2.2.1            8) impi/2022.1.2       12) wgrib2/2.0.8
+
+ 
+
