@@ -1,0 +1,8 @@
+#!/bin/sh
+
+#For hera:
+  module use -a /contrib/anaconda/modulefiles
+  module load anaconda/latest
+
+#Include my library
+export PYTHONPATH=$PYTHONPATH:$HOME/rgdev/mmablib/py
