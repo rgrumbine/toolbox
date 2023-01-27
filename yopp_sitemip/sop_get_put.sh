@@ -1,7 +1,7 @@
 #!/bin/sh --login
-#SBATCH -J yopp
-#SBATCH -e yopp.err
-#SBATCH -o yopp.out
+#SBATCH -J yopp201
+#SBATCH -e yopp201.err
+#SBATCH -o yopp201.out
 #SBATCH -t 7:55:00
 #  #SBATCH -t 0:29:00
 #SBATCH -q batch
@@ -50,68 +50,46 @@ cp -p $YDIR/*.py .
 cp -p $YDIR/*.csv .
 
 #Arctic SOP1:
-start=20180305
-end=20180320
+start=20180201
+end=20180331
 #end=20180331
 
 tag=$start
 
+export YOPP_base=$HOME/clim_data/yopp
+
 set -xe
 while [ $tag -le $end ]
 do
-  #GFS archives:
-  yy=`echo $tag | cut -c1-4`
-  yrmo=`echo $tag | cut -c1-6`
-
-  d=/NCEPPROD/hpssprod/runhistory/rh${yy}/${yrmo}/$tag
-  out=$YDIR/gpfs/hps/nco/ops/com/gfs/prod/gfs.$tag
-  #out=... for newer times
-
-  if [ ! -d $out ] ; then
-    #for cyc in 00 06 12 18
-    for cyc in 00 
-    do
-
-      #current: 20210726 name_base=com_gfs_prod_gfs
-      #for fn in gfs_flux.tar gfs_pgrb2.tar gfs_pgrb2b.tar 
-
-      name_base=gpfs_hps_nco_ops_com_gfs_prod_gfs
-      for fn in sfluxgrb.tar pgrb2_0p25.tar 
-      do
-        #current: 20210726 htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn > ${fn}.list
-        #echo htar -xvf ${d}/${name_base}.${tag}_${cyc}.$fn 
-  
-        #old: 20180201
-        htar -xvf ${d}/${name_base}.${tag}${cyc}.$fn 
-      done
-      mv gfs.t${cyc}z.pgrb* $out
-    done
-  fi
-
   #######
   # do the extraction to .nc:
-    export YOPP_archive_dir=$HOME/clim_data/yopp
 
-    for cyc in 00 
-    do
+  for cyc in 18 
+  do
+    export YOPP_archive_dir=$YOPP_base/$cyc
+
+    if [ ! -f $YOPP_archive_dir/ncep_gfs_sflux.$tag$cyc.tgz ] ; then
       time python3 $YDIR/sflux_toyopp.py $cyc $tag
       tar czf ncep_gfs_sflux.$tag$cyc.tgz *.nc
       mv *.nc $YOPP_archive_dir
+    fi
 
+    if [ ! -f $YOPP_archive_dir/ncep_gfs_pgrb.$tag$cyc.tgz ] ; then
       time python3 $YDIR/pgrb2_toyopp.py $cyc $tag
       tar czf ncep_gfs_pgrb.$tag$cyc.tgz *.nc
-      mv *.nc $YOPP_archive_dir
+      mv *.nc ncep_gfs_pgrb.$tag$cyc.tgz $YOPP_archive_dir
+    fi
 
+    if [ ! -f $YOPP_archive_dir/ncep_gfs_pgrb_surf.$tag$cyc.tgz ] ; then
       time python3 $YDIR/pgrb2_surface.py $cyc $tag
       tar czf ncep_gfs_pgrb_surf.$tag$cyc.tgz *.nc
-      mv *.nc $YOPP_archive_dir
-  # push the patches to PSL, ECMWF -- interactive only
-      #./to_yopp $tag$cyc
-      mv ncep_gfs*.*.tgz $YOPP_archive_dir
-    done
-  #######
-  # remove the huge gfs files
-  #######
+      mv *.nc ncep_gfs_pgrb_surf.$tag$cyc.tgz $YOPP_archive_dir
+    fi
+
+    # push the patches to PSL, ECMWF -- interactive only
+    #./to_yopp $tag$cyc
+      
+  done
 
   tag=`expr $tag + 1`
   tag=`$HOME/bin/dtgfix3 $tag`
