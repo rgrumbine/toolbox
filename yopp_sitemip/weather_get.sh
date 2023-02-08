@@ -64,7 +64,7 @@ do
 
   if [ ! -d $out ] ; then
     #for cyc in 00 06 12 18
-    for cyc in 12 
+    for cyc in 18 
     do
 
       #current: 20210726 name_base=com_gfs_prod_gfs
