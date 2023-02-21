@@ -1,7 +1,7 @@
 #!/bin/sh --login
-#SBATCH -J yopp201
-#SBATCH -e yopp201.err
-#SBATCH -o yopp201.out
+#SBATCH -J yopp2
+#SBATCH -e yopp2.err
+#SBATCH -o yopp2.out
 #SBATCH -t 7:55:00
 #  #SBATCH -t 0:29:00
 #SBATCH -q batch
@@ -49,22 +49,23 @@ ln -s $YDIR/gpfs .
 cp -p $YDIR/*.py .
 cp -p $YDIR/*.csv .
 
-#Arctic SOP1:
-start=20180201
-end=20180331
-#end=20180331
+#Arctic SOP2:
+#start=20180701
+start=20180703
+end=20180930
 
 tag=$start
 
 export YOPP_base=$HOME/clim_data/yopp
 
-set -xe
+#set -xe
+set -x
 while [ $tag -le $end ]
 do
   #######
   # do the extraction to .nc:
 
-  for cyc in 18 
+  for cyc in 00 
   do
     export YOPP_archive_dir=$YOPP_base/$cyc
 
