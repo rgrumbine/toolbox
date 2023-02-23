@@ -1,7 +1,7 @@
 #!/bin/sh --login
-#SBATCH -J yopp2
-#SBATCH -e yopp2.err
-#SBATCH -o yopp2.out
+#SBATCH -J yopp91
+#SBATCH -e yopp91.err
+#SBATCH -o yopp91.out
 #SBATCH -t 7:55:00
 #  #SBATCH -t 0:29:00
 #SBATCH -q batch
@@ -51,7 +51,7 @@ cp -p $YDIR/*.csv .
 
 #Arctic SOP2:
 #start=20180701
-start=20180703
+start=20180901
 end=20180930
 
 tag=$start
@@ -72,7 +72,7 @@ do
     if [ ! -f $YOPP_archive_dir/ncep_gfs_sflux.$tag$cyc.tgz ] ; then
       time python3 $YDIR/sflux_toyopp.py $cyc $tag
       tar czf ncep_gfs_sflux.$tag$cyc.tgz *.nc
-      mv *.nc $YOPP_archive_dir
+      mv *.nc ncep_gfs_sflux.$tag$cyc.tgz $YOPP_archive_dir
     fi
 
     if [ ! -f $YOPP_archive_dir/ncep_gfs_pgrb.$tag$cyc.tgz ] ; then
