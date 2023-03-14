@@ -1,0 +1,10 @@
+The intent here is to construct a set of shared routines which define constants or compute universal variables (like the earth's tilt, say) such that all earth system models may use the same value. 
+
+It's also the case that different components may have different requirements for accuracy on, again, say the earth's tilt. Over a few days, this doesn't change much. But in getting to climate time scales, the Milankovitch cycles become important. In analogue to the real_kind(7,250) request, then, such variables/functions have an option to specify needed precision.
+
+
+----
+ftn 'present'?
+
+towards CF convention (etc.)
+
