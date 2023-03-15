@@ -25,11 +25,13 @@ time ./nsidc       # updates only about quarterly
 time ./get_cafs.sh # -- 500 Mb/day
 
 #submit jobs that reference hpss to q so that data transfer nodes+queues can be used
-qsub ./reget.2yr.sh # -- 2Gb/day
+qsub ./reget.2yr.sh # -- 2Gb/day, ssmi-s, amsr2
 
 qsub ./gefs_get.sh   #  ./gefs_thin.sh, ./gefs_clean.sh -- 1 Gb/day
 time   ./gefs_thin.sh   # this winds up cleaning yesterday and before, 
                         # since the queue won't respond instantly
+
+qsub sice.reget.sh   # 5-10 Gb/day, opnl sea ice analysis
 
 #While large volumes, these are disk to disk copy from com to my space
 time ./rtofs_cice_copy.sh # -- 27 Gb/day
