@@ -1,0 +1,13 @@
+note: 
+
+Not all constants from all components are included. Only those that seem to be more generally interesting than just for a specific component. For ex. the Henry's Law constants internal to the Air Quality Model (CMAQ) are left there. An air-sea henry's law constant for exchange of, say, CO2, would be more general.
+
+Not all components have been inspected. But NOAH, CMEPS, AQM, FV3, WW3, MOM6, CICE have been.
+
+-rw-r--r-- 1 robert.grumbine couple 11270 Jan  3 21:06 noah.physcons.F90
+-rw-r--r-- 1 robert.grumbine couple  6744 Jan  5  2022 cmeps.ufs_const_mod.F90
+drwxr-sr-x 2 robert.grumbine couple  4096 May 24  2022 aqm
+drwxr-sr-x 2 robert.grumbine couple  4096 Feb 23 15:58 fv3
+drwxr-sr-x 2 robert.grumbine couple  4096 Jan  3 21:06 ww3
+-rw-r--r-- 1 robert.grumbine emc     2327 Jun 16  2021 mom6.gsw_mod_teos10_constants.f90
+-rw-r--r-- 1 robert.grumbine couple  1314 Feb 23 15:57 aqm_const_mod.F90
