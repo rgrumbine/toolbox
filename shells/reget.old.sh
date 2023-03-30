@@ -1,4 +1,4 @@
-#!/bin/bash --login
+#!/bin/bash 
 #####
 #BSUB -J gethpss
 #BSUB -q "dev"

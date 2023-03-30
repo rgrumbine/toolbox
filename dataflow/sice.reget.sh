@@ -1,6 +1,6 @@
-#!/bin/bash --login
-#PBS -N siceget
-#PBS -o siceget
+#!/bin/bash 
+#PBS -N sicereget
+#PBS -o sicereget
 #PBS -j oe
 #PBS -A XFER-DEV
 #PBS -q dev_transfer
@@ -8,7 +8,6 @@
 #PBS -l select=1:ncpus=1
 
 set -x
-
 
 #Go back to this date, ensuring all are present:
 end_date=20221231
@@ -23,7 +22,7 @@ start_date=`$HOME/bin/dtgfix3 $start_date`
 start_date=`expr $start_date - 1`
 start_date=`$HOME/bin/dtgfix3 $start_date`
 
-#start_date=20220829
+start_date=20210831
 
 base=$HOME/noscrub/sice/
 if [ ! -d $base ] ; then

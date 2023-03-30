@@ -1,4 +1,4 @@
-#!/bin/bash --login
+#!/bin/bash 
 #PBS -N gefsget
 #PBS -o outname
 #PBS -j oe

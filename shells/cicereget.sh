@@ -1,4 +1,4 @@
-#!/bin/sh --login
+#!/bin/sh 
 #####
 # @ job_name=gethpss
 # @ output=~/gethpss.out

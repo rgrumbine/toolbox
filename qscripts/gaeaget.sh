@@ -1,4 +1,4 @@
-#!/bin/bash --login
+#!/bin/bash 
 #PBS -N gaeaget
 #PBS -o gaeaget
 #PBS -j oe

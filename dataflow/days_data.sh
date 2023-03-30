@@ -1,4 +1,4 @@
-#!/bin/bash --login
+#!/bin/bash 
 
 #General retrieval of data sets for the day, in approximate order of increasing size
 # Robert Grumbine 26 September 2022
