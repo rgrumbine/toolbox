@@ -3,7 +3,7 @@
 set -e
 echo entered gefs_clean.sh
 
-tag=20221001
+tag=20221231
 end=`date +"%Y%m%d"`
 #end=20220609
 

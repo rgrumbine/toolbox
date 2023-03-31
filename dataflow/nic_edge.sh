@@ -9,7 +9,7 @@ cd $HOME/rgdev/edges/
 #RG: better to use prod_envir, but dev/dcom is issue
 base=/lfs/h1/ops/dev/dcom/
 
-tag=20221101
+tag=20221231
 
 while [ $tag -le `date +"%Y%m%d"` ]
 do

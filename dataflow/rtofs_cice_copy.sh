@@ -1,15 +1,28 @@
 #!/bin/sh
 
-echo entered rtofs_cice_copy.sh 
 
+env > ~/rtofs.env.1
+
+echo zzz entered rtofs_cice_copy.sh 
+
+set -xe
+echo zzz source modules
+source /usr/share/lmod/lmod/init/bash
+
+echo zzz try to load prod_envir
+module purge
+module reset
+
+export MODULEPATH_ROOT=/usr/share/modulefiles
 module load prod_envir
+echo zzz done trying to load prod_envir
 
 ops=$COMROOT/rtofs/v2.3/
 echo zzz ops = $ops
 
 cd $ops
 base=$HOME/noscrub/model_intercompare/rtofs_cice/
-tag=20221101
+tag=20230301
 end=`date +"%Y%m%d"`
 end=`expr $end - 1`
 end=`$HOME/bin/dtgfix3 $end`
@@ -26,4 +39,5 @@ do
   tag=`$HOME/bin/dtgfix3 $tag`
 done
 
-echo leaving rtofs_cice_copy.sh 
+echo zzz leaving rtofs_cice_copy.sh 
+env > ~/rtofs.env.2

@@ -2,6 +2,12 @@
 
 j=`date +"%j"`
 x=`expr $j % 7 `
+if [ $# -ge 1 ] ; then
+  export arg=$1
+else
+  export arg="N"
+fi
+
 if [ $x -eq 0 -o $1 == "f" ] ; then
   cd $HOME/noscrub/verification/
   wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2023/

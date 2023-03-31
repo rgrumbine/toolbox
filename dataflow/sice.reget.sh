@@ -22,7 +22,7 @@ start_date=`$HOME/bin/dtgfix3 $start_date`
 start_date=`expr $start_date - 1`
 start_date=`$HOME/bin/dtgfix3 $start_date`
 
-start_date=20210831
+#start_date=20210831
 
 base=$HOME/noscrub/sice/
 if [ ! -d $base ] ; then
