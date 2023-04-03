@@ -2,7 +2,7 @@
 #set -xe
 set -e
 
-echo entered gefs_thin.sh
+echo zzz entered gefs_thin.sh
 
 module load intel
 module load libjpeg
@@ -19,7 +19,7 @@ end=`date +"%Y%m%d"`
 
 while [ $tag -le $end ]
 do
-  echo working on $tag
+  echo zzz working on $tag
   winddir=gefs.${tag}/${cyc}/pgrb2ap5_bc
   if [ -d $winddir -a \( ! -f winds.${tag}.tar \) ] ; then
     hhh=000
@@ -53,4 +53,4 @@ done
 
 $HOME/rgdev/toolbox/dataflow/gefs_clean.sh
 
-echo leaving gefs_thin.sh
+echo zzz leaving gefs_thin.sh

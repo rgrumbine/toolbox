@@ -1,5 +1,11 @@
-#!/bin/sh
-
+#!/bin/bash 
+#PBS -N rtofsget
+#PBS -o rtofsget
+#PBS -j oe
+#PBS -A XFER-DEV
+#PBS -q dev_transfer
+#PBS -l walltime=6:00:00
+#PBS -l select=1:ncpus=1
 
 env > ~/rtofs.env.1
 

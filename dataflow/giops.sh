@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo entered giops.sh
+echo zzz entered giops.sh
 
 set -x
 
@@ -9,7 +9,6 @@ if [ ! -d $models/giops ] ; then
         mkdir -p $models/giops
 fi      
 cd $models/giops
-
 
 tag=`date +"%Y%m%d"`
   tag=`expr $tag - 1`
@@ -32,4 +31,4 @@ do
   tag=`$HOME/bin/dtgfix3 $tag`
 done
 
-echo leaving giops.sh
+echo zzz leaving giops.sh

@@ -7,7 +7,7 @@
 #PBS -l walltime=6:00:00
 #PBS -l select=1:ncpus=1
 
-echo entered gefs_get.sh
+echo zzz entered gefs_get.sh
 
 if [ ! -d $HOME/noscrub/gefs/ ] ; then
 	mkdir -p $HOME/noscrub/gefs
@@ -65,4 +65,4 @@ do
   tag=`dtgfix3 $tag`
 done
 
-echo leaving gefs_get.sh
+echo zzz leaving gefs_get.sh
