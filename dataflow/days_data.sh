@@ -9,7 +9,7 @@ if [ $? -ne 0 ] ; then
 	echo could not cd to dataflow directory
 	exit 1
 fi
-env > env.initial
+#env > env.initial
 
 time ./cislakes.sh #-- kb/wk
 time ./nic_edge.sh #-- kb/day
@@ -43,4 +43,4 @@ time   ./gefs_thin.sh   # this winds up cleaning yesterday and before,
 time ./giops.sh           # -- 28 Gb/day 
 #viirs -- 32 Gb/day
 
-env > env.final
+#env > env.final
