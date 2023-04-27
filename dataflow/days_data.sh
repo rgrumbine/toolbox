@@ -39,6 +39,8 @@ time   ./gefs_thin.sh   # this winds up cleaning yesterday and before,
 /opt/pbs/bin/qsub sice.reget.sh   # 5-10 Gb/day, opnl sea ice analysis
 
 #While large volumes, these are disk to disk copy from com to my space
+time ./riops.sh           # --  6.5 Gb/day
+time ./gofs.sh            # -- 13.3 Gb/day
 /opt/pbs/bin/qsub ./rtofs_cice_copy.sh # -- 27 Gb/day
 time ./giops.sh           # -- 28 Gb/day 
 #viirs -- 32 Gb/day
