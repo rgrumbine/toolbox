@@ -9,7 +9,7 @@ if [ $? -ne 0 ] ; then
 	echo could not cd to dataflow directory
 	exit 1
 fi
-env > env.initial
+#env > env.initial
 
 time ./cislakes.sh #-- kb/wk
 time ./nic_edge.sh #-- kb/day
@@ -39,8 +39,10 @@ time   ./gefs_thin.sh   # this winds up cleaning yesterday and before,
 /opt/pbs/bin/qsub sice.reget.sh   # 5-10 Gb/day, opnl sea ice analysis
 
 #While large volumes, these are disk to disk copy from com to my space
-qsub ./rtofs_cice_copy.sh # -- 27 Gb/day
+time ./riops.sh           # --  6.5 Gb/day
+time ./gofs.sh            # -- 13.3 Gb/day
+/opt/pbs/bin/qsub ./rtofs_cice_copy.sh # -- 27 Gb/day
 time ./giops.sh           # -- 28 Gb/day 
 #viirs -- 32 Gb/day
 
-env > env.final
+#env > env.final

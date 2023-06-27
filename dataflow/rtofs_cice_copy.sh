@@ -7,11 +7,11 @@
 #PBS -l walltime=6:00:00
 #PBS -l select=1:ncpus=1
 
-env > ~/rtofs.env.1
+#env > ~/rtofs.env.1
 
 echo zzz entered rtofs_cice_copy.sh 
 
-set -xe
+set -x
 echo zzz source modules
 source /usr/share/lmod/lmod/init/bash
 
@@ -46,4 +46,4 @@ do
 done
 
 echo zzz leaving rtofs_cice_copy.sh 
-env > ~/rtofs.env.2
+#env > ~/rtofs.env.2
