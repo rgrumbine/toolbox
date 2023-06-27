@@ -1,4 +1,4 @@
-#!/bin/bash --login
+#!/bin/bash 
 #PBS -N gefsget
 #PBS -o outname
 #PBS -j oe
@@ -7,7 +7,7 @@
 #PBS -l walltime=6:00:00
 #PBS -l select=1:ncpus=1
 
-echo entered gefs_get.sh
+echo zzz entered gefs_get.sh
 
 if [ ! -d $HOME/noscrub/gefs/ ] ; then
 	mkdir -p $HOME/noscrub/gefs
@@ -16,7 +16,7 @@ cd $HOME/noscrub/gefs/
 
 set -x
 
-tag=20221201
+tag=20230501
 #end=20220905
 end=`date +"%Y%m%d"`
 base=`pwd`
@@ -65,4 +65,4 @@ do
   tag=`dtgfix3 $tag`
 done
 
-echo leaving gefs_get.sh
+echo zzz leaving gefs_get.sh

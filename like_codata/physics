@@ -1,0 +1,11 @@
+! CODATA values
+
+      real (kind=dbl_kind), public :: &
+         stefan_boltzmann = 567.0e-10_dbl_kind,&!  W/m^2/K^4
+
+! Relatively constrained physical constants
+         vonkar     = 0.4_dbl_kind  ,&! von Karman constant
+         gravity    = 9.80616_dbl_kind ,&! gravitational acceleration (m/s^2)
+     !fn(latitude, elevation)
+
+

@@ -1,0 +1,112 @@
+! CODATA values
+
+      real (kind=dbl_kind), public :: &
+         stefan_boltzmann = 567.0e-10_dbl_kind,&!  W/m^2/K^4
+
+! Relatively constrained physical constants
+         vonkar     = 0.4_dbl_kind  ,&! von Karman constant
+         gravit   = 9.80616_dbl_kind ,&! gravitational acceleration (m/s^2)
+     !fn(latitude, elevation)
+
+
+! Properties of terrestrial materials
+(density, albedo, cp, Lsub, Lvap, tf, thermal conductivity, molecular viscosity -- dynamic
+(air, ice, snow, water, glacial ice, fresh water, sea water, land(types) )
+(ecosystems)
+!--------------------------------------------------------------------------------------
+!                     Density
+      real (kind=dbl_kind), public :: &
+         rhos      = 330.0_dbl_kind   ,&! density of snow (kg/m^3)
+         rhoi      = 917.0_dbl_kind   ,&! density of ice (kg/m^3)
+         rhosi     = 940.0_dbl_kind   ,&! average sea ice density
+                                        ! Cox and Weeks, 1982: 919-974 kg/m^2
+         rhow      = 1026.0_dbl_kind  ,&! density of seawater (kg/m^3)
+         rhofresh  = 1000.0_dbl_kind    ! density of fresh water (kg/m^3)
+rhow = fn(t, s, p)
+rhofresh = fn(t,p)
+
+      ! Parameters for snow redistribution, metamorphosis
+      real (kind=dbl_kind), public :: &
+         rsnw_fall  = 54.526_dbl_kind, & ! radius of new snow (10^-6 m)
+         rsnw_tmax  = 1500.0_dbl_kind, & ! maximum snow radius (10^-6 m)
+         rhosnew    =  100.0_dbl_kind, & ! new snow density (kg/m^3)
+         rhosmin    =  100.0_dbl_kind, & ! minimum snow density (kg/m^3)
+         rhosmax    =  450.0_dbl_kind, & ! maximum snow density (kg/m^3)
+         windmin    =   10.0_dbl_kind, & ! minimum wind speed to compact snow (m/s)
+         drhosdwind =   27.3_dbl_kind, & ! wind compaction factor for snow (kg s/m^4)
+         snwlvlfac  =    0.3_dbl_kind    ! fractional increase in snow
+                                         ! depth for bulk redistribution
+
+!--------------------------------------------------------------------------------------
+!                     Cp, L, k
+
+         cp_ocn    = 4218._dbl_kind   ,&! specific heat of ocn    (J/kg/K)
+                                        ! freshwater value needed for enthalpy
+         cp_ice    = 2106._dbl_kind   ,&! specific heat of fresh ice (J/kg/K)
+         Lsub      = 2.835e6_dbl_kind ,&! latent heat, sublimation freshwater (J/kg)
+         Lvap      = 2.501e6_dbl_kind ,&! latent heat, vaporization freshwater (J/kg)
+
+         kice      = 2.03_dbl_kind    ,&! thermal conductivity of fresh ice(W/m/deg)
+         ksno      = 0.30_dbl_kind    ,&! thermal conductivity of snow  (W/m/deg)
+
+      real (kind=dbl_kind), public :: &
+         cp_air = 1005.0_dbl_kind    ,&! specific heat of air (J/kg/K)
+         cp_wv  = 1.81e3_dbl_kind    ,&! specific heat of water vapor (J/kg/K)
+         zvir   = 0.606_dbl_kind     ,&! rh2o/rair - 1.0
+         qqqice = 11637800._dbl_kind ,&! for qsat over ice
+         TTTice = 5897.8_dbl_kind    ,&! for qsat over ice
+         qqqocn = 627572.4_dbl_kind  ,&! for qsat over ocn
+         TTTocn = 5107.4_dbl_kind    ,&! for qsat over ocn
+
+! Viscosities:
+         viscosity_dyn = 1.79e-3_dbl_kind, & ! dynamic viscosity of brine (kg/m/s)
+
+
+!--------------------------------------------------------------------------------------
+!                     Radiation-related 
+! Albedoes:
+! Ocean albedo
+! fn(zenith, turbidity, biota)
+         albocn     = 0.06_dbl_kind ,&! ocean albedo
+
+! Snow/Ice albedo:
+         ! baseline albedos for ccsm3 shortwave, set in namelist
+         albicev    = 0.78_dbl_kind ,&! visible ice albedo for h > ahmax
+         albicei    = 0.36_dbl_kind ,&! near-ir ice albedo for h > ahmax
+         albsnowv   = 0.98_dbl_kind ,&! cold snow albedo, visible
+         albsnowi   = 0.70_dbl_kind ,&! cold snow albedo, near IR
+         ahmax      = 0.3_dbl_kind  ,&! thickness above which ice albedo is constant (m)
+! fn(zenith, wavelength, ...)
+
+! Snow (on land)
+! fn(zenith, wavelength, ...)
+
+! Ice IR emissivity
+         ! (Briegleb JGR 97 11475-11485  July 1992)
+         emissivity = 0.985_dbl_kind,&! emissivity of snow and ice
+!--------------------------------------------------------------------------------------
+Freezing/melting points of sea water
+         tfrz_option  = 'mushy'   ! 'minus1p8' = -1.8 C
+                                  ! 'linear_salt' = -depressT * sss
+                                  ! 'mushy' conforms with ktherm=2
+         Tffresh   = 273.15_dbl_kind  ,&! freezing temp of fresh ice (K)
+         Tocnfrz   = -1.8_dbl_kind    ,&! freezing temp of seawater (C),
+         depressT  = 0.054_dbl_kind   ,&! Tf:brine salinity ratio (C/ppt)
+
+         Timelt    = 0.0_dbl_kind     ,&! melting temperature, ice top surface  (C)
+         Tsmelt    = 0.0_dbl_kind     ,&! melting temperature, snow top surface (C)
+
+!fn(salt, pressure)
+
+
+!-----------------------------------------------------------------------
+! Parameters for boundary layers
+!-----------------------------------------------------------------------
+         zref   = 10._dbl_kind       ,&! reference height for atm stability (m)
+         iceruf = 0.0005_dbl_kind    ,&! ice surface roughness to atm (m)
+         senscoef= 0.0012_dbl_kind   ,&! Sensible heat flux coefficient for constant-based boundary layer
+         latncoef= 0.0015_dbl_kind     ! Latent heat flux coefficient for constant-based boundary layer
+
+
+         dragio   = 0.00536_dbl_kind ,&! ice-ocn drag coefficient
+         iceruf_ocn = 0.03_dbl_kind  ,&! under-ice roughness (m)

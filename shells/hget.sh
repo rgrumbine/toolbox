@@ -1,4 +1,4 @@
-#!/bin/bash --login
+#!/bin/bash 
 #PBS -N heraget
 #PBS -o heraget
 #PBS -j oe

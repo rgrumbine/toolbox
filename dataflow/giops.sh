@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo entered giops.sh
+echo zzz entered giops.sh
 
 set -x
 
@@ -10,14 +10,13 @@ if [ ! -d $models/giops ] ; then
 fi      
 cd $models/giops
 
-
 tag=`date +"%Y%m%d"`
   tag=`expr $tag - 1`
   tag=`$HOME/bin/dtgfix3 $tag`
   tag=`expr $tag - 1`
   tag=`$HOME/bin/dtgfix3 $tag`
 
-while [ $tag -ge 20221001 ]
+while [ $tag -gt 20221231 ]
 do
 
   if [ ! -d giops.$tag ] ; then
@@ -32,4 +31,4 @@ do
   tag=`$HOME/bin/dtgfix3 $tag`
 done
 
-echo leaving giops.sh
+echo zzz leaving giops.sh
