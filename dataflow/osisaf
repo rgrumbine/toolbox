@@ -8,10 +8,7 @@ else
   export arg="N"
 fi
 
-if [ $x -eq 0 -o $1 == "f" ] ; then
-  cd $HOME/noscrub/verification/
+cd $HOME/noscrub/verification/
+if [ $x -eq 0 -o $arg == "f" ] ; then
   wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2023/
-  #wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2022/
-  #wget --mirror ftp://osisaf.met.no/archive/ice/conc/2021/
-  #wget --mirror ftp://osisaf.met.no/archive/ice/conc/2020/
 fi
