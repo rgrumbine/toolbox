@@ -41,14 +41,13 @@ for line in fin:
     pop = 0
   #debug: print(k, words[0], tlat, tlon, pop,flush=True)
   
-  #if (tlat > -90. and tlon > -180 and tlon < 180): #whole globe
-  #if (tlat > 20. and tlat < 60 and tlon > -125 and tlon < -60.): #~lower 48 + most Canada, some Mexico
   #if (tlat > 30. and tlat < 50 and tlon > -90. and tlon < -70.): #Eastern NA
   #if (tlat > 38. and tlat < 45. and tlon > -78. and tlon < -70.): #Bosnywash
   #if (tlat > 39.-1. and tlat < 39+1. and tlon > -77.-1 and tlon < -77.+1): #DC area +- 1 degree
   #if (tlat > -90. and tlon > -180 and tlon < 180 and pop > int(sys.argv[1]) ): #whole globe
-  #if (tlat > 20. and tlat < 60 and tlon > -125 and tlon < -60. and pop > int(sys.argv[1]) ): #~lower 48 + most Canada, some Mexico
-  if (tlat > 25. and tlat < 49. and tlon > -125 and tlon < -70. and pop > int(sys.argv[1]) ): #~lower 48 + most Canada, some Mexico
+  if (tlat > 20. and tlat < 80. and tlon > -20 and tlon < 100 and pop > int(sys.argv[1]) ): #Old world-W
+  #if (tlat > 20. and tlat < 60 and tlon > -125 and tlon < -60. and pop > int(sys.argv[1]) ): #lower 48 + most Canada, some Mexico
+  #if (tlat > 25. and tlat < 49. and tlon > -125 and tlon < -70. and pop > int(sys.argv[1]) ): #lower 48 + most Canada, some Mexico
     points.append([tlon, tlat])
     #print(words[0].replace(" ","_"),";", tlat,";", tlon,";", pop,flush=True)
     print(words[0].replace(" ","_"), tlat, tlon, pop,flush=True)

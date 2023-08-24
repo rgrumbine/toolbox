@@ -4,8 +4,12 @@
 module load intel
 module load geos
 module load proj 
-# Use this under/with .venv: module load python/3.10.4
-module load python/3.8.6
+# Use this under/with virtual environment
+source ~/env3.10/bin/activate
+
+#module load python/3.8.6
+
 export PYTHONPATH=$PYTHONPATH:$HOME/rgdev/mmablib/py
 
+# Misc additional
 module load imagemagick
