@@ -23,7 +23,7 @@ def plot_world_map(lons, lats, data):
     vmin = np.nanmin(data)
     vmax = np.nanmax(data)
 
-    #proj = ccrs.LambertConformal(central_longitude=-170, central_latitude=60., cutoff=25.)
+    proj = ccrs.LambertConformal(central_longitude=-170, central_latitude=60., cutoff=25.)
     #proj = ccrs.NorthPolarStereo(true_scale_latitude=60.)
     #proj = ccrs.Stereographic(central_longitude=+170, central_latitude=60. )
 
