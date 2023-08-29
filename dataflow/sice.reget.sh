@@ -10,7 +10,7 @@
 set -x
 
 #Go back to this date, ensuring all are present:
-end_date=20221231
+end_date=20230531
 
 #Start from this date -- back up 2 days for archive process/delay
 start_date=`date +"%Y%m%d"`
