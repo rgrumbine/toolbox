@@ -16,7 +16,7 @@ cd $HOME/noscrub/gefs/
 
 set -x
 
-tag=20221231
+tag=20230501
 #end=20220905
 end=`date +"%Y%m%d"`
 base=`pwd`
