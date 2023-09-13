@@ -2,7 +2,7 @@ import os
 import sys
 
 #Check sorted (by hash) listings of md5 hashes for duplicates
-nmd5 = 3
+nmd5 = 0
 fname = 1
 oldmd5 = 0
 oldline = "1 1 1 1 1 1 1 1 1 1 1 "
