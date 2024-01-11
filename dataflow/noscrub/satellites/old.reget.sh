@@ -1,6 +1,6 @@
-#!/bin/bash 
-#PBS -N reget22
-#PBS -o reget22
+#!/bin/bash --login
+#PBS -N reget20b
+#PBS -o reget20b
 #PBS -j oe
 #PBS -A XFER-DEV
 #PBS -q dev_transfer
@@ -17,14 +17,13 @@ set -x
 #name change 26 Feb 2020
 #  what is now dcom_prod was dcom_us007003
 
-end_date=20230901
-
+end_date=20191101
 start_date=`date +"%Y%m%d"`
 start_date=`expr $start_date - 1`
 start_date=`$HOME/bin/dtgfix3 $start_date`
 start_date=`expr $start_date - 1`
 start_date=`$HOME/bin/dtgfix3 $start_date`
-#start_date=20211231
+start_date=20201231
 
 base=$HOME/noscrub/satellites
 if [ ! -d $base ] ; then
@@ -33,7 +32,7 @@ fi
 
 set -x
 
-export date=$start_date
+date=$start_date
 while [ $date -ge $end_date ]; do
 
   dcom_dir=${base}/prod/$date
