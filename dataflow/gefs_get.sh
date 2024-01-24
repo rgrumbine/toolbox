@@ -16,7 +16,7 @@ cd $HOME/noscrub/gefs/
 
 set -x
 
-tag=20231101
+tag=20231204
 #end=20220905
 end=`date +"%Y%m%d"`
 base=`pwd`
@@ -29,9 +29,12 @@ j=0
 #pathbase=gpfs_hps_nco_ops_com_naefs_prod_gefs
 #After 2020/02/25
 #pathbase=com_naefs_prod_gefs
+#2022/06/27 -- 2023/12/03
+#pathbase=com_naefs_v6.1_gefs
+#
+#2023/12/04 -- present
+pathbase=com_naefs_v7.0_gefs
 
-#2022/06/27 -- present
-pathbase=com_naefs_v6.1_gefs
 
 # 75 is ~2 Tb for .5 GEFS
 #while [ $j -lt 75 -a \( $tag -le $end \) ]
