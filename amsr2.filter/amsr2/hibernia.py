@@ -11,8 +11,8 @@ import numpy.ma as ma
 from filtering import *
 
 # noodle satobs class and descendents
-sat_lr = amsr2_lr()
-tmp = match(sat_lr)
+sat_lr = match.amsr2_lr()
+tmp = match.match(sat_lr)
 
 def near(x, y, delta):
     return(fabs(x-y) < delta)
@@ -20,15 +20,15 @@ def near(x, y, delta):
 #----------------------------------------------------------
 fout = open(sys.argv[1], "a")
 
-start = datetime.datetime(2022,1,1)
-end   = datetime.datetime(2023,3,13)
+start = datetime.datetime(2020,12,1)
+end   = datetime.datetime(2023,3,31)
 #end   = datetime.datetime(2022,1,4)
 dt = datetime.timedelta(1)
 
 trips = 0
 while (start <= end and trips < 3000):
   tag=start.strftime("%Y%m%d")
-  filename = "amsr2."+tag+"/postperfect."+tag
+  filename = "dev/amsr2."+tag+"/lr.txt."+tag
   print(filename)
   count = 0
   if (os.path.exists(filename)):
@@ -39,18 +39,18 @@ while (start <= end and trips < 3000):
         print("failed to open input",filename)
         exit(1)
 
-    for line in fin:
-      tmp.read(line)
-      #debug: print(tmp.obs.latitude, tmp.obs.longitude, flush=True)
-    
+    #for line in fin:
+    #  tmp.matched_read(line)
+    lrtmp = match.raw_read(fin)
+    fin.close()
+
+    for tmp in lrtmp:
       if (near(tmp.obs.latitude,46.5,5.) and near(tmp.obs.longitude,-48.5, 5.) ):
         tmp.show(fout)
         #debug: tmp.show()
         count += 1
     
-    fin.close()
-
-    print("found ", count, "hibernia points")
+    print("found ", count, "hibernia points", flush=True)
     #for i in range (0, len(lrmatch) ):
     #    lrmatch[i].show(fout)
     #    #debug: lrmatch[i].show()
