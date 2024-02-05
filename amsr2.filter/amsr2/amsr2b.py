@@ -195,15 +195,3 @@ del landmask
 del watermask 
 del tbfilters
 
-# return
-# --- round3 ----
-
-# read
-# makemasks
-# try filters
-# close and delete
-
-# Re-masking -------------------------------------------------------------
-#(icemask, landmask, watermask) = makemasks(allmatch)
-#stats = mask_stats(npts, landmask, icemask, watermask)
-#print(stats,flush=True)

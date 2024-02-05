@@ -10,44 +10,7 @@ import match
 #generalizing 2021 filtering process
 #----------------------------------------------
 # llgrid tools
-
-def oiv2(lat, lon):
-  dlat = 0.25
-  dlon = 0.25
-  firstlat = -89.875
-  firstlon = 0.125
-  if (lon < 0):
-    lon += 360.
-  j = round( (lat - firstlat)/dlat )
-  i = round( (lon - firstlon)/dlon )
-  return (j,i)
-
-def rg12th(lat, lon):
-  dlat = -1./12.
-  dlon =  1./12.
-  firstlat = 90. - dlat/2.
-  firstlon = dlon/2.
-  if (lon < 0):
-    lon += 360.
-  j = round( (lat - firstlat)/dlat )
-  i = round( (lon - firstlon)/dlon )
-  return (j,i)
-
-#----------------------------------------------
-# satellite 
-# delta ratio
-def delta(x,y):
-  return (x-y)/(x+y)
-
-#A stokes parameter
-def delta2(x,y):
-  d = x*x
-  s = x*x
-  d -= y*y
-  s += y*y
-  #debug: print("d, s, d/s",d.max(), d.min(), s.max(), s.min(), (d/s).max(), (d/s).min(), flush=True )
-  return (d/s)
-  #return (x*x-y*y)/(x*x+y*y)
+from tools import *
 
 #---------------------------------------------------------------
 # Define utilities for doing the assessment:

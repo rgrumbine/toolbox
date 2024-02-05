@@ -1,11 +1,12 @@
 import numpy as np
 import numpy.ma as ma
 
+import match
 from filtering import *
 
-tb_lr = np.zeros((amsr2_lr.ntb))
-tb_hr = np.zeros((amsr2_hr.ntb))
-sat_lr = amsr2_lr()
+tb_lr = np.zeros((match.amsr2_lr.ntb))
+tb_hr = np.zeros((match.amsr2_hr.ntb))
+sat_lr = match.amsr2_lr()
 
 #----------------------------------------------------------
 # Read in data, customized for each different sort of scan/match
@@ -35,10 +36,10 @@ fin.close()
 
 npts = len(lrmatch)
 
-
 #---------------------------------------------------------------------
 # Constructing the masks
 # RG: better to have a set of masks, rather than specified names in specified orders
+
 (icemask, landmask, watermask, known) = makemasks(lrmatch)
 stats = mask_stats(npts, landmask, icemask, watermask, known)
 print(stats,flush=True)
@@ -66,7 +67,7 @@ for i in range(0, len(used)):
 stats = mask_stats(npts, landmask, icemask, watermask, known)
 print(stats,flush=True)
 
-         
+# Number of iterations on filtering = 8
 for k in range(1,8):
   if (k == 1):
     tbfilters = filter_scan(lrmatch, icemask, landmask, watermask, known, stats)
