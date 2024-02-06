@@ -4,15 +4,11 @@ import numpy.ma as ma
 from filtering import *
 
 # noodle satobs class and descendents
-tb_lr = np.zeros((amsr2_lr.ntb))
-tb_hr = np.zeros((amsr2_hr.ntb))
-sat_lr = amsr2_lr()
 
 #----------------------------------------------------------
 # Read in data, customized for each different sort of scan/match
 # Later, read in from the standardized 'match' class
 fin = open(sys.argv[1], "r")
-tmp = match(sat_lr)
 lrmatch = []
 hrmatch  = []
 

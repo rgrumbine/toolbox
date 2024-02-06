@@ -4,16 +4,10 @@ import numpy.ma as ma
 import match
 from filtering import *
 
-tb_lr = np.zeros((match.amsr2_lr.ntb))
-tb_hr = np.zeros((match.amsr2_hr.ntb))
-sat_lr = match.amsr2_lr()
-
 #----------------------------------------------------------
 # Read in data, customized for each different sort of scan/match
 # Later, read in from the standardized 'match' class
 fin = open(sys.argv[1], "r")
-#tmp = match(sat_lr)
-tmp = match.amsr2_lr()
 lrmatch = []
 for line in fin:
   words = line.split()

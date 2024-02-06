@@ -13,20 +13,19 @@ nlons = len(icefix.dimensions["nlons"])
 new_shape = (nlats, nlons)
 #debug: print("nlon nlat ",nlons, nlats, flush=True)
 
-ice_longitude = np.zeros((nlats, nlons),dtype="double")
 #ice_longitude.resize(new_shape, refcheck=False)
+ice_longitude = np.zeros((nlats, nlons),dtype="double")
 ice_latitude = np.zeros((nlats, nlons),dtype="double")
 ice_distance = np.zeros((nlats, nlons),dtype="float")
-
 ice_land = np.zeros((nlats, nlons))
-ice_land      = icefix.variables["land"]     [:,:]
-
 ice_post = np.zeros((nlats, nlons))
-ice_post      = icefix.variables["posteriori"][:,:]
 
+ice_land      = icefix.variables["land"]     [:,:]
+ice_post      = icefix.variables["posteriori"][:,:]
 ice_longitude = icefix.variables["longitude"][:,:]
 ice_latitude  = icefix.variables["latitude"] [:,:]
+
 ice_distance  = icefix.variables["distance_to_land"][:,:]
 ice_distance /= 1000.   #Convert to km
-print("read lon max ",ice_longitude.max() )
+#debug: print("read lon max ",ice_longitude.max(), flush=True )
 
