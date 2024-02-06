@@ -6,83 +6,61 @@ import netCDF4
 from netCDF4 import Dataset
 
 #----------------------------------------------
-def oiv2(lat, lon):
-  dlat = 0.25
-  dlon = 0.25
-  firstlat = -89.875
-  firstlon = 0.125
-  if (lon < 0):
-    lon += 360.
-  j = round( (lat - firstlat)/dlat )
-  i = round( (lon - firstlon)/dlon )
-  return (j,i)
-
-def rg12th(lat, lon):
-  dlat = -1./12.
-  dlon = 1./12.
-  firstlat = 90. - dlat/2.
-  firstlon = dlon/2.
-  if (lon < 0):
-    lon += 360.
-  j = round( (lat - firstlat)/dlat )
-  i = round( (lon - firstlon)/dlon )
-  return (j,i)
-
-def delta(x,y):
-  return (x-y)/(x+y)
+from tools import *
 
 #----------------------------------------------
-#matchup :
+#matchup  -- ssmis-specialized
+# import match # once merged in to match class
 #longitude, latitude, quality, land, icec; 
 #    ice_land, ice_post, ice_distance; sst, ice_sst
-class match:
-
-  def __init__(self, latitude = 95., longitude = 95., icec = 95., land = 95, quality = 95, ice_land = 95, ice_post = 95, ice_distance = 95., sst = 95., ice_sst = 95.):
-    self.latitude = latitude
-    self.longitude = longitude
-    self.icec = icec
-    self.land = land
-    self.quality = quality
-    self.ice_land = 95
-    self.ice_post = 95
-    self.ice_distance = 95.
-    self.sst = 95.
-    self.ice_sst = 95.
-    self.tb = np.zeros((7))
-    #print("done with init", flush=True)
-
-  def show(self, fout = sys.stdout):
-    print("{:9.4f}".format(self.longitude), "{:8.4f}".format(self.latitude), 
-               "{:.2f}".format(self.icec), "{:.2f}".format(self.land), self.quality, 
-          "{:3d}".format(self.ice_land), "{:3d}".format(self.ice_post), 
-                   "{:7.2f}".format(self.ice_distance), 
-          "  ", "{:.2f}".format(self.sst), "{:.2f}".format(self.ice_sst), 
-          "  ", "{:6.2f}".format(self.tb[0]),
-           "{:6.2f}".format(self.tb[1]),
-           "{:6.2f}".format(self.tb[2]),
-           "{:6.2f}".format(self.tb[3]),
-           "{:6.2f}".format(self.tb[4]),
-           "{:6.2f}".format(self.tb[5]),
-           "{:6.2f}".format(self.tb[6]),
-          file=fout)
-
-  def add_tb(self, tb):
-    for i in range (0,7):
-      self.tb[i] = tb[i]
-
-  def add_oiv2(self, sst, ice_sst):
-    j,i = oiv2(self.latitude, self.longitude)
-    self.sst = sst[j,i]
-    self.ice_sst = ice_sst[j,i]
-
-  def add_icefix(self, ice_land, ice_post, ice_distance):
-    j,i = rg12th(self.latitude, self.longitude)
-    self.ice_land = ice_land[j,i]
-    self.ice_post = ice_post[j,i]
-    self.ice_distance = ice_distance[j,i]
-
-  def __getitem__(self, i):
-    return(tb[i])
+#class match:
+#
+#  def __init__(self, latitude = 95., longitude = 95., icec = 95., land = 95, quality = 95, ice_land = 95, ice_post = 95, ice_distance = 95., sst = 95., ice_sst = 95.):
+#    self.latitude = latitude
+#    self.longitude = longitude
+#    self.icec = icec
+#    self.land = land
+#    self.quality = quality
+#    self.ice_land = 95
+#    self.ice_post = 95
+#    self.ice_distance = 95.
+#    self.sst = 95.
+#    self.ice_sst = 95.
+#    self.tb = np.zeros((7))
+#    #print("done with init", flush=True)
+#
+#  def show(self, fout = sys.stdout):
+#    print("{:9.4f}".format(self.longitude), "{:8.4f}".format(self.latitude), 
+#               "{:.2f}".format(self.icec), "{:.2f}".format(self.land), self.quality, 
+#          "{:3d}".format(self.ice_land), "{:3d}".format(self.ice_post), 
+#                   "{:7.2f}".format(self.ice_distance), 
+#          "  ", "{:.2f}".format(self.sst), "{:.2f}".format(self.ice_sst), 
+#          "  ", "{:6.2f}".format(self.tb[0]),
+#           "{:6.2f}".format(self.tb[1]),
+#           "{:6.2f}".format(self.tb[2]),
+#           "{:6.2f}".format(self.tb[3]),
+#           "{:6.2f}".format(self.tb[4]),
+#           "{:6.2f}".format(self.tb[5]),
+#           "{:6.2f}".format(self.tb[6]),
+#          file=fout)
+#
+#  def add_tb(self, tb):
+#    for i in range (0,7):
+#      self.tb[i] = tb[i]
+#
+#  def add_oiv2(self, sst, ice_sst):
+#    j,i = oiv2(self.latitude, self.longitude)
+#    self.sst = sst[j,i]
+#    self.ice_sst = ice_sst[j,i]
+#
+#  def add_icefix(self, ice_land, ice_post, ice_distance):
+#    j,i = rg12th(self.latitude, self.longitude)
+#    self.ice_land = ice_land[j,i]
+#    self.ice_post = ice_post[j,i]
+#    self.ice_distance = ice_distance[j,i]
+#
+#  def __getitem__(self, i):
+#    return(tb[i])
 
 ###############################################################
 

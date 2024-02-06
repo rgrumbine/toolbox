@@ -177,9 +177,14 @@ if (perfect > 0):
   tcount = 0
   bstats = np.zeros((3))
   f21 = filter("ch4", "hot", 254., bstats, chan = 4) 
+  f22 = filter("ch0", "hot", 251., bstats, chan = 0)
+  f23 = filter("ch2", "hot", 256., bstats, chan = 2)
+  f24 = filter("ch6", "hot", 258., bstats, chan = 6)
+
   for i in range(0, len(allmatch)):
 
-    if ( f21.apply(allmatch[i]) 
+    if ( f21.apply(allmatch[i]) or f22.apply(allmatch[i])
+      or f23.apply(allmatch[i]) or f24.apply(allmatch[i])
        ):
       tcount += 1
     else:
