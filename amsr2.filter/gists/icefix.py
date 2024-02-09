@@ -28,4 +28,3 @@ ice_latitude  = icefix.variables["latitude"] [:,:]
 ice_distance  = icefix.variables["distance_to_land"][:,:]
 ice_distance /= 1000.   #Convert to km
 #debug: print("read lon max ",ice_longitude.max(), flush=True )
-

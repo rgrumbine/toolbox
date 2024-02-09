@@ -23,11 +23,12 @@ class satobs
     observation latitude, longitude, date
 """
 class satobs:
-  def __init__(self, ntb = 0, satid = 0, latitude = 95., longitude = -900.):
+  def __init__(self, ntb = 0, satid = 0, latitude = 95., longitude = -900., land = -1):
         self.ntb       = ntb
         self.satid     = satid
         self.latitude  = latitude
         self.longitude = longitude
+        self.land      = land
         self.tb        = np.zeros((ntb))
 
   def add_tb(self, tb):
@@ -47,11 +48,21 @@ class satobs:
   def read(self, line):
   #read from a text line, assuming that the satobs is the first set of things on the line
     words = line.split()
-    self.satid  = int(words[0])
-    self.longitude = float(words[1])
-    self.latitude = float(words[2])
+    # Older:
+    #self.satid  = int(words[0])
+    #self.longitude = float(words[1])
+    #self.latitude = float(words[2])
+    #for i in range(0,self.ntb):
+    #  self.tb[i] = float(words[3+i])
+    #Current:
+    self.satid  = 0
+    self.latitude = float(words[1])
+    self.longitude = float(words[2])
+    i = words[3]
+    j = words[4]
+    self.land = 1.-float(words[5])
     for i in range(0,self.ntb):
-      self.tb[i] = float(words[3+i])
+      self.tb[i] = float(words[6+i])
 
 class amsr2_lr(satobs):
   ntb = 12
@@ -77,6 +88,7 @@ class amsr2_lr(satobs):
 
 class amsr2_hr(satobs):
   ntb = 2
+  #RG: def freq
 
   def __init__(self, satid = 0, latitude = 95., longitude = -900.):
         self.satid     = satid
@@ -86,6 +98,7 @@ class amsr2_hr(satobs):
 
 class avhrr(satobs):
   ntb = 7
+  #RG: def wavelength
   def __init__(self, satid = 0, latitude = 95., longitude = -900.):
         self.satid     = satid
         self.latitude  = latitude
@@ -94,6 +107,7 @@ class avhrr(satobs):
 
 class viirs(satobs):
   ntb = 7
+  #RG: def wavelength
   def __init__(self, satid = 0, latitude = 95., longitude = -900.):
         self.satid     = satid
         self.latitude  = latitude
@@ -102,6 +116,7 @@ class viirs(satobs):
 
 class ssmis(satobs):
   ntb = 7
+  #RG: def freq
   def __init__(self, satid = 0, latitude = 95., longitude = -900.):
         self.satid     = satid
         self.latitude  = latitude
@@ -113,15 +128,18 @@ class ssmis(satobs):
 # satellite to ice/ocean matchup class
 #matchup :
 #longitude, latitude, quality, land, icec;
-#    ice_land, ice_post, ice_distance; sst, ice_sst
+#    ice_land, ice_post, ice_distance; sst, ice_sst, ims
+
+from tools import *
 class match:
 
-  def __init__(self, sat = 0., icec = 95., land = 95, quality = 95, ice_land = 95, ice_post = 95, ice_distance = 95., sst = 95., ice_sst = 95.):
+  def __init__(self, sat = 0., icec = 95., land = 95, quality = 95, ice_land = 95, ice_post = 95, ice_distance = 95., sst = 95., ice_sst = 95., ims = [8,8,8,8,8] ):
       #RG: insinstance(sat_obs)
     self.obs = sat
+    self.land = land
 
     self.icec = icec
-    self.land = land
+    self.ims  = ims
 
     self.ice_land = ice_land
     self.ice_post = ice_post
@@ -144,7 +162,7 @@ class match:
           "{:3d}".format(self.ice_land), "{:3d}".format(self.ice_post),
                    "{:7.2f}".format(self.ice_distance),
           "  ", "{:.2f}".format(self.sst), "{:.2f}".format(self.ice_sst),
-          "  ",end="",file = fout) 
+          "  ",self.ims, end="",file = fout) 
     print("",file=fout)
 
   def hello(self):
@@ -166,15 +184,37 @@ class match:
     #debug  self.show()
 
   def add_oiv2(self, sst, ice_sst):
-    j,i          = oiv2(self.latitude, self.longitude)
+    j,i          = oiv2(self.obs.latitude, self.obs.longitude)
     self.sst     = sst[j,i]
     self.ice_sst = ice_sst[j,i]
 
+  def add_icec(self, icec):
+    #debug: print("icec max min",icec.max(), icec.min() )
+    j,i = rg12th(self.obs.latitude, self.obs.longitude)
+    #debug: print("j,i lat lon = ",j,i,self.obs.latitude, self.obs.longitude,flush=True)
+    self.icec = icec[j,i]
+
   def add_icefix(self, ice_land, ice_post, ice_distance):
-    j,i = rg12th(self.latitude, self.longitude)
+    j,i = rg12th(self.obs.latitude, self.obs.longitude)
     self.ice_land     = ice_land[j,i]
     self.ice_post     = ice_post[j,i]
     self.ice_distance = ice_distance[j,i]
+
+  def add_ims(self, ims, proj):
+    (x,y) = proj(self.obs.longitude, self.obs.latitude)
+    #debug: print("add_ims x y = ",x,y, self.obs.longitude, self.obs.latitude, flush=True)
+    fi = x/4000. + 6144./2.
+    fj = y/4000. + 6144./2.
+    i = int(fi+0.5)
+    j = int(fj+0.5)
+    #debug: print("add_ims", fi, fj,  i,j, flush=True)
+    #debug: print("ims ",ims[j,i], flush=True )
+    self.ims[0] = ims[j,i]
+    self.ims[1] = ims[j,i+1]
+    self.ims[2] = ims[j+1,i]
+    self.ims[3] = ims[j,i-1]
+    self.ims[4] = ims[j-1,i]
+    #debug: print(self.ims, flush=True)
 
   def __getitem__(self, i):
     return(self.obs.tb[i])
