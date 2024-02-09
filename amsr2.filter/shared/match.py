@@ -162,7 +162,8 @@ class match:
           "{:3d}".format(self.ice_land), "{:3d}".format(self.ice_post),
                    "{:7.2f}".format(self.ice_distance),
           "  ", "{:.2f}".format(self.sst), "{:.2f}".format(self.ice_sst),
-          "  ",self.ims, end="",file = fout) 
+          "  ", self.ims[0],self.ims[1],self.ims[2], self.ims[3], self.ims[4], 
+          end="",file = fout) 
     print("",file=fout)
 
   def hello(self):

@@ -1,0 +1,4 @@
+source $HOME/env3.10/bin/activate
+module load PrgEnv-intel netcdf
+export PYTHONPATH=$PYTHONPATH:gists:shared:$HOME/rgops/mmablib/py
+

@@ -1,7 +1,4 @@
-import os 
-import sys
 import numpy as np
-import numpy.ma as ma
 import netCDF4 as nc
 
 import pyproj 
@@ -9,8 +6,9 @@ import pyproj
 # IMS Map projection from projection:proj4 in netcdf header
 proj4 = "+proj=stere +lat_0=90 +lat_ts=60 +lon_0=-80 +k=1 +x_0=0 +y_0=0 +a=6378137 +b=6356257 +units=m +no_defs" 
 
+tagj='001'
 ims_base='/u/robert.grumbine/noscrub/imstmp/'
-fname=ims_base+'ims2024001_4km_v1.3.nc'
+fname=ims_base+'ims2024'+tagj+'_4km_v1.3.nc'
 ims = nc.Dataset(fname, 'r', format='NETCDF4')
 
 nx = len(ims.dimensions["x"])
@@ -76,3 +74,12 @@ def ims_invlocate(proj, latitude, longitude):
 
 def is_land(ims, i, j, pm = 0):
   return (ims[j,i] == 2 or ims[j,i] == 4)
+
+# For demo purposes, print out a patch around hibernia, say 80x80 around 46.5 N, 48.5 W
+#demo: (i,j) = ims_invlocate(pims, 46.5, 48.5)
+#demo: print(i,j,"hibernia")
+#demo: for dj in range (-40,40):
+#demo:   for di in range (-40,40):
+#demo:     print(ims_value[j+dj,i+di],end="")
+#demo:   print("")
+
