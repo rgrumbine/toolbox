@@ -6,9 +6,13 @@ import pyproj
 # IMS Map projection from projection:proj4 in netcdf header
 proj4 = "+proj=stere +lat_0=90 +lat_ts=60 +lon_0=-80 +k=1 +x_0=0 +y_0=0 +a=6378137 +b=6356257 +units=m +no_defs" 
 
-tagj='001'
+tagj='2024001'
+yy=tagj[0:4]
+
 ims_base='/u/robert.grumbine/noscrub/imstmp/'
-fname=ims_base+'ims2024'+tagj+'_4km_v1.3.nc'
+fname=ims_base+yy+'/ims'+tagj+'_4km_v1.3.nc'
+
+
 ims = nc.Dataset(fname, 'r', format='NETCDF4')
 
 nx = len(ims.dimensions["x"])

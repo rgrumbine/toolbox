@@ -78,15 +78,6 @@ print(len(allmatches), "lr satellite obs")
 del x,tmp
 
 #---------------------------------------------------------------
-# Read in the ice fixed file (for distance to land, posteriori filter, ..)
-# ice_distance, ice_land, ice_post, ice_latitude, ice_longitude
-# Needs seaice_fixed_fields.nc in cwd
-
-#fname='seaice_fixed_fields.nc'
-#print("fname = ",fname)
-from icefix import *
-#debug: print(ice_post.max(), flush=True)
-
 # Add ice fixed info to matchups (ice_land, ice_post, ice_distance)
 #debug: print("zzzzzzzzzzzzzzzzzz icefix zzzzzzzzzzzzzzzzzzzz")
 for i in range(0,len(allmatches)):

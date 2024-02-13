@@ -1,3 +1,10 @@
+#!/bin/sh
+
+# Setting up an environment to run in, but 'environment' is a special 
+#   word in use, as is 'home'
+# Robert Grumbine 13 Feb 2024
+
+# Wcoss2:
 source $HOME/env3.10/bin/activate
 module load PrgEnv-intel netcdf
 export PYTHONPATH=$PYTHONPATH:gists:shared:$HOME/rgops/mmablib/py

@@ -12,6 +12,8 @@
 
 netCDF4
 numpy
+pyproj
+pygrib
 
 # python core
 #from math import *
