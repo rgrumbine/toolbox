@@ -179,8 +179,20 @@ class match:
     self.ice_land = int(words[base + 3])
     self.ice_post = int(words[base + 4])
     self.ice_distance = float(words[base + 5])
-    self.sst          = float(words[base + 6])
-    self.ice_sst      = float(words[base + 7])
+    # try/except because the oiv2 sst includes masking, which won't translate to float
+    try:
+        self.sst          = float(words[base + 6])
+    except:
+        self.sst          = 32.
+    try: 
+        self.ice_sst      = float(words[base + 7])
+    except:
+        self.ice_sst      = 0.0
+    self.ims[0] = int(words[base+8])
+    self.ims[1] = int(words[base+9])
+    self.ims[2] = int(words[base+10])
+    self.ims[3] = int(words[base+11])
+    self.ims[4] = int(words[base+12])
     #debug: print("lr_read: ",end="", flush=True)
     #debug  self.show()
 

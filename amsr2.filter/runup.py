@@ -20,8 +20,8 @@ from filtering import *
 from tools import *
 
 
-start = datetime.datetime(2023,1,1)
-end   = datetime.datetime(2023,1,1)
+start = datetime.datetime(2023,1,2)
+end   = datetime.datetime(2023,3,31)
 dt = datetime.timedelta(1)
 
 
@@ -50,8 +50,7 @@ while (tag <= end):
   
   nlats = len(icefix.dimensions["nlats"])
   nlons = len(icefix.dimensions["nlons"])
-  #debug: 
-  print("nlon nlat ",nlons, nlats, flush=True)
+  #debug: print("nlon nlat ",nlons, nlats, flush=True)
   
   #ice_longitude = np.zeros((nlats, nlons),dtype="double")
   #ice_latitude = np.zeros((nlats, nlons),dtype="double")
@@ -92,6 +91,7 @@ while (tag <= end):
   #fin = open(sys.argv[1],"r")
   basedir='/u/robert.grumbine/noscrub/filter/'
   ftmp='amsr2_'+tag8+'.txt.0'
+  print("opening ",basedir+ftmp, flush=True)
   fin = open(basedir+ftmp,"r")
   #RG: test on existence of fin
   k = int(0)
@@ -99,7 +99,7 @@ while (tag <= end):
     if ("lr" in line):
       k += int(1)
       #debug: if (k%1000 == 0):
-      #debug:   print("k/1000 = ",k/1000)
+      #debug:   print("k/1000 = ",k/1000, flush=True)
       #RG: more efficient to work w. tmp directly? tmp.obs.read(line)
       x.read(line)
       tmp = match.match(x)
@@ -231,6 +231,10 @@ while (tag <= end):
   #  Now have all data in hand --- write it out
   fout = open("matched_"+tag8+".txt","w")
   for k in range(0,len(allmatches)):
+      # if ice_post[j,i] in post_use_vals and ice.land, ice.post, ice.dist all ok 
+      #   write out to fout
+      # else:
+      #   nothing
     allmatches[k].show(fout)
   fout.close()
   #---------------------------------------------------------------

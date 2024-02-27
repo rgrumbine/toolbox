@@ -33,10 +33,3 @@ done
 
 echo leaving get_cafs.sh
 
-exit
-
-total 573116
--r--r--r-- 1 Robert.Grumbine couple  81764774 May 30 15:32 RASM-ESRL_4NIC_2022-05-30.tar.gz
--r--r--r-- 1 Robert.Grumbine couple  51857228 May 30 15:35 RASM-ESRL_4SIPN_2022-05-30.tar.gz
--r--r--r-- 1 Robert.Grumbine couple 349235272 May 30 14:31 REB2.2022-05-30.nc
--r--r--r-- 1 Robert.Grumbine couple 104002756 May 30 15:26 REB2_plots.2022-05-30.tar.gz
