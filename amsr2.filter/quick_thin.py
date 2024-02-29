@@ -9,10 +9,10 @@ import datetime
 # env libraries
 import numpy as np
 import numpy.ma as ma
-import netCDF4 as nc
-import pygrib
 
-import pyproj
+#import netCDF4 as nc
+#import pygrib
+#import pyproj
 
 # shared
 from match import *
@@ -83,8 +83,6 @@ c00 = int(0)
 other = int(0)
 
 for line in fin:
-    x.read(line)
-    tmp = match.match(x)
     tmp.lr_read(line)
 
     #Skip pts that are not cleanly cold ocean in land mask and posteriori file:
@@ -93,8 +91,8 @@ for line in fin:
         ignore += 1
         continue
    
-    #Copy in to allmatches:
     k += 1
+    #Copy in to allmatches (for having everything in one array, not needed for 'thin'):
     #allmatches.append(tmp)
     #allmatches[k-1] = copy.deepcopy(tmp)
     if (k % 20000 == 0):
@@ -122,7 +120,7 @@ fin.close()
 
 print("ignore, other = ",ignore, other)
 print('k = ',k)
-print(c11, c10, c01, c00, c11+c01+c10+c00, 1.-(c11+c00)/(c11+c10+c01+c00) )
+print('stats ',c11, c10, c01, c00, c11+c01+c10+c00, 1.-(c11+c00)/(c11+c10+c01+c00) )
 f11.close()
 f01.close()
 f10.close()

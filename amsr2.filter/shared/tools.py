@@ -51,4 +51,26 @@ def delta2(x,y):
 def near(x, y, delta):
     return(fabs(x-y) < delta)
 
+#----------------------------------------------
+def imsice(ims):
+  if (ims[0] == 3 and
+      ims[1] == 3 and
+      ims[2] == 3 and
+      ims[3] == 3 and
+      ims[4] == 3):
+    return True
+  else:
+    return False
+
+def imsopen(ims):
+  if (ims[0] == 1 and
+      ims[1] == 1 and
+      ims[2] == 1 and
+      ims[3] == 1 and
+      ims[4] == 1):
+    return True
+  else:
+    return False
+#----------------------------------------------------------
+
 

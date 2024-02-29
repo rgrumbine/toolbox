@@ -56,13 +56,13 @@ class satobs:
     #  self.tb[i] = float(words[3+i])
     #Current:
     self.satid  = 0
-    self.latitude = float(words[1])
-    self.longitude = float(words[2])
-    i = words[3]
-    j = words[4]
-    self.land = 1.-float(words[5])
+    self.longitude = float(words[1])
+    self.latitude = float(words[2])
+    #i = words[3]
+    #j = words[4]
+    #self.land = 1.-float(words[5])
     for i in range(0,self.ntb):
-      self.tb[i] = float(words[6+i])
+      self.tb[i] = float(words[3+i])
 
 class amsr2_lr(satobs):
   ntb = 12
