@@ -18,19 +18,31 @@ import pyproj
 from match import *
 from filtering import *
 from tools import *
+# mmablib
+from utility import *
 
+#start = datetime.datetime(2023,1,2)
+#end   = datetime.datetime(2023,1,2)
+if (len(sys.argv) == 2):
+    tmp = parse_8digits(int(sys.argv[1]) )
+    start = tmp
+    end   = tmp
+    del tmp
+else:
+    start = datetime.datetime(2024,1,3)
+    end   = datetime.datetime(2024,2,29)
 
-start = datetime.datetime(2023,1,2)
-end   = datetime.datetime(2023,3,31)
 dt = datetime.timedelta(1)
 
 
+#RG: Update to run if files present, alt: if desired output not present
 tag = start
 while (tag <= end): 
   tag8 = tag.strftime("%Y%m%d")
   tagj = tag.strftime("%Y%j")
   yy=tagj[0:4]
   print("date info:",tag8, tagj, yy, flush=True)
+  #debug: exit(0)
 
   #---------------------------------------------------------------
   #---------------------------------------------------------------
@@ -40,10 +52,6 @@ while (tag <= end):
   # ice_distance, ice_land, ice_post, ice_latitude, ice_longitude
   # Needs seaice_fixed_fields.nc in cwd
   
-  #from icefix import *
-  import numpy as np
-  import netCDF4 as nc
-  
   #--
   fname='seaice_fixed_fields.nc'
   icefix = nc.Dataset(fname, 'r', format='NETCDF4')
@@ -52,24 +60,28 @@ while (tag <= end):
   nlons = len(icefix.dimensions["nlons"])
   #debug: print("nlon nlat ",nlons, nlats, flush=True)
   
-  #ice_longitude = np.zeros((nlats, nlons),dtype="double")
-  #ice_latitude = np.zeros((nlats, nlons),dtype="double")
   ice_distance = np.zeros((nlats, nlons),dtype="float")
   ice_land = np.zeros((nlats, nlons))
   ice_post = np.zeros((nlats, nlons))
   
   ice_land      = icefix.variables["land"]     [:,:]
   ice_post      = icefix.variables["posteriori"][:,:]
-  #ice_longitude = icefix.variables["longitude"][:,:]
-  #ice_latitude  = icefix.variables["latitude"] [:,:]
   
   ice_distance  = icefix.variables["distance_to_land"][:,:]
   ice_distance /= 1000.   #Convert to km
+
+  #debug: 
+  """
+  ice_longitude = np.zeros((nlats, nlons),dtype="double")
+  ice_latitude = np.zeros((nlats, nlons),dtype="double")
+  ice_longitude = icefix.variables["longitude"][:,:]
+  ice_latitude  = icefix.variables["latitude"] [:,:]
+  """
+  #debug: print("ice_longitude shape ",ice_longitude.shape )
   #debug: print("read lon max ",ice_longitude.max(), flush=True )
-  #--
-  
+  #debug: exit(0) 
+
   post_use_vals = [165, 173, 174]
-  
   
   #---------------------------------------------------------------
   # Read in the satellite obs to matchup -- satobs class in match file
@@ -88,12 +100,13 @@ while (tag <= end):
   
   allmatches = []
   #read in sat obs (text file, from scan of bufr)
-  #fin = open(sys.argv[1],"r")
-  basedir='/u/robert.grumbine/noscrub/filter/'
+  basedir='/u/robert.grumbine/noscrub/filter/txt/'
   ftmp='amsr2_'+tag8+'.txt.0'
-  print("opening ",basedir+ftmp, flush=True)
-  fin = open(basedir+ftmp,"r")
-  #RG: test on existence of fin
+  try:
+      fin = open(basedir+ftmp,"r")
+  except:
+      print("failed to open matchups file ",basedir+ftmp)
+      exit(1)
   k = int(0)
   for line in fin:
     if ("lr" in line):
@@ -130,7 +143,11 @@ while (tag <= end):
   # Read ice analysis, add to matchup (icec)
   analy_base='/u/robert.grumbine/noscrub/sice/sice.'+tag8+'/'
   fname=analy_base+'seaice.t00z.5min.grb.grib2'
-  grbs = pygrib.open(fname)
+  try:
+      grbs = pygrib.open(fname)
+  except:
+      print("failed to open grib2 analysis ",fname)
+      exit(1)
   for x in grbs:
     #debug: print(x.shortName, x.name, x.level, x.typeOfLevel, x.paramId, x.forecastTime, flush=True)
     #debug: print(x, flush=True)
@@ -149,12 +166,6 @@ while (tag <= end):
   
   #---------------------------------------------------------------
   # Read in IMS analysis, add to NH matchups
-  #from imsread import *
-  #--
-  import numpy as np
-  import netCDF4 as nc
-  
-  import pyproj 
   
   # IMS Map projection from projection:proj4 in netcdf header
   proj4 = "+proj=stere +lat_0=90 +lat_ts=60 +lon_0=-80 +k=1 +x_0=0 +y_0=0 +a=6378137 +b=6356257 +units=m +no_defs" 
@@ -162,7 +173,11 @@ while (tag <= end):
   ims_base='/u/robert.grumbine/noscrub/imstmp/'
   fname=ims_base+yy+'/ims'+tagj+'_4km_v1.3.nc'
   
-  ims = nc.Dataset(fname, 'r', format='NETCDF4')
+  try:
+    ims = nc.Dataset(fname, 'r', format='NETCDF4')
+  except:
+    print("failed to open ims file ",fname)
+    exit(1)
   
   nx = len(ims.dimensions["x"])
   ny = len(ims.dimensions["y"])
@@ -206,7 +221,12 @@ while (tag <= end):
   sstbase='/u/robert.grumbine/static/oiv2/'
   fname=sstbase+'oisst-avhrr-v02r01.'+tag8+'.nc'
   
-  sstgrid = nc.Dataset(fname, 'r', format='NETCDF4')
+  try:
+    sstgrid = nc.Dataset(fname, 'r', format='NETCDF4')
+  except:
+    print("failed to open sst file ",fname)
+    exit(1)
+
   sst_nlats = len(sstgrid.dimensions["lat"])
   sst_nlons = len(sstgrid.dimensions["lon"])
   
@@ -229,7 +249,13 @@ while (tag <= end):
   
   #---------------------------------------------------------------
   #  Now have all data in hand --- write it out
-  fout = open("matched_"+tag8+".txt","w")
+  try:
+    fout = open("matched_"+tag8+".txt","w")
+  except:
+    print("failed to open output file ","matched_"+tag8+".txt")
+    exit(1)
+  
+  # Bring in thinning from quick_thin.py
   for k in range(0,len(allmatches)):
       # if ice_post[j,i] in post_use_vals and ice.land, ice.post, ice.dist all ok 
       #   write out to fout

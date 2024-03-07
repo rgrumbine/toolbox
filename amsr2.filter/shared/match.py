@@ -56,8 +56,8 @@ class satobs:
     #  self.tb[i] = float(words[3+i])
     #Current:
     self.satid  = 0
-    self.longitude = float(words[1])
-    self.latitude = float(words[2])
+    self.latitude = float(words[1])
+    self.longitude = float(words[2])
     #i = words[3]
     #j = words[4]
     #self.land = 1.-float(words[5])
@@ -209,7 +209,12 @@ class match:
 
   def add_icefix(self, ice_land, ice_post, ice_distance):
     j,i = rg12th(self.obs.latitude, self.obs.longitude)
-    self.ice_land     = ice_land[j,i]
+    #i,j = rg12th(self.obs.latitude, self.obs.longitude)
+    try:
+      self.ice_land     = ice_land[j,i]
+    except:
+      print("lat lon, j,i ",self.obs.latitude, self.obs.longitude, j, i)
+      exit(1)
     self.ice_post     = ice_post[j,i]
     self.ice_distance = ice_distance[j,i]
 

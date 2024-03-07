@@ -5,13 +5,13 @@
 # Robert Grumbine 13 Feb 2024
 
 # Wcoss2:
-#source $HOME/env3.10/bin/activate
-#module load PrgEnv-intel netcdf
+source $HOME/env3.10/bin/activate
+module load PrgEnv-intel netcdf
 
 # Hera:
-source $HOME/env3.7/bin/activate
-module load hpc/1.2.0  hpc-intel/2022.1.2
-module load netcdf/4.9.0
+#source $HOME/env3.7/bin/activate
+#module load hpc/1.2.0  hpc-intel/2022.1.2
+#module load netcdf/4.9.0
 
 
 # All:
