@@ -41,11 +41,11 @@ match11 = []
 match10 = []
 match01 = []
 match00 = []
-counts  = np.zeros((int(tmax),x.ntb), dtype=np.int8)
-count11 = np.zeros((int(tmax),x.ntb), dtype=np.int8)
-count10 = np.zeros((int(tmax),x.ntb), dtype=np.int8)
-count01 = np.zeros((int(tmax),x.ntb), dtype=np.int8)
-count00 = np.zeros((int(tmax),x.ntb), dtype=np.int8)
+counts  = np.zeros((int(tmax),x.ntb), dtype=np.int64)
+count11 = np.zeros((int(tmax),x.ntb), dtype=np.int64)
+count10 = np.zeros((int(tmax),x.ntb), dtype=np.int64)
+count01 = np.zeros((int(tmax),x.ntb), dtype=np.int64)
+count00 = np.zeros((int(tmax),x.ntb), dtype=np.int64)
 
 
 f11 = open("f11", "r")
@@ -89,7 +89,7 @@ f00.close()
 print("final counts = ", len(match11), len(match00), len(match01), len(match10) )
 total  = len(match11) + len(match10) + len(match01) + len(match00)
 pbogus = float(len(match10)) / float(total)
-print("total, pbogus ",total,pbogus)
+print("total, pbogus ",total,pbogus, flush=True)
 
 #---------------------------------------------------------------
 
@@ -105,7 +105,7 @@ def pdf(matches, counts):
   
         #if (int(matches[k].obs.tb[tchannel]+0.5) > tcrit):  
         if ( matches[k].obs.tb[tchannel] > tcrit):  
-          counts[ tcrit  ,tchannel] += 1
+          counts[ tcrit  ,tchannel] += int(1)
 
 #---------------------------------------------------------------
 
@@ -127,18 +127,22 @@ for k in range(int(tmin), int(tmax)):
   print("c00 ",k, count00[k,:])
 
 
+#P(A|B) = P(B|A)*P(A)/P(B)
+#  A = bogus
+#  B = Tb_k (channel k Tb is greater than tcrit)
+#
 #P(bogus | Tb_k) = P(Tb_k | bogus) * P(bogus) / P(Tb_k )
+#
 #total = len(match11) + len(match10) + len(match01) + len(match00)
 #pbogus = float(len(match10)) / float(total)
-#p(tb_k) = sum(countIJ[tb,0) / float(total)
-#p(tb_k | bogus) = count10[tb,0] / float(total)
-
-tchan=0
-for tchan in range(int(0), match11.obs.ntb):
-  for tb_k in range(int(tmin), int(tmax)):
-    sumtc    = float(counts[tb, tchan])  / float(total)
-    sumgiven = float(count10[tb, tchan]) / float(total)
-    print("tchan, tb_crit ",tchan, tb_k, sumgiven * pbogus / sumtc, sumgiven, pbogus, sumtc, flush=True)
+#p(tb_k) = sum(countIJ[tb,k) / float(total)
+#p(tb_k | bogus) = count10[tb,k] / float(total)
+for tchan in range(int(0), match11[0].obs.ntb):
+  for tb in range(int(tmin), int(tmax)):
+    sumtc    = float( counts[tb, tchan]) / float(total)
+    sumgiven = float(count10[tb, tchan]) / float(len(match10) )
+    if (sumtc > 0.):
+      print("tchan, tb_crit ",tchan, tb, sumgiven * pbogus / sumtc, sumgiven, pbogus, sumtc, flush=True)
   
 
 #---------------------------------------------------------------
