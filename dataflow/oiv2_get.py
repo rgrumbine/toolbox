@@ -38,8 +38,10 @@ while (tdate >= enddate):
   if (not os.path.exists(oname)):
     print("getting ",oname)
     print(baseurl+ym+'/oisst-avhrr-v02r01.'+ymd+'.nc', flush=True)
+
     web = urllib.request.urlopen(baseurl+ym+'/oisst-avhrr-v02r01.'+ymd+'.nc')
     data = web.read()
+
     outfile = open('oisst-avhrr-v02r01.'+ymd+'.nc','w+b')
     outfile.write(data)
     outfile.close()

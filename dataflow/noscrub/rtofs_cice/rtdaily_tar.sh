@@ -1,7 +1,7 @@
 #!/bin/sh
 
-tag=20230711
-while [ $tag -le 20230731 ]
+tag=20240101
+while [ $tag -le 20240131 ]
 do
   echo $tag
   if [ -d rtofs.$tag ] ; then
