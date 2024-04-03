@@ -74,11 +74,16 @@ lats = np.arange(90-dl/2, -90., -dl)
 # newfilter:
 newbase="/u/robert.grumbine/noscrub/com/seaice_analysis/v4.6.0/seaice_analysis."
 # oldfilter
-oldbase="/u/robert.grumbine/noscrub/sice/sice."
+#oldbase="/u/robert.grumbine/noscrub/sice/sice."
+oldbase="/u/robert.grumbine/noscrub/sice/seaice_analysis."
 
 dt = datetime.timedelta(1)
-start = datetime.datetime(2024,1,1)
-end   = datetime.datetime(2024,3,9)
+#start = datetime.datetime(2022,1,20)
+#end   = datetime.datetime(2022,2,5)
+#start = datetime.datetime(2022,3,3)
+#end   = datetime.datetime(2022,3,23)
+start = datetime.datetime(2023,3,11)
+end   = datetime.datetime(2023,3,31)
 working = start
 
 while (working <= end):

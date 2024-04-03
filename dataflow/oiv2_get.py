@@ -13,7 +13,7 @@ dt = datetime.timedelta(1)
 today = date.today()
 startdate = today
 startdate -= 16*dt
-#startdate = datetime.date(2024,2,10)
+#startdate = datetime.date(2024,3,6)
 
 
 # First date of OIv2
@@ -39,13 +39,17 @@ while (tdate >= enddate):
     print("getting ",oname)
     print(baseurl+ym+'/oisst-avhrr-v02r01.'+ymd+'.nc', flush=True)
 
-    web = urllib.request.urlopen(baseurl+ym+'/oisst-avhrr-v02r01.'+ymd+'.nc')
-    data = web.read()
+    try:
+      web = urllib.request.urlopen(baseurl+ym+'/oisst-avhrr-v02r01.'+ymd+'.nc')
+      data = web.read()
+  
+      outfile = open('oisst-avhrr-v02r01.'+ymd+'.nc','w+b')
+      outfile.write(data)
+      outfile.close()
+      web.close()
+    except:
+      print("could not get ",oname, flush=True)
 
-    outfile = open('oisst-avhrr-v02r01.'+ymd+'.nc','w+b')
-    outfile.write(data)
-    outfile.close()
-    web.close()
   else:
     print("have ",oname)
 
