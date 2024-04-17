@@ -12,14 +12,14 @@ from datetime import timedelta
 dt = datetime.timedelta(1)
 today = date.today()
 startdate = today
-startdate -= 16*dt
+startdate -= 15*dt
 #startdate = datetime.date(2024,3,6)
 
 
 # First date of OIv2
 #enddate = datetime.date(1981,9,1)
 # current from here back:
-enddate = datetime.date(2024,2,1)
+enddate = datetime.date(2024,3,1)
 
 #---------------------------------------------------------
 import urllib
