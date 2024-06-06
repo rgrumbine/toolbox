@@ -50,11 +50,11 @@ while (tdate >= enddate):
     except:
       print("could not get ",oname, flush=True)
 
-  else:
-    print("have ",oname)
+  #else:
+  #  print("have ",oname)
 
   #run back in time from 'today'
   tdate -= dt
 
 #---------------------------------------------------------
-
+print("run back to ",tdate)
