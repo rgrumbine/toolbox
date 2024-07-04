@@ -36,7 +36,7 @@ echo zzz preceding was list of modules from days_data.sh
 time   $EXDIR/gefs_thin.sh   # this winds up cleaning yesterday and before, 
                         # since the queue won't respond instantly
 
-/opt/pbs/bin/qsub $EXDIR/sice.reget.sh   # 5-10 Gb/day, opnl sea ice analysis
+#/opt/pbs/bin/qsub $EXDIR/sice.reget.sh   # 5-10 Gb/day, opnl sea ice analysis
 
 #While large volumes, these are disk to disk copy from com to my space
 time $EXDIR/riops.sh           # --  6.5 Gb/day
