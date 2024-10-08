@@ -1,3 +1,4 @@
+import sys
 import os
 import datetime
 
@@ -143,7 +144,10 @@ def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, i2 = 0, j
 #--------------------------------------------------------
 base = "/home/Robert.Grumbine/clim_data/cafs/"
 
-tag = datetime.datetime(2022,4,1)
+#tag = datetime.datetime(2022,4,1)
+print("args ",sys.argv)
+tag = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
+
 dname = tag.strftime("%Y%m%d")
 fname = "REB2."+tag.strftime("%Y-%m-%d") + ".nc"
 if (not os.path.exists(base+dname+"/"+fname) ):
@@ -369,13 +373,13 @@ ax  = fig.add_subplot(1, 1, 1, projection = proj)
 
 ax.set_extent((-190, -60, 50, 90), crs=ccrs.PlateCarree())
 ax.gridlines(crs=ccrs.PlateCarree(),
-        xlocs=[-165, -150, -135., -120, -105, -90, -75, -60],
+        xlocs=[-210, -195, -180, -165, -150, -135., -120, -105, -90, -75, -60, -45, -30, -15, 0, 15],
         ylocs=[50, 60, 66.6, 70, 75, 80] )
 
                 
 ax.add_feature(cfeature.GSHHSFeature(levels = [1,2,3,4], scale = "l") )
                 
-plt.title("nwp")
+plt.title("nwp_"+tag.strftime("%Y%m%d")+"_00")
 
 plt.scatter(tlons, tlats, transform = ccrs.PlateCarree(),  marker = ".", s = 8, color = "purple")
 plt.savefig("nwp_"+tag.strftime("%Y%m%d")+"_00.png")
