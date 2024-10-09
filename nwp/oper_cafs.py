@@ -145,7 +145,7 @@ def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, i2 = 0, j
 base = "/home/Robert.Grumbine/clim_data/cafs/"
 
 #tag = datetime.datetime(2022,4,1)
-print("args ",sys.argv)
+#debug: print("args ",sys.argv, flush=True)
 tag = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
 
 dname = tag.strftime("%Y%m%d")
@@ -223,7 +223,7 @@ for i in range(0,nx):
         nodemap[j,i] = int(k)
         G.add_node(k, i = i, j =j, lat = lats[j,i], lon = lons[j,i],  land=land[j,i])
         k += int(1)
-print("Done adding nodes, k=",k, flush=True)
+#debug: print("Done adding nodes, k=",k, flush=True)
 
 # Construct edges between nodes
 k = 0
@@ -284,7 +284,7 @@ for j in range(0,ny):
           G.add_edge(n, nodemap[jm,ip], weight = weight)
           k += 1
 
-print("Have constructed graph, number of edges =",k, len(G.edges), flush=True)
+#debug: print("Have constructed graph, number of edges =",k, len(G.edges), flush=True)
 #debug: exit(0)
 
 #--------------------------------------------------------
@@ -315,22 +315,24 @@ j_start = int(67)
 #j_finish = int(420)
 i_finish = int(396) 
 j_finish = int(344) 
-print("start: ",lons[j_start, i_start], lats[j_start, i_start] )
-print("finis: ",lons[j_finish, i_finish], lats[j_finish, i_finish] )
+#debug: print("start: ",lons[j_start, i_start], lats[j_start, i_start] )
+#debug: print("finis: ",lons[j_finish, i_finish], lats[j_finish, i_finish] )
 
 # Quick check to see whether there are _any_ paths:
 start  = nodemap[j_start, i_start]
 finish = nodemap[j_finish, i_finish]
-print("start node ",G.nodes[start])
-print("finish node ",G.nodes[finish])
-print(i_start, j_start, i_finish, j_finish, start, finish)
+#debug: print("start node ",G.nodes[start])
+#debug: print("finish node ",G.nodes[finish])
+#debug: print(i_start, j_start, i_finish, j_finish, start, finish)
 print("Is there a path from start to finish? ",netx.has_path(G,start,finish ), flush=True )
 if (not netx.has_path(G,start,finish )):
   exit(1)
 
 #------------------------------------------------
 path = netx.dijkstra_path(G,start, finish)
-print("dijkstra length ", len(path), flush=True)
+print("dijkstra length and score ", len(path), 
+       netx.dijkstra_path_length(G, start, finish), flush=True)
+
 for k in range(0,len(path)):
   print(k,G.nodes[path[k]])
   #print(k,
@@ -365,16 +367,20 @@ for k in range(0,len(path)):
 matplotlib.use('Agg') #for batch mode
 #matplotlib.use('Qt5Agg') #for interactive mode
 
-proj = ccrs.LambertConformal(central_longitude = -135, central_latitude = 75., cutoff = 35.)
+proj = ccrs.LambertConformal(central_longitude = -120, central_latitude = 75., cutoff = 45.)
 
 ax  = plt.axes(projection = proj)
-fig = plt.figure(figsize=(12, 9))
+lll = 2.5
+fig = plt.figure(figsize=(lll*4, lll*3))
 ax  = fig.add_subplot(1, 1, 1, projection = proj)
 
-ax.set_extent((-190, -60, 50, 90), crs=ccrs.PlateCarree())
+ax.set_extent((-170, -75, 60, 80), crs=ccrs.PlateCarree())
+
 ax.gridlines(crs=ccrs.PlateCarree(),
-        xlocs=[-210, -195, -180, -165, -150, -135., -120, -105, -90, -75, -60, -45, -30, -15, 0, 15],
-        ylocs=[50, 60, 66.6, 70, 75, 80] )
+    xlocs=[-225, -210, -195, -180, -165, -150, -135., -120, -105, -90, 
+            -75, -60, -45, -30, -15, 0, 15],
+    #ylocs=[50, 60, 66.6, 70, 75, 80] )
+    ylocs=[60, 66.6, 70, 72.5, 75, 77.5, 80, 82.5, 85] )
 
                 
 ax.add_feature(cfeature.GSHHSFeature(levels = [1,2,3,4], scale = "l") )
