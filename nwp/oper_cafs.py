@@ -221,7 +221,7 @@ for i in range(0,nx):
         lons[j,i] > lonmin and lons[j,i] < lonmax     ):
       if (land[j,i] == 0):
         nodemap[j,i] = int(k)
-        G.add_node(k, i = i, j =j, lat = lats[j,i], lon = lons[j,i],  land=land[j,i])
+        G.add_node(k, i = i, j =j, lat = lats[j,i], lon = lons[j,i],  aice=aice[j,i], hi = hi[j,i])
         k += int(1)
 #debug: print("Done adding nodes, k=",k, flush=True)
 
@@ -336,11 +336,9 @@ print("dijkstra length and score ", len(path),
 for k in range(0,len(path)):
   print(k,G.nodes[path[k]])
   #print(k,
-  #      G.nodes[path[k]]['i'],
-  #      G.nodes[path[k]]['j'],
-  #      G.nodes[path[k]]['lon'],
-  #      G.nodes[path[k]]['lat'],
-  #      G.nodes[path[k]]['land'],
+  #      G.nodes[path[k]]['i'], G.nodes[path[k]]['j'],
+  #      G.nodes[path[k]]['lon'], G.nodes[path[k]]['lat'],
+  #      G.nodes[path[k]]['aice'], G.nodes[path[k]]['hi'],
   #      flush=True )
 print("",flush=True)
 tlons = np.zeros((len(path)))
@@ -362,8 +360,6 @@ for k in range(0,len(path)):
   #debug: exit(0)
 #-----------------------------------------------------
 
-# something not behaving with the geographic plotting:
-
 matplotlib.use('Agg') #for batch mode
 #matplotlib.use('Qt5Agg') #for interactive mode
 
@@ -382,12 +378,12 @@ ax.gridlines(crs=ccrs.PlateCarree(),
     #ylocs=[50, 60, 66.6, 70, 75, 80] )
     ylocs=[60, 66.6, 70, 72.5, 75, 77.5, 80, 82.5, 85] )
 
-                
-ax.add_feature(cfeature.GSHHSFeature(levels = [1,2,3,4], scale = "l") )
+# scales are coarse, low, intermediate, high, and full
+ax.add_feature(cfeature.GSHHSFeature(levels = [1,2,3,4], scale = "low") )
                 
 plt.title("nwp_"+tag.strftime("%Y%m%d")+"_00")
 
-plt.scatter(tlons, tlats, transform = ccrs.PlateCarree(),  marker = ".", s = 8, color = "purple")
+plt.scatter(tlons, tlats, transform = ccrs.PlateCarree(),  marker = ".", s = 10, color = "purple")
 plt.savefig("nwp_"+tag.strftime("%Y%m%d")+"_00.png")
 
 plt.close('all')
@@ -427,4 +423,15 @@ print(paths)
 
 ## count number of paths which pass through each grid cell
 #counts = np.zeros((ny, nx),dtype="int")
+
+#-----------------------------------------------------
+"""
+Reference:
+USCG Healy
+maximum speed = 31 km/h
+cruising      = 26 km/h
+1.4 m ice     =  5.6 km/h
+"""
+
+
 
