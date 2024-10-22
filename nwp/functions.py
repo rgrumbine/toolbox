@@ -6,10 +6,6 @@ from math import *
 import numpy as np
 import numpy.ma as ma
 
-#debug: import netCDF4
-#debug: from netCDF4 import Dataset
-#debug: import networkx as netx
-
 #--------------------------------------------------------
 def find(lons, lats, lonin, latin):
   #debug print("lon, lat in:",lonin, latin, flush=True)

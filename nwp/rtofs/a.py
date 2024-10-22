@@ -10,23 +10,25 @@ from netCDF4 import Dataset
 #--------------------------------------------------------------
 #fin = Dataset("../dcom/rtofs_glo_2ds_f000_prog.nc","r")
 #fin = Dataset("../dcom/rtofs_glo_2ds_f000_diag.nc","r")
-#fin = Dataset("../dcom/rtofs_glo_2ds_f000_ice.nc","r")
-fin = Dataset("rtofs_glo.t00z.n00.cice_inst.nc","r")
 
-nx = len(fin.dimensions["ni"])
-ny = len(fin.dimensions["nj"])
+# cice_inst
+#fin = Dataset("rtofs_glo.t00z.n00.cice_inst.nc","r")
+#nx = len(fin.dimensions["ni"])
+#ny = len(fin.dimensions["nj"])
+#lons = fin.variables["TLON"][:,:]
+#lats = fin.variables["TLAT"][:,:]
+#sst   = fin.variables["sst"][0,:,:]
+#aice  = fin.variables["aice"][0,:,:]
 
-print(nx, ny)
-#debug: exit(0)
-
-#extract longitude, latitude, aice
-# -- node properties
-lons = fin.variables["TLON"][:,:]
-lats = fin.variables["TLAT"][:,:]
-
-#sst  = fin.variables["sst"][0,:,:]
-#sst  = fin.variables["ice_thickness"][0,:,:]
-aice  = fin.variables["aice"][0,:,:]
+# 2ds_ice
+fin = Dataset("rtofs_glo_2ds_f000_ice.nc","r")
+nx = len(fin.dimensions['X'])
+ny = len(fin.dimensions['Y'])
+lons = fin.variables["Longitude"][:,:]
+lats = fin.variables["Latitude"][:,:]
+#not available: sst   = fin.variables["sst"][0,:,:]
+aice  = fin.variables["ice_coverage"][0,:,:]
+#debug: check distance of ice-free arctic  aice.fill(0.)
 
 #debug:
 print("lons: ",lons.max(), lons.min() )
@@ -78,36 +80,9 @@ print("lons: ",lons.max(), lons.min(), flush=True )
 #debug: exit(0)
 
 #----------------------------------------------------------------
-#print("nx,ny,nx*ny:",nx,ny,nx*ny)
-def find(lons, lats, lonin, latin):
-  #debug print("lon, lat in:",lonin, latin, flush=True)
-  tmpx = lons - lonin
-  tmpy = lats - latin
-  #debug print("x ",tmpx.max(), tmpx.min(), lons.max(), lons.min(), flush=True )
+from functions import *
 
-  xmask = ma.masked_outside(tmpx, -0.5, 0.5)
-  xin = xmask.nonzero()
-  wmask = ma.logical_and(xmask, ma.masked_outside(tmpy, +0.5, -0.5) )
-  win = wmask.nonzero()
-
-  imin = -1
-  jmin = -1
-  dxmin = 999.
-  dymin = 999.
-  dmin  = 999.
-  for k in range(0, len(win[0]) ):
-    i = win[1][k]
-    j = win[0][k]
-    #debug print(k,i,j,abs(tmpx[j,i]), abs(tmpy[j,i]), dxmin, dymin, dmin, flush=True)
-    #if (abs(tmpx[j,i]) < dxmin and abs(tmpy[j,i]) < dymin):
-    if (sqrt(tmpx[j,i]**2 + tmpy[j,i]**2) < dmin):
-      imin = i
-      jmin = j
-      dxmin = abs(tmpx[j,i])
-      dymin = abs(tmpy[j,i])
-      dmin  = sqrt(tmpx[j,i]**2 + tmpy[j,i]**2)
-  #print("dmin:",imin, jmin, dmin, dxmin, dymin)
-  return (imin,jmin)
+#----------------------------------------------------------------
 
 #tlat = 74.0
 #for iii in range (0, 400):
@@ -131,18 +106,19 @@ print("finish",i_finish, j_finish, flush=True)
 #--------------------------------------------------------------
 
 # Construct nodes -- limit area to keep run time manageable:
-latmin = 65.0
-latmax = 88.0
+latmin = 64.0
+latmax = 82.0
 #lonmin = 185.0-360.
 #lonmax = 290.0-360.
 lonmin = -175.0
 lonmax =  -70.0
 xmask = ma.masked_outside(lons, lonmin, lonmax)
 xin = xmask.nonzero()
-#print(len(xin), len(xin[0]))
+#debug: print(len(xin), len(xin[0]), flush=True)
 xmask = ma.logical_and(xmask, ma.masked_outside(lats, latmin, latmax))
 xin = xmask.nonzero()
-#print(len(xin), len(xin[0]))
+#debug: 
+print("number of points:", len(xin[0]), flush=True)
 
 xmask = ma.logical_and(xmask, aice < 1000.)
 xin = xmask.nonzero()
@@ -173,6 +149,14 @@ print("Done adding nodes, k=",k, flush=True)
 # RG: tripolar grid means adjacent geographic points aren't always i,j adjacent
 # fix!
 # Construct edges between nodes:
+
+#cost_type = 
+  #1 -> steps in i,j space
+  #2 -> meters
+  #3 -> weighted by polar class
+  #4 -> weight by 1./(1.1-aice)
+cost_type = 4
+
 for k in range(0, len(xin[0])):
   i = xin[1][k]
   j = xin[0][k]
@@ -186,20 +170,27 @@ for k in range(0, len(xin[0])):
 
   if (im >= 0):
     if (nodemap[j,im] != -1):
-      G.add_edge(n, nodemap[j,im], weight = 1.)
+      weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], 
+                               lat2 = lats[j,im], lon2 = lons[j,im], aice = aice[j,i])
+      G.add_edge(n, nodemap[j,im], weight = weight)
   if (ip < nx):
     if (nodemap[j,ip] != -1):
-      G.add_edge(n, nodemap[j,ip], weight = 1.)
+      weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], 
+                               lat2 = lats[j,ip], lon2 = lons[j,ip], aice = aice[j,i])
+      G.add_edge(n, nodemap[j,ip], weight = weight)
 
   if (jp < ny ):
     if (nodemap[jp,i] != -1):
-      G.add_edge(n, nodemap[jp,i], weight = 1.)
+      weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jp,i], lon2 = lons[jp,i], aice = aice[j,i])
+      G.add_edge(n, nodemap[jp,i], weight = weight)
     if (im >= 0):
       if (nodemap[jp,im] != -1):
-        G.add_edge(n, nodemap[jp,im], weight = 1.)
+        weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jp,im], lon2 = lons[jp,im], aice = aice[j,i])
+        G.add_edge(n, nodemap[jp,im], weight = weight)
     if (ip < nx):
       if (nodemap[jp,ip] != -1):
-        G.add_edge(n, nodemap[jp,ip], weight = 1.)
+        weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jp,ip], lon2 = lons[jp,ip], aice = aice[j,i])
+        G.add_edge(n, nodemap[jp,ip], weight = weight)
   #RG: a guess about the archipelago seam
   else:
     tmpi = i
@@ -210,13 +201,16 @@ for k in range(0, len(xin[0])):
 
   if (jm >= 0 ):
     if (nodemap[jm,i] != -1):
-      G.add_edge(n, nodemap[jm,i], weight = 1.)
+      weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jm,i], lon2 = lons[jm,i], aice = aice[j,i])
+      G.add_edge(n, nodemap[jm,i], weight = weight)
     if (im >= 0):
       if (nodemap[jm,im] != -1):
-        G.add_edge(n, nodemap[jm,im], weight = 1.)
+        weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jm,im], lon2 = lons[jm,im], aice = aice[j,i])
+        G.add_edge(n, nodemap[jm,im], weight = weight)
     if (ip < nx):
       if (nodemap[jm,ip] != -1):
-        G.add_edge(n, nodemap[jm,ip], weight = 1.)
+        weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jm,ip], lon2 = lons[jm,ip], aice = aice[j,i])
+        G.add_edge(n, nodemap[jm,ip], weight = weight)
 
 #debug:
 print("Have constructed graph, number of nodes, edges =",k, len(G.edges), flush=True)
@@ -249,7 +243,7 @@ path = netx.dijkstra_path(G,start, finish)
 
 pseudo_length = netx.dijkstra_path_length(G,start, finish)
 
-print("dijkstra length ", len(path), flush=True)
+print("dijkstra length ", len(path), pseudo_length, flush=True)
 
 tlons = np.zeros((len(path)))
 tlats = np.zeros((len(path)))
