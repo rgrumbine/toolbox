@@ -1,7 +1,7 @@
 #!/bin/sh
-#SBATCH -J nwp_cafs
-#SBATCH -e nwp_cafs.err
-#SBATCH -o nwp_cafs.out
+#SBATCH -J nwp9_cafs
+#SBATCH -e nwp9_cafs.err
+#SBATCH -o nwp9_cafs.out
 #SBATCH -t 7:55:00
 #  #SBATCH -t 0:25:00
 #SBATCH -q batch
@@ -28,24 +28,27 @@ export OUTDIR=$HOME/rgdev/cafs_nwp
 tag=`date +"%Y%m%d"`
 #debug: 
 tag=20241022
+#tag=20220501
 
 #reverse -- now to past
-end=20230401
+end=20220401
 #debug: end=20241011
 
 while [ $tag -ge $end ]
 do
+  echo working on $tag
 
   yy=`echo $tag | cut -c1-4`
   mm=`echo $tag | cut -c5-6`
   dd=`echo $tag | cut -c7-8`
-  if [ ! -f $HOME/rgdev/cafs_nwp/${yy}/out.$tag ] ; then
+  if [ ! -f $OUTDIR/${yy}/out.$tag -o ! -f $OUTDIR/${yy}/nwp_${tag}_240.png \
+         -o ! -f $OUTDIR/${yy}/path_${tag}_240.kml ] ; then
     time python3 new_cafs.py $yy $mm $dd > $OUTDIR/${yy}/out.$tag
   fi
-  if [ -f nwp_${tag}_6.png ] ; then
+  if [ -f nwp_${tag}_240.png ] ; then
     mv nwp_${tag}_*.png $OUTDIR/${yy}
   fi  
-  if [ -f path_${tag}_6.kml ] ; then
+  if [ -f path_${tag}_240.kml ] ; then
     mv path_${tag}_*.kml $OUTDIR/${yy}
   fi  
 
