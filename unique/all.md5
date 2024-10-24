@@ -3,7 +3,7 @@
 fname=files3
 fout=alpha
 
-find $* -type f -exec md5sum {} \; > $fname
+find $* -size +0 -type f -exec md5sum {} \; > $fname
 sort $fname > $fout
 python3 $HOME/rgdev/toolbox/unique/md5.py $fout > a
 echo deal with special characters
