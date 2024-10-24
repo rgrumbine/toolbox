@@ -68,14 +68,14 @@ void laplacean(grid2<double> &x, grid2<double> &lapl, double &delta_max, double 
   delta_max = max(fabs(lapl.gridmax()), fabs(lapl.gridmin()) );
   rmse = lapl.rms();
 
-  float ratio = 40.;
+  float ratio = 16.;
   int count = 0;
   for (loc.j = 0; loc.j < x.ypoints() - 1 ; loc.j++) {
     for (loc.i = 0; loc.i < x.xpoints() - 1 ; loc.i++) {
       if (lapl[loc] < -ratio*rmse || lapl[loc] > ratio*rmse) {
       //if (lapl[loc] < -59. || lapl[loc] > 59.) {
         count += 1;
-	printf("%d %d %f %f\n",loc.i, loc.j, x[loc], lapl[loc]);
+	//printf("%d %d %f %f\n",loc.i, loc.j, x[loc], lapl[loc]);
       }
     }
   }
@@ -109,10 +109,11 @@ int main(void) {
   GRIDTYPE<double> x, mask, lapl;
   GRIDTYPE<float> sstin;
   GRIDTYPE<unsigned char> maskin;
-  double weight = 0.99, toler = 1.e-9; 
+  double weight = 1.00, toler = 1.e-9; 
   double rmse, delta_max;
   FILE *fin;
   ijpt loc;
+  latpt ll;
 
   //fin = fopen("seaice_gland5min", "r");
   fin = fopen("seaice_newland", "r");
@@ -125,14 +126,22 @@ int main(void) {
 
   for (loc.j = 0; loc.j < x.ypoints()  ; loc.j++) {
   for (loc.i = 0; loc.i < x.xpoints()  ; loc.i++) {
+    ll = x.locate(loc);
     if (maskin[loc] == 157) {
          x[loc] = 0.;
       mask[loc] = 1.;
     }
     else {
-         x[loc] = sstin[loc];
+         x[loc] = ll.lat;
+         x[loc] = ll.lon;
       mask[loc] = 0.;
     }
+    if (loc.j == 0 || loc.i == 0 || loc.j == x.ypoints()-1 || loc.i == x.xpoints()-1 ){
+         x[loc] = ll.lat;
+         x[loc] = ll.lon;
+      mask[loc] = 0.;
+    }
+      
   }
   }
 
@@ -144,7 +153,7 @@ int main(void) {
   int iter = 0;
   GRIDTYPE<double> tmp;
 
-  while (delta_max > toler && iter < 500*10 ) {
+  while (delta_max > toler && iter < 500*60 ) {
     sor(x, mask, lapl, weight);
     laplacean(x, lapl, delta_max, rmse);
     printf("%d delta max, rmse: %e %e\n",iter, delta_max, rmse);
