@@ -7,6 +7,19 @@ import numpy as np
 import numpy.ma as ma
 
 #--------------------------------------------------------
+"""
+Functions present:
+
+def find(lons, lats, lonin, latin):
+def kmlout_path(fname, G, path):
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, 
+               i2 = 0, j2 = 0, aice = 0, hi = 0):
+def calculateCost(PolarClass, iceCon, iceThick):
+
+"""
+#--------------------------------------------------------
 def find(lons, lats, lonin, latin):
   #debug print("lon, lat in:",lonin, latin, flush=True)
   tmpx = lons - lonin

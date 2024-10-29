@@ -223,35 +223,9 @@ for tstep in range(0,40):
   tlons = np.zeros((len(path)))
   tlats = np.zeros((len(path)))
   
-  kmlout = open("path_"+tag.strftime("%Y%m%d")+"_"+"{:d}".format((tstep+1)*6)+".kml","w")
-  #kml header:
-  print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", file=kmlout)
-  print("<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\">", file=kmlout)
-  print("<Folder>", file=kmlout)
-  print("<LookAt>", file=kmlout)
-  print("  <range>3000000</range>", file=kmlout)
-  print("  <latitude> 68.0 </latitude>", file=kmlout)
-  print("  <longitude> -127</longitude>", file=kmlout)
-  print("</LookAt>", file=kmlout)
-  print("    <Document id=\"1\">", file=kmlout)
+#----------- kml output ---------------------------------
+  kmlout_path("path_"+tag.strftime("%Y%m%d")+"_"+"{:d}".format((tstep+1)*6)+".kml", G, path)
 
-  for k in range(0,len(path)):
-  #  if (G.nodes[path[k]]['lon'] > 180.):
-  #    tlon = G.nodes[path[k]]['lon']  - 360.
-  #    tlons[k] = tlon
-  #  else:
-    tlon = G.nodes[path[k]]['lon']
-    tlons[k] = tlon
-    tlats[k] = G.nodes[path[k]]['lat']
-    print("<Placemark> <Point> <coordinates>",tlon,G.nodes[path[k]]['lat'],0.0,
-          "</coordinates></Point></Placemark>", file=kmlout)
-
-  #Print footer:
-  print("    </Document>",file=kmlout)
-  print("</Folder>",file=kmlout)
-  print("</kml>",file=kmlout)
-
-  
     #debug: exit(0)
   
 #----------- Graphics ---------------------------------
