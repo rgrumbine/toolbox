@@ -171,3 +171,40 @@ def kmlout_path(fname, G, path):
   print("</kml>",file=kmlout)
   kmlout.close()
 #--------------------------------------------------------
+def wrap_lons(lons):
+
+  if (lons.max() > 360. or lons.min() < -360. ):
+    lmask = ma.masked_array(lons > 2.*360.+180.)
+    lin = lmask.nonzero()
+    for k in range(0, len(lin[0])):
+      i = lin[1][k]
+      j = lin[0][k]
+      lons[j,i] -= 3.*360.
+    #debug: print("lons: ",lons.max(), lons.min(), flush=True )
+  
+    lmask = ma.masked_array(lons > 1.*360.+180.)
+    lin = lmask.nonzero()
+    for k in range(0, len(lin[0])):
+      i = lin[1][k]
+      j = lin[0][k]
+      lons[j,i] -= 2.*360.
+    #debug: print("lons: ",lons.max(), lons.min(), flush=True )
+  
+    #most (10.6 million of 14.7 million) rtofs points have lons > 180, so subtract 360 and
+    # then correct the smaller number that are < -180 as a result
+    lons -= 360.
+    lmask = ma.masked_array(lons < -180.)
+    lin = lmask.nonzero()
+    #print("180 lons ",len(lin), len(lin[0]))
+    for k in range(0, len(lin[0])):
+      i = lin[1][k]
+      j = lin[0][k]
+      lons[j,i] += 1.*360.
+  
+  if ( lons.max() > 180. ):
+      lons -= 360.
+  #debug: print("lons: ",lons.max(), lons.min(), flush=True )
+  
+  #debug: for i in range(0,nx):
+  #debug:   print(i,lats[ny-1,i], lons[ny-1,i], lats[ny-2,i], lons[ny-2,i])
+
