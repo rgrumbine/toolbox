@@ -69,15 +69,19 @@ for tstep in range(0,40):
 
   #--------------------------------------------------------
   # define a subset to search within for paths
+  # NWP Domain:
   latmin = 64.0
-  latmax = 80.0
+  latmax = 82.0
   lonmin = 185.0
   lonmax = 290.0
 
   # Construct nodes -- brute force looping over all grid points:
-  nodemap = np.zeros((ny,nx),dtype="int")
+  # RG: Rtofs does this more elegantly, using masked arrays.
+  #     The coarser and regional cafs grid doesn't demand this the way 
+  #       the global, higher resolution RTOFS does
+  offmap = 0
+  nodemap = np.full((ny,nx),int(offmap), dtype="int")
   
-  k = int(1)
   #Not a directed graph
   G = netx.Graph()
   
@@ -87,6 +91,7 @@ for tstep in range(0,40):
   #4 -> weight by 1./(1.1-aice)
   cost_type = 4
   
+  k = int(1)
   for i in range(0,nx):
     for j in range(0,ny):
       #debug: if (k%1000 == 0):
@@ -115,45 +120,45 @@ for tstep in range(0,40):
         continue
   
       if (im >= 0):
-        if (nodemap[j,im] != 0):
+        if (nodemap[j,im] != offmap):
           weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[j,im], lon2 = lons[j,im], aice = aice[j,i])
           G.add_edge(n, nodemap[j,im], weight= weight)
           k += 1
   
       if (ip < nx):
-        if (nodemap[j,ip] != 0):
+        if (nodemap[j,ip] != offmap):
           weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[j,ip], lon2 = lons[j,ip], aice = aice[j,i])
           G.add_edge(n, nodemap[j,ip], weight = weight)
           k += 1
   
       if (jp < ny ):
-        if (nodemap[jp,i] != 0):
+        if (nodemap[jp,i] != offmap):
           weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jp,i], lon2 = lons[jp,i], aice = aice[j,i])
           G.add_edge(n, nodemap[jp,i], weight = weight)
           k += 1
         if (im >= 0):
-          if (nodemap[jp,im] != 0):
+          if (nodemap[jp,im] != offmap):
             weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jp,im], lon2 = lons[jp,im], aice = aice[j,i])
             G.add_edge(n, nodemap[jp,im], weight = weight)
             k += 1
         if (ip < nx):
-          if (nodemap[jp,ip] != 0):
+          if (nodemap[jp,ip] != offmap):
             weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jp,ip], lon2 = lons[jp,ip], aice = aice[j,i])
             G.add_edge(n, nodemap[jp,ip], weight = weight)
             k += 1
   
       if (jm >= 0 ):
-        if (nodemap[jm,i] != 0):
+        if (nodemap[jm,i] != offmap):
           weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jm,i], lon2 = lons[jm,i], aice = aice[j,i])
           G.add_edge(n, nodemap[jm,i], weight = weight)
           k += 1
         if (im >= 0):
-          if (nodemap[jm,im] != 0):
+          if (nodemap[jm,im] != offmap):
             weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jm,im], lon2 = lons[jm,im], aice = aice[j,i])
             G.add_edge(n, nodemap[jm,im], weight = weight)
             k += 1
         if (ip < nx):
-          if (nodemap[jm,ip] != 0):
+          if (nodemap[jm,ip] != offmap):
             weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jm,ip], lon2 = lons[jm,ip], aice = aice[j,i])
             G.add_edge(n, nodemap[jm,ip], weight = weight)
             k += 1
@@ -176,7 +181,6 @@ for tstep in range(0,40):
   #for j in range(0,ny):
   #  for i in range(0, nx):
   #      print(i, j, nodemap[j,i])
-  # nodemap = 0 when i,j not in map
   
   #exit(0)
   
@@ -220,7 +224,17 @@ for tstep in range(0,40):
   tlats = np.zeros((len(path)))
   
   kmlout = open("path_"+tag.strftime("%Y%m%d")+"_"+"{:d}".format((tstep+1)*6)+".kml","w")
-  #RG: Need kml header and footer information
+  #kml header:
+  print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", file=kmlout)
+  print("<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\">", file=kmlout)
+  print("<Folder>", file=kmlout)
+  print("<LookAt>", file=kmlout)
+  print("  <range>3000000</range>", file=kmlout)
+  print("  <latitude> 68.0 </latitude>", file=kmlout)
+  print("  <longitude> -127</longitude>", file=kmlout)
+  print("</LookAt>", file=kmlout)
+  print("    <Document id=\"1\">", file=kmlout)
+
   for k in range(0,len(path)):
   #  if (G.nodes[path[k]]['lon'] > 180.):
   #    tlon = G.nodes[path[k]]['lon']  - 360.
@@ -231,6 +245,12 @@ for tstep in range(0,40):
     tlats[k] = G.nodes[path[k]]['lat']
     print("<Placemark> <Point> <coordinates>",tlon,G.nodes[path[k]]['lat'],0.0,
           "</coordinates></Point></Placemark>", file=kmlout)
+
+  #Print footer:
+  print("    </Document>",file=kmlout)
+  print("</Folder>",file=kmlout)
+  print("</kml>",file=kmlout)
+
   
     #debug: exit(0)
   
@@ -246,5 +266,5 @@ maximum speed = 31 km/h
 cruising      = 26 km/h
 1.4 m ice     =  5.6 km/h
 
-At cruising speed, 2965 km = 114 hours; about 5 days vs. the 10 of model lead time
+At cruising speed, 2965 km = 114 hours; about 5 days vs. the 10 of CAFS model lead time
 """

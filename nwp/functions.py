@@ -131,3 +131,30 @@ def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, i2 = 0, j
     return 1
 
 #--------------------------------------------------------
+def kmlout_path(fname, G, path):
+  kmlout = open(fname,"w")
+  #Print header:
+  print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", file=kmlout)
+  print("<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\">", file=kmlout)
+  print("<Folder>", file=kmlout)
+  print("<LookAt>", file=kmlout)
+  print("  <range>3000000</range>", file=kmlout)
+  print("  <latitude> 68.0 </latitude>", file=kmlout)
+  print("  <longitude> -127</longitude>", file=kmlout)
+  print("</LookAt>", file=kmlout)
+  print("    <Document id=\"1\">", file=kmlout)
+  
+  for k in range(0,len(path)):
+    if (G.nodes[path[k]]['lon'] > 180.):
+      tlon = G.nodes[path[k]]['lon']  - 360.
+    else:
+      tlon = G.nodes[path[k]]['lon']
+    print("<Placemark> <Point> <coordinates>",tlon,G.nodes[path[k]]['lat'],0.0,
+          "</coordinates></Point></Placemark>", file=kmlout)
+  
+  #Print footer:
+  print("    </Document>",file=kmlout)
+  print("</Folder>",file=kmlout)
+  print("</kml>",file=kmlout)
+  kmlout.close()
+#--------------------------------------------------------

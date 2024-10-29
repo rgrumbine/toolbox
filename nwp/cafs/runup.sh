@@ -26,12 +26,13 @@ export OUTDIR=$HOME/rgdev/cafs_nwp
 
 #------------------------------------------------------
 tag=`date +"%Y%m%d"`
-#debug: 
-tag=20241022
+tag=`expr $tag - 1`
+tag=`$HOME/bin/dtgfix3 $tag`
+#debug: tag=20241022
 #tag=20220501
 
 #reverse -- now to past
-end=20220401
+end=20220901
 #debug: end=20241011
 
 while [ $tag -ge $end ]
