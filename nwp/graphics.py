@@ -60,7 +60,7 @@ def show( tlats, tlons, tag, hours = 6, cost = 2965):
   
   plt.scatter(tlons, tlats, transform = ccrs.PlateCarree(),  
               marker = ".", s = 10, color = "purple")
-  plt.savefig("nwp_"+tag.strftime("%Y%m%d")+"_"+"{:d}".format(hours)+".png")
+  plt.savefig("nwp_"+tag.strftime("%Y%m%d")+"_"+"{:03d}".format(hours)+".png")
   
   plt.close('all')
 

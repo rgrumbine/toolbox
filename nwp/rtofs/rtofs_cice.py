@@ -34,9 +34,7 @@ tag = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
 #aice  = fin.variables["aice"][0,:,:]
 
 # 2ds_ice
-# RG: for hhh = ...
-hhh=000
-fin = Dataset(base+"/rtofs."+tag.strftime("%Y%m%d")+"/rtofs_glo_2ds_f000_ice.nc","r")
+fin = Dataset("rtofs_glo_2ds_f000_ice.nc","r")
 nx = len(fin.dimensions['X'])
 ny = len(fin.dimensions['Y'])
 lons = fin.variables["Longitude"][:,:]
@@ -54,7 +52,6 @@ aice  = fin.variables["ice_coverage"][0,:,:]
 
 #--------------------------------------------------------------
 # Ensure lons are  <= 360.
-# RG: if hhh == 0
 wrap_lons(lons)
 
 #----------------------------------------------------------------
@@ -88,14 +85,13 @@ latmax = 82.0
 #lonmax = 290.0-360.
 lonmin = -175.0
 lonmax =  -70.0
-
 xmask = ma.masked_outside(lons, lonmin, lonmax)
 xin = xmask.nonzero()
 #debug: print('lons',len(xin), len(xin[0]), flush=True)
 xmask = ma.logical_and(xmask, ma.masked_outside(lats, latmin, latmax))
-#debug: xin = xmask.nonzero()
+xin = xmask.nonzero()
 #debug: print("number of points:", len(xin[0]), flush=True)
-# Also mask out nonvalues in aice
+
 xmask = ma.logical_and(xmask, aice < 1000.)
 xin = xmask.nonzero()
 #debug: print("number of active points", len(xin[0]), flush=True)
@@ -111,7 +107,7 @@ for k in range(0, len(xin[0])):
   i = xin[1][k]
   j = xin[0][k]
   #debug:
-  if (k%50000 == 0):
+  if (k%30000 == 0):
     print("adding nodes, k = ",k, flush=True)
   #debug print("node:",k,i,j,lats[j,i], lons[j,i], aice[j,i], flush=True)
   nodemap[j,i] = int(k)
@@ -207,7 +203,7 @@ if (not netx.has_path(G,start,finish )):
   #(i_finish, j_finish) = find(lons, lats, -103, 74.35)
   #orig (i_finish, j_finish) = find(lons, lats, -78.0, 74.0)
   #exit(1)
-  print("trying Bering strait to Banks island with ",i_finish, j_finish)
+  print("retrying with ",i_finish, j_finish)
   finish = nodemap[j_finish, i_finish]
 
 if (not netx.has_path(G, start, finish )):
@@ -239,9 +235,9 @@ print("",flush=True)
 #---------- Output  ---------------------------------
 
 #---------- -- kml     ---------------------------------
-#debug: tag=datetime.datetime(2024,10,18)
-outname = "path_"+tag.strftime("%Y%m%d")+"_"+"{:03d}".format(hhh)+".kml"
-kmlout_path(outname, G, path)
+tag=datetime.datetime(2024,10,18)
+
+kmlout_path("path.kml", G, path)
 
 #---------- -- Graphics -----------------------------
 show(tlats, tlons, tag, hours=0, cost = pseudo_length) 

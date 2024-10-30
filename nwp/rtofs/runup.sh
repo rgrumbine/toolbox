@@ -1,7 +1,7 @@
 #!/bin/sh
-#SBATCH -J nwp_cafs
-#SBATCH -e nwp_cafs.err
-#SBATCH -o nwp_cafs.out
+#SBATCH -J nwp_rtofs
+#SBATCH -e nwp_rtofs.err
+#SBATCH -o nwp_rtofs.out
 #SBATCH -t 7:55:00
 #  #SBATCH -t 0:25:00
 #SBATCH -q batch
@@ -13,6 +13,7 @@
 
 # Path to model output:
 export indir=/home/Robert.Grumbine/clim_data/rtofs/
+export base=$indir
 
 # location of python and support
 export exdir=/home/Robert.Grumbine/rgdev/toolbox/nwp
@@ -28,11 +29,12 @@ export OUTDIR=$HOME/rgdev/rtofs_nwp
 
 #------------------------------------------------------
 #tag=20220401
-tag=20241020
+#End of the v2.4 archive: end=20220912
+tag=20240908
 
 #reverse -- now to past
-#end=`date +"%Y%m%d"`
-end=20220401
+#end=20220401
+export end=20240401
 
 cd rtofs
 while [ $tag -ge $end ]
@@ -42,12 +44,12 @@ do
   mm=`echo $tag | cut -c5-6`
   dd=`echo $tag | cut -c7-8`
   if [ ! -f $OUTDIR/out.$tag ] ; then
-    time python3 rtofs.py $yy $mm $dd > $OUTDIR/out.$tag
+    time python3 rtofs_2ds.py $yy $mm $dd > $OUTDIR/out.$tag
   fi
-  if [ -f nwp_${tag}_6.png ] ; then
+  if [ -f nwp_${tag}_000.png ] ; then
     mv nwp_${tag}_*.png $OUTDIR
   fi  
-  if [ -f path_${tag}_6.kml ] ; then
+  if [ -f path_${tag}_000.kml ] ; then
     mv path_${tag}_*.kml $OUTDIR
   fi
 
