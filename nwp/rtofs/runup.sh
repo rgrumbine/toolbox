@@ -30,11 +30,12 @@ export OUTDIR=$HOME/rgdev/rtofs_nwp
 #------------------------------------------------------
 #tag=20220401
 #End of the v2.4 archive: end=20220912
-tag=20240908
+#tag=20241020
+export tag=20240911
 
 #reverse -- now to past
 #end=20220401
-export end=20240401
+export end=20240901
 
 cd rtofs
 while [ $tag -ge $end ]
@@ -43,9 +44,9 @@ do
   yy=`echo $tag | cut -c1-4`
   mm=`echo $tag | cut -c5-6`
   dd=`echo $tag | cut -c7-8`
-  if [ ! -f $OUTDIR/out.$tag ] ; then
+  #if [ ! -f $OUTDIR/out.$tag ] ; then
     time python3 rtofs_2ds.py $yy $mm $dd > $OUTDIR/out.$tag
-  fi
+  #fi
   if [ -f nwp_${tag}_000.png ] ; then
     mv nwp_${tag}_*.png $OUTDIR
   fi  

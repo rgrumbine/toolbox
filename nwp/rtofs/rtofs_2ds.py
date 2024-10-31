@@ -46,8 +46,14 @@ lonmax =  -70.0
 # RG: for hhh = ...
 hhh=000
 for hhh in range (0, 193, 6):
-  fin = Dataset(base+"/rtofs."+tag.strftime("%Y%m%d")+
-          "/rtofs_glo_2ds_f"+"{:03d}".format(hhh)+"_ice.nc","r")
+  fname = base+"/rtofs."+tag.strftime("%Y%m%d")+ "/rtofs_glo_2ds_f"+"{:03d}".format(hhh)+"_ice.nc"
+
+  try:
+    fin = Dataset(fname,"r")
+  except:
+    print("Could not open ",fname, flush=True)
+    exit(1)
+
   if (hhh == 0):
     nx = len(fin.dimensions['X'])
     ny = len(fin.dimensions['Y'])
