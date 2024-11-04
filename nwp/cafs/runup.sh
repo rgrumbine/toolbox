@@ -29,10 +29,10 @@ tag=`date +"%Y%m%d"`
 tag=`expr $tag - 1`
 tag=`$HOME/bin/dtgfix3 $tag`
 #debug: tag=20241022
-#tag=20220501
+tag=20241028
 
 #reverse -- now to past
-end=20220901
+end=20241028
 #debug: end=20241011
 
 while [ $tag -ge $end ]
@@ -42,10 +42,10 @@ do
   yy=`echo $tag | cut -c1-4`
   mm=`echo $tag | cut -c5-6`
   dd=`echo $tag | cut -c7-8`
-  if [ ! -f $OUTDIR/${yy}/out.$tag -o ! -f $OUTDIR/${yy}/nwp_${tag}_240.png \
-         -o ! -f $OUTDIR/${yy}/path_${tag}_240.kml ] ; then
+  #if [ ! -f $OUTDIR/${yy}/out.$tag -o ! -f $OUTDIR/${yy}/nwp_${tag}_240.png \
+  #       -o ! -f $OUTDIR/${yy}/path_${tag}_240.kml ] ; then
     time python3 new_cafs.py $yy $mm $dd > $OUTDIR/${yy}/out.$tag
-  fi
+  #fi
   if [ -f nwp_${tag}_240.png ] ; then
     mv nwp_${tag}_*.png $OUTDIR/${yy}
   fi  
