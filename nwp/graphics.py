@@ -45,7 +45,7 @@ def show( tlats, tlons, tag, hours = 6, cost = 2965, reference = 2965):
 
   plt.annotate("route cost "+"{:.0f}".format(cost)+" vs "
                             +"{:.0f}".format(reference)+" of completely ice-free path",
-          (0.125, 0.10),  xycoords = 'figure fraction', size = 24 )
+          (0.125, 0.10),  xycoords = 'figure fraction', size = 16 )
 
   ax.set_extent((-170, -75, 60, 80), crs=ccrs.PlateCarree())
   

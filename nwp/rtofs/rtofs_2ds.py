@@ -241,4 +241,4 @@ for hhh in range (0, 193, 6):
   kmlout_path(outname, G, path)
   
   #---------- -- Graphics -----------------------------
-  show(tlats, tlons, tag, hours=hhh, cost = pseudo_length, reference = 3698.) 
+  show(tlats, tlons, tag, hours=hhh, cost = pseudo_length, reference = 3691.) 

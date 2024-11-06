@@ -22,10 +22,17 @@ base = os.environ['base']
 #debug: print("args ",sys.argv, flush=True)
 tag = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
 
+#debug -- set up a bogus line to see where it starts to fail to be plotted:
+tlons = np.arange(-170., -75., 0.1)
+tlats = np.linspace(60, 80, len(tlons))
+pseudo_length = 5000
+#debug: show(tlats, tlons, tag, hours = 0, cost = pseudo_length)
+#debug: exit(0)
+
 dname = tag.strftime("%Y%m%d")
 fname = "REB2."+tag.strftime("%Y-%m-%d") + ".nc"
 if (not os.path.exists(base+'/'+dname+"/"+fname) ):
-  print("could not open ",base+'/'+dname+"/"+fname)
+  print("could not open ",base+'/'+dname+"/"+fname, flush=True)
   exit(1)
 
 fin = Dataset(base+'/'+dname+"/"+fname, "r")
@@ -35,6 +42,8 @@ lons = fin.variables["TLON"][:,:]
 lats = fin.variables["TLAT"][:,:]
 tarea = fin.variables["tarea"][:,:]
 
+#debug: show(tlats, tlons, tag, hours = 300, cost = pseudo_length)
+#debug: exit(0)
 
 for tstep in range(0,40):
 #debug: for tstep in range(0,2):
@@ -81,7 +90,10 @@ for tstep in range(0,40):
   #       the global, higher resolution RTOFS does
   offmap = 0
   nodemap = np.full((ny,nx),int(offmap), dtype="int")
-  
+ 
+  #debug:  show(tlats, tlons, tag, hours = 400+tstep, cost = pseudo_length)
+  #debug:  exit(0)
+
   #Not a directed graph
   G = netx.Graph()
   
@@ -206,30 +218,39 @@ for tstep in range(0,40):
   if (not netx.has_path(G,start,finish )):
     exit(1)
 
+  #debug:  show(tlats, tlons, tag, hours = 500+tstep, cost = pseudo_length)
+  #debug:  exit(0)
+
   #------------------------------------------------
   path = netx.dijkstra_path(G,start, finish)
   print("dijkstra length and score ", len(path), 
          netx.dijkstra_path_length(G, start, finish), flush=True)
   pseudo_length = netx.dijkstra_path_length(G, start, finish)
   
+  graphic_lats = np.zeros((len(path)))
+  graphic_lons = np.zeros((len(path)))
   for k in range(0,len(path)):
     print(k,G.nodes[path[k]])
+    graphic_lats[k] = G.nodes[path[k]]['lat']
+    graphic_lons[k] = G.nodes[path[k]]['lon']
     #print(k,
     #      G.nodes[path[k]]['i'], G.nodes[path[k]]['j'],
     #      G.nodes[path[k]]['lon'], G.nodes[path[k]]['lat'],
     #      G.nodes[path[k]]['aice'], G.nodes[path[k]]['hi'],
     #      flush=True )
   print("",flush=True)
-  tlons = np.zeros((len(path)))
-  tlats = np.zeros((len(path)))
   
 #----------- kml output ---------------------------------
   kmlout_path("path_"+tag.strftime("%Y%m%d")+"_"+"{:d}".format((tstep+1)*6)+".kml", G, path)
 
-    #debug: exit(0)
-  
 #----------- Graphics ---------------------------------
-  show(tlats, tlons, tag, hours = (tstep+1)*6, cost = pseudo_length)
+  #debug:  show(tlats, tlons, tag, hours = 600+tstep, cost = pseudo_length)
+  #debug:  exit(0)
+
+  show(graphic_lats, graphic_lons, tag, hours = (tstep+1)*6, cost = pseudo_length)
+  del graphic_lats, graphic_lons
+  #debug:  exit(0)
+
 #-----------------------------------------------------
 
 
