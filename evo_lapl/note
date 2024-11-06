@@ -1,0 +1,10 @@
+Demonstrator of evolving solver for laplace's equation and comparing with convolutional neural net approach
+
+* Main -- read in data file, land mask, extract Eurasia and mark land pts
+* Delta-finder -- evaluate laplacean on grid
+* SOR -- successive overrelaxation 
+      -- (k, w) where k = range in second derivative, w = sor weight
+      -- (k, w) as above, but with depending on location
+* Scorer -- evaluate max abs err, rmse <-- part of laplacean computation
+
+Define 'truth' as result of k = 1, w = 1 to tolerance 1.e-6(?) max, rms

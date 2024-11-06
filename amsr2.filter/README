@@ -1,0 +1,16 @@
+reqt.txt  -- suitable for python3 -m pip install -r reqt.txt
+nest      -- source nest, to build module and python environments
+noodle.py -- compute bayes stats
+quick_thin.py -- split matchup files to f11, f10, f01, f00 for later use
+              --   has some filtering that can/should be used pre-emptively in runup 
+
+seaice_fixed_fields.nc -- fixed fields in netcdf
+seaice_totext -- from amsr2.acquire, produce text files from binary
+
+get.sh
+
+restart.py
+runup.py
+thin.sh
+
+statview.py -- general viewer for statistics from python3 -m cProfile -o prof.stats PROG.py ...
