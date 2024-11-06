@@ -62,8 +62,12 @@ def apply_filters(filts, matchups, show = True):
           print("filt ",ifilt, "match k",k, matchups[k].show(), flush=True )
     if(to_filter):
       applied += 1
+<<<<<<< HEAD
   #debug: print("tot applied: ",applied,flush=True)
   return applied
+=======
+  print("tot applied: ",applied,flush=True)
+>>>>>>> develop
         
 
 
@@ -85,6 +89,15 @@ for line in fin:
   tfilters[k] = copy.deepcopy(tmp)
   k += 1
 
+<<<<<<< HEAD
+=======
+#debug: print("k, len",k, len(tfilters), flush=True)
+#debug: tfilters[0].show()
+#debug: tfilters[int(k/2)].show()
+#debug: 
+#debug: exit(0)
+
+>>>>>>> develop
 # go through filters
 for tchan in range(0, x.ntb):
   #debug: print("tchan = ",tchan, flush=True)
@@ -253,6 +266,7 @@ notbogus.append(tbfilt(5, 244, 0.010314302987781668, 0.267519375232369))
 
 nfilt=len(notbogus)
 show = False
+<<<<<<< HEAD
 print("len notbogus filters: ",len(notbogus), "\n")
 
 print("tot match 00 ",len(match00), end="" )
@@ -270,4 +284,19 @@ print(" filter applied: ",n, float(n)/float(len(match10)) )
 print("tot match 11 ",len(match11), end="" )
 n = apply_filters(notbogus, match11, show)
 print(" filter applied: ",n, float(n)/float(len(match11)) )
+=======
+print("len notbogus: ",len(notbogus))
+
+print("tot match 00 ",len(match00) )
+apply_filters(notbogus, match00, show)
+
+print("tot match 01 ",len(match01) )
+apply_filters(notbogus, match01, show)
+
+print("tot match 10 ",len(match10)  )
+apply_filters(notbogus, match10, show)
+
+print("tot match 11 ",len(match11) )
+apply_filters(notbogus, match11, show)
+>>>>>>> develop
 
