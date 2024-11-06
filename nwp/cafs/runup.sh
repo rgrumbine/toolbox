@@ -5,24 +5,28 @@
 #SBATCH -t 7:55:00
 #  #SBATCH -t 0:25:00
 #SBATCH -q batch
-#SBATCH -A marine-cpu
-#  #SBATCH -A fv3-cpu
+# change this to your #SBATCH -A marine-cpu
 #SBATCH -N 1
 #SBATCH --mail-type FAIL
 #SBATCH --mail-user USER@system
 
-# Path to cafs output:
+#------------------------------------------------------
+
+# Path to cafs output (used internally to program -- change this)
 export base=/home/Robert.Grumbine/clim_data/cafs/
 
-# This must be more or less exactly this:
-source /home/Robert.Grumbine/rgref/env3.12/bin/activate
-export PYTHONPATH=$PYTHONPATH:/home/Robert.Grumbine/rgdev/toolbox/nwp
-# location of python and support
+# location of python and support -- change this to your location
 cd /home/Robert.Grumbine/rgdev/toolbox/nwp/cafs
 
-#These can be anything of convenience
+# Change to anything of convenience
 export MPLCONFIGDIR=$HOME/rgexpt/
 export OUTDIR=$HOME/rgdev/cafs_nwp
+
+#------------------------------------------------------
+
+# These must be more or less exactly this:
+source /home/Robert.Grumbine/rgref/env3.12/bin/activate
+export PYTHONPATH=$PYTHONPATH:/home/Robert.Grumbine/rgdev/toolbox/nwp
 
 #------------------------------------------------------
 tag=`date +"%Y%m%d"`
@@ -32,7 +36,7 @@ tag=`$HOME/bin/dtgfix3 $tag`
 tag=20241028
 
 #reverse -- now to past
-end=20241028
+end=20241104
 #debug: end=20241011
 
 while [ $tag -ge $end ]
