@@ -1,0 +1,20 @@
+NIC considers up to 40% to be navigable
+Plot NIC paths, including NSR
+Expand to NSR paths
+Show shaded ice concs
+
+Overlay both cafs and rtofs and ...
+Express confidence between multiple models' concentrations
+
+# --------- from inline ----------------------------
+return 1 #RG: temporary
+
+# RG: RTOFS: auxiliary file with lats, lons wrapped in to range
+# RG: RTOFS: auxiliary file with tmask, tarea for rtofs grid(s)
+# RG: RTOFS, UFS: tripolar grid means adjacent geographic points aren't always i,j adjacent
+# RG: RTOFS: a guess about the archipelago seam
+
+# RG: CAFS: is baffin bay insize cafs domain?
+# RG: CAFS: Need a findij function (65.68 N, -168.59), (64.0, -78.0) 
+# RG: CAFS: Rtofs does this more elegantly, using masked arrays.
+

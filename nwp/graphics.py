@@ -19,7 +19,7 @@ import cartopy.feature as cfeature
 matplotlib.use('Agg') #for batch mode
 #matplotlib.use('Qt5Agg') #for interactive mode
 
-def show( tlats, tlons, tag, hours = 6, cost = 2965):
+def show( tlats, tlons, tag, hours = 6, cost = 2965, reference = 2965):
 
   proj = ccrs.LambertConformal(central_longitude = -120, 
                                central_latitude = 75., cutoff = 45.)
@@ -43,8 +43,9 @@ def show( tlats, tlons, tag, hours = 6, cost = 2965):
 #plt.annotate("label 4", (.05, .85), xycoords = 'figure fraction', size = 16 )
 #plt.annotate("label 5", (.05, .90), xycoords = 'figure fraction', size = 16 )
 
-  plt.annotate("route cost "+"{:.0f}".format(cost)+" vs 2965 of completely ice-free path",
-          (0.25, 0.10),  xycoords = 'figure fraction', size = 16 )
+  plt.annotate("route cost "+"{:.0f}".format(cost)+" vs "
+                            +"{:.0f}".format(reference)+" of completely ice-free path",
+          (0.125, 0.10),  xycoords = 'figure fraction', size = 16 )
 
   ax.set_extent((-170, -75, 60, 80), crs=ccrs.PlateCarree())
   
@@ -60,7 +61,7 @@ def show( tlats, tlons, tag, hours = 6, cost = 2965):
   
   plt.scatter(tlons, tlats, transform = ccrs.PlateCarree(),  
               marker = ".", s = 10, color = "purple")
-  plt.savefig("nwp_"+tag.strftime("%Y%m%d")+"_"+"{:d}".format(hours)+".png")
+  plt.savefig("nwp_"+tag.strftime("%Y%m%d")+"_"+"{:03d}".format(hours)+".png")
   
   plt.close('all')
 
