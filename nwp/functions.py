@@ -7,6 +7,19 @@ import numpy as np
 import numpy.ma as ma
 
 #--------------------------------------------------------
+"""
+Functions present:
+
+def find(lons, lats, lonin, latin):
+def kmlout_path(fname, G, path):
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, 
+               i2 = 0, j2 = 0, aice = 0, hi = 0):
+def calculateCost(PolarClass, iceCon, iceThick):
+
+"""
+#--------------------------------------------------------
 def find(lons, lats, lonin, latin):
   #debug print("lon, lat in:",lonin, latin, flush=True)
   tmpx = lons - lonin
@@ -131,3 +144,67 @@ def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, i2 = 0, j
     return 1
 
 #--------------------------------------------------------
+def kmlout_path(fname, G, path):
+  kmlout = open(fname,"w")
+  #Print header:
+  print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", file=kmlout)
+  print("<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\">", file=kmlout)
+  print("<Folder>", file=kmlout)
+  print("<LookAt>", file=kmlout)
+  print("  <range>3000000</range>", file=kmlout)
+  print("  <latitude> 68.0 </latitude>", file=kmlout)
+  print("  <longitude> -127</longitude>", file=kmlout)
+  print("</LookAt>", file=kmlout)
+  print("    <Document id=\"1\">", file=kmlout)
+  
+  for k in range(0,len(path)):
+    if (G.nodes[path[k]]['lon'] > 180.):
+      tlon = G.nodes[path[k]]['lon']  - 360.
+    else:
+      tlon = G.nodes[path[k]]['lon']
+    print("<Placemark> <Point> <coordinates>",tlon,G.nodes[path[k]]['lat'],0.0,
+          "</coordinates></Point></Placemark>", file=kmlout)
+  
+  #Print footer:
+  print("    </Document>",file=kmlout)
+  print("</Folder>",file=kmlout)
+  print("</kml>",file=kmlout)
+  kmlout.close()
+#--------------------------------------------------------
+def wrap_lons(lons):
+
+  if (lons.max() > 360. or lons.min() < -360. ):
+    lmask = ma.masked_array(lons > 2.*360.+180.)
+    lin = lmask.nonzero()
+    for k in range(0, len(lin[0])):
+      i = lin[1][k]
+      j = lin[0][k]
+      lons[j,i] -= 3.*360.
+    #debug: print("lons: ",lons.max(), lons.min(), flush=True )
+  
+    lmask = ma.masked_array(lons > 1.*360.+180.)
+    lin = lmask.nonzero()
+    for k in range(0, len(lin[0])):
+      i = lin[1][k]
+      j = lin[0][k]
+      lons[j,i] -= 2.*360.
+    #debug: print("lons: ",lons.max(), lons.min(), flush=True )
+  
+    #most (10.6 million of 14.7 million) rtofs points have lons > 180, so subtract 360 and
+    # then correct the smaller number that are < -180 as a result
+    lons -= 360.
+    lmask = ma.masked_array(lons < -180.)
+    lin = lmask.nonzero()
+    #print("180 lons ",len(lin), len(lin[0]))
+    for k in range(0, len(lin[0])):
+      i = lin[1][k]
+      j = lin[0][k]
+      lons[j,i] += 1.*360.
+  
+  if ( lons.max() > 180. ):
+      lons -= 360.
+  #debug: print("lons: ",lons.max(), lons.min(), flush=True )
+  
+  #debug: for i in range(0,nx):
+  #debug:   print(i,lats[ny-1,i], lons[ny-1,i], lats[ny-2,i], lons[ny-2,i])
+
