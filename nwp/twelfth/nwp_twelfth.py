@@ -67,11 +67,11 @@ for j in range(0,ny):
 
     if (im >= 0):
       if (nodemap[j,im] != 0):
-        G.add_edge(n, nodemap[j,im], weight=0.)
+        G.add_edge(n, nodemap[j,im], weight= 1.)
         k += 1
     if (ip < nx):
       if (nodemap[j,ip] != 0):
-        G.add_edge(n, nodemap[j,ip], weight = 0.)
+        G.add_edge(n, nodemap[j,ip], weight = 1.)
         k += 1
 
     if (jp < ny ):

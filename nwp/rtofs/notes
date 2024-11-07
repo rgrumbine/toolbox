@@ -1,0 +1,12 @@
+return 1 #RG: temporary
+
+# RG: a guess about the archipelago seam
+
+# RG: auxiliary file with lats, lons wrapped in to range
+# RG: auxiliary file with tmask, tarea for rtofs grid(s)
+
+# RG: is baffin bay insize cafs domain?
+# RG: Need a findij function (65.68 N, -168.59), (64.0, -78.0) 
+
+# RG: Rtofs does this more elegantly, using masked arrays.
+# RG: tripolar grid means adjacent geographic points aren't always i,j adjacent
