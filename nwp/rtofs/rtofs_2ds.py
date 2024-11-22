@@ -18,7 +18,7 @@ from graphics import *
 base = os.environ['base']
 tag = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
 
-# limit area to keep run time manageable -- NWP Domain
+# limit domain to keep run time manageable -- NWP domain
 latmin = 64.0
 latmax = 82.0
 #lonmin = 185.0-360.

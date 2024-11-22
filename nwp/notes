@@ -5,6 +5,17 @@ Show shaded ice concs
 
 Overlay both cafs and rtofs and ...
 Express confidence between multiple models' concentrations
+# --------- ------------- ----------------------------
+"""
+Reference:
+USCG Healy
+maximum speed = 31 km/h
+cruising      = 26 km/h
+1.4 m ice     =  5.6 km/h
+
+At cruising speed, 2965 km = 114 hours; about 5 days vs. the 10 of CAFS model lead time
+"""
+
 
 # --------- from inline ----------------------------
 return 1 #RG: temporary
