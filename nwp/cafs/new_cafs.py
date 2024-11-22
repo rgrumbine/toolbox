@@ -16,18 +16,30 @@ from functions import *
 from graphics import *
 
 #--------------------------------------------------------
+# define a subset to search within for paths
+# NWP Domain:
+latmin = 64.0
+latmax = 82.0
+lonmin = 185.0
+lonmax = 290.0
+
+def cafs_fname(base, tag):
+    fname = base+'/'+"/"+"REB2."+tag.strftime("%Y-%m-%d") + ".nc"
+    return fname
+#--------------------------------------------------------
 base = os.environ['base']
 
 tag = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
 
-
-#dname = tag.strftime("%Y%m%d")
-fname = "REB2."+tag.strftime("%Y-%m-%d") + ".nc"
-if (not os.path.exists(base+'/'+"/"+fname) ):
-  print("could not open ",base+'/'+"/"+fname, flush=True)
+fname = cafs_fname(base, tag)
+#if (not os.path.exists(base+'/'+"/"+fname) ):
+#  print("could not open ",base+'/'+"/"+fname, flush=True)
+if (not os.path.exists(fname) ):
+  print("could not open "+fname, flush=True)
   exit(1)
 
-fin = Dataset(base+'/'+"/"+fname, "r")
+fin = Dataset(fname, "r")
+
 nx = len(fin.dimensions["ni"])
 ny = len(fin.dimensions["nj"])
 lons = fin.variables["TLON"][:,:]
@@ -64,14 +76,7 @@ for tstep in range(0,40):
     i = indices[1][k]
     land[j,i] = 0.0 
 
-  #--------------------------------------------------------
-  # define a subset to search within for paths
-  # NWP Domain:
-  latmin = 64.0
-  latmax = 82.0
-  lonmin = 185.0
-  lonmax = 290.0
-
+  #------- Universal -----------------------------------------
   # Construct nodes -- brute force looping over all grid points:
   # RG: Rtofs does this more elegantly, using masked arrays.
   #     The coarser and regional cafs grid doesn't demand this the way 
@@ -178,8 +183,8 @@ for tstep in range(0,40):
 
   #------------------------------------------------
   path = netx.dijkstra_path(G,start, finish)
-  print("dijkstra length and score ", len(path), 
-         netx.dijkstra_path_length(G, start, finish), flush=True)
+  #debug: print("dijkstra length and score ", len(path), 
+  #debug:        netx.dijkstra_path_length(G, start, finish), flush=True)
   pseudo_length = netx.dijkstra_path_length(G, start, finish)
   
   graphic_lats = np.zeros((len(path)))

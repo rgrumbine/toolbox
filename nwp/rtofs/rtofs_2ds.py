@@ -14,10 +14,7 @@ from netCDF4 import Dataset
 from functions import *
 from graphics import *
 
-#--------------------------------------------------------------
-base = os.environ['base']
-tag = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
-
+# semi-universal constants -------------------------------------
 # limit domain to keep run time manageable -- NWP domain
 latmin = 64.0
 latmax = 82.0
@@ -25,6 +22,10 @@ latmax = 82.0
 #lonmax = 290.0-360.
 lonmin = -175.0
 lonmax =  -70.0
+
+#---------- somewhat particular to model -------------------------------------
+base = os.environ['base']
+tag = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
 
 
 # RG: auxiliary file with tmask, tarea for rtofs grid(s)
@@ -42,11 +43,19 @@ lonmax =  -70.0
 #sst   = fin.variables["sst"][0,:,:]
 #aice  = fin.variables["aice"][0,:,:]
 
+# RG: define a function to take date and hour, return file name
+def rtofs_fname(base, tag, hhh):
+  fname = base+"/rtofs."+tag.strftime("%Y%m%d")+ "/rtofs_glo_2ds_f"+"{:03d}".format(hhh)+"_ice.nc"
+  return fname
+
+# RG: define dictionary for nx, ny, lats, lons, aice -- moddef as for gross checks
+
 # 2ds_ice
-# RG: for hhh = ...
+#---------- loop over model's time span -------------------------------------
 hhh=000
 for hhh in range (0, 193, 6):
-  fname = base+"/rtofs."+tag.strftime("%Y%m%d")+ "/rtofs_glo_2ds_f"+"{:03d}".format(hhh)+"_ice.nc"
+  #fname = base+"/rtofs."+tag.strftime("%Y%m%d")+ "/rtofs_glo_2ds_f"+"{:03d}".format(hhh)+"_ice.nc"
+  fname = rtofs_fname(base, tag, hhh)
 
   try:
     fin = Dataset(fname,"r")
@@ -62,14 +71,14 @@ for hhh in range (0, 193, 6):
     # Ensure lons are  <= 360.
     wrap_lons(lons)
     #debug: print("lons: ",lons.max(), lons.min() )
-    #debug: print("lats: ",lats.max(), lats.min() )
+    #debug: print("lats: ",lats.max(), lats.min(), flush=True )
   
   #not available in 2ds_ice: sst   = fin.variables["sst"][0,:,:]
   aice  = fin.variables["ice_coverage"][0,:,:]
   #debug: print("aice: ",aice.max(), aice.min(), flush=True )
 
   #debug: exit(0)
-  #debug: check distance of ice-free arctic  #aice.fill(0.)
+  #debug: check distance of ice-free arctic  -- cost_type = 2
 
   #----------------------------------------------------------------
   #start in Bering strait
@@ -117,9 +126,7 @@ for hhh in range (0, 193, 6):
   print("Done adding nodes, k=",k, flush=True)
   #debug: exit(0)
 
-  #---------------------------------------------------------
-  # RG: tripolar grid means adjacent geographic points aren't always i,j adjacent
-  # fix!
+  #---------- Universal --------------------------------------
   # Construct edges between nodes:
   
   #cost_type = 
@@ -184,8 +191,7 @@ for hhh in range (0, 193, 6):
           weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jm,ip], lon2 = lons[jm,ip], aice = aice[j,i])
           G.add_edge(n, nodemap[jm,ip], weight = weight)
   
-  #debug:
-  print("Have constructed graph, number of nodes, edges =",k, len(G.edges), flush=True)
+  #debug: print("Have constructed graph, number of nodes, edges =",k, len(G.edges), flush=True)
   #debug: exit(0)
 
 #--------------------------------------------------------------
@@ -193,7 +199,7 @@ for hhh in range (0, 193, 6):
   start  = nodemap[j_bering, i_bering]
   finish = nodemap[j_finish, i_finish]
 
-  print(i_bering, j_bering, i_finish, j_finish, start, finish, nodemap[j_bering, i_bering], nodemap[j_finish, i_finish], flush=True)
+  #debug: print(i_bering, j_bering, i_finish, j_finish, start, finish, nodemap[j_bering, i_bering], nodemap[j_finish, i_finish], flush=True)
 
   print(G.nodes[start])
   print(G.nodes[finish])
@@ -241,4 +247,4 @@ for hhh in range (0, 193, 6):
   kmlout_path(outname, G, path)
   
   #---------- -- Graphics -----------------------------
-  show(tlats, tlons, tag, hours=hhh, cost = pseudo_length, reference = 3691.) 
+  show(tlats, tlons, tag, hours=hhh, cost = pseudo_length, reference = 3686.) 
