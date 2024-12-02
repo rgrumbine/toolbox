@@ -29,13 +29,13 @@ pseudo_length = 5000
 #debug: show(tlats, tlons, tag, hours = 0, cost = pseudo_length)
 #debug: exit(0)
 
-dname = tag.strftime("%Y%m%d")
+#dname = tag.strftime("%Y%m%d")
 fname = "REB2."+tag.strftime("%Y-%m-%d") + ".nc"
-if (not os.path.exists(base+'/'+dname+"/"+fname) ):
-  print("could not open ",base+'/'+dname+"/"+fname, flush=True)
+if (not os.path.exists(base+'/'+"/"+fname) ):
+  print("could not open ",base+'/'+"/"+fname, flush=True)
   exit(1)
 
-fin = Dataset(base+'/'+dname+"/"+fname, "r")
+fin = Dataset(base+'/'+"/"+fname, "r")
 nx = len(fin.dimensions["ni"])
 ny = len(fin.dimensions["nj"])
 lons = fin.variables["TLON"][:,:]
