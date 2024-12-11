@@ -1,0 +1,2 @@
+more efficient -- establish the nodes and edges only once, only update properties (aice) each time step
+
