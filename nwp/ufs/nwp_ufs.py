@@ -55,36 +55,7 @@ print("lons: ",lons.max(), lons.min() )
 
 #exit(0)
 #----------------------------------------------------------------
-#print("nx,ny,nx*ny:",nx,ny,nx*ny)
-def find(lons, lats, lonin, latin):
-  #debug print("lon, lat in:",lonin, latin, flush=True)
-  tmpx = lons - lonin
-  tmpy = lats - latin
-  #debug print("x ",tmpx.max(), tmpx.min(), lons.max(), lons.min(), flush=True )
-
-  xmask = ma.masked_outside(tmpx, -0.5, 0.5)
-  xin = xmask.nonzero()
-  wmask = ma.logical_and(xmask, ma.masked_outside(tmpy, +0.5, -0.5) )
-  win = wmask.nonzero()
-
-  imin = -1
-  jmin = -1
-  dxmin = 999.
-  dymin = 999.
-  dmin  = 999.
-  for k in range(0, len(win[0]) ):
-    i = win[1][k]
-    j = win[0][k]
-    #debug print(k,i,j,abs(tmpx[j,i]), abs(tmpy[j,i]), dxmin, dymin, dmin, flush=True)
-    #if (abs(tmpx[j,i]) < dxmin and abs(tmpy[j,i]) < dymin):
-    if (sqrt(tmpx[j,i]**2 + tmpy[j,i]**2) < dmin):
-      imin = i
-      jmin = j
-      dxmin = abs(tmpx[j,i])
-      dymin = abs(tmpy[j,i])
-      dmin  = sqrt(tmpx[j,i]**2 + tmpy[j,i]**2)
-  #print("dmin:",imin, jmin, dmin, dxmin, dymin)
-  return (imin,jmin)
+from functions import *
 
 #useful for checking where seam is
 #tlat = 74.0

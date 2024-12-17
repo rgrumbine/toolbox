@@ -115,7 +115,7 @@ print("finish",i_finish, j_finish)
 #exit(0)
 #--------------------------------------------------------------
 
-# Construct nodes -- limit area to keep run time manageable:
+# Construct nodes, mask -- limit area to keep run time manageable:
 latmin = 65.0
 latmax = 88.0
 #lonmin = 185.0-360.
@@ -135,7 +135,8 @@ xin = xmask.nonzero()
 
 #exit(0)
 
-
+#---------------------------------------------------------
+# make_nodes(G, nodemap, xin, lats, lons, aice):
 #Not a directed graph
 G = netx.Graph()
 

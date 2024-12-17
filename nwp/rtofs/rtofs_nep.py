@@ -12,7 +12,7 @@ from netCDF4 import Dataset
 
 # User-written
 from functions import *
-from graphics import *
+from nep_graphics import *
 
 # semi-universal constants -------------------------------------
 # limit domain to keep run time manageable -- NWP domain
@@ -20,13 +20,34 @@ latmin = 64.0
 latmax = 82.0
 #lonmin = 185.0-360.
 #lonmax = 290.0-360.
-lonmin = -175.0
-lonmax =  -70.0
+# NEP domain
+lonmin = -180.0
+lonmax =  180.0
+
+# Locations:
+Bering_Strait = [-168.43, 65.46]
+
+#NWP points
+S_Banks_Island = [-126, 71.0]
+N_Banks_Island = [-124.0, 75.1]
+NWP_Central    = [-103.0, 74.35]
+#NWP Terminus
+Baffin_Bay = [-75.50, 73.97 ]
+
+Hammerfest = [ 21.4, 71.4 ]
+
+Wrangel_Strait = [ 178.0, 70.3 ]
+S_Anzhu_Islands = [ 153.7, 73.1 ]
+N_Anzhu_Islands = [ 154.3, 77.0 ] 
+S_Novaya_Zemlya = [  58.0, 70.4 ] 
+N_Novaya_Zemlya = [  68.9, 77.2 ] 
+
+#exit(0)
 
 #---------- somewhat particular to model -------------------------------------
+
 base = os.environ['base']
 tag = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
-
 
 # RG: auxiliary file with tmask, tarea for rtofs grid(s)
 # RG: auxiliary file with lats, lons wrapped in to range
@@ -53,7 +74,8 @@ def rtofs_fname(base, tag, hhh):
 # 2ds_ice
 #---------- loop over model's time span -------------------------------------
 hhh=000
-for hhh in range (0, 193, 6):
+#for hhh in range (0, 193, 6):
+for hhh in range (0, 13, 6):
   #fname = base+"/rtofs."+tag.strftime("%Y%m%d")+ "/rtofs_glo_2ds_f"+"{:03d}".format(hhh)+"_ice.nc"
   fname = rtofs_fname(base, tag, hhh)
 
@@ -82,32 +104,29 @@ for hhh in range (0, 193, 6):
 
   #----------------------------------------------------------------
   #start in Bering strait
-  (i_bering, j_bering) = find(lons, lats, -168.59, 65.68) #Bering Strait
-  #(i_bering, j_bering) = find(lons, lats, -126, 71.0) # S of banks island
-  #(i_bering, j_bering) = find(lons, lats, -124.0, 75.1) # N of banks island
-  #(i_bering, j_bering) = find(lons, lats, -103.0, 74.35) # Central passage
+  (i_bering, j_bering) = find(lons, lats, Bering_Strait[0], Bering_Strait[1]) 
   print("bering:",i_bering,j_bering, flush=True)
   
-  #finish in ... Baffin Bay
-  (i_finish, j_finish) = find(lons, lats, -74.0, 74.0)
+  #Finish ...:
+  (i_finish, j_finish) = find(lons, lats, Hammerfest[0], Hammerfest[1])
   print("finish",i_finish, j_finish, flush=True)
   
   #debug: exit(0)
   #--------------------------------------------------------------
-  # Mask out areas outside NWP domain
+  # Mask out areas outside domain
   xmask = ma.masked_outside(lons, lonmin, lonmax)
   xin = xmask.nonzero()
-  #debug: print('lons',len(xin), len(xin[0]), flush=True)
+  
   xmask = ma.logical_and(xmask, ma.masked_outside(lats, latmin, latmax))
-  #debug: xin = xmask.nonzero()
-  #debug: print("number of points:", len(xin[0]), flush=True)
+
   # Also mask out nonvalues in aice
   xmask = ma.logical_and(xmask, aice < 1000.)
   xin = xmask.nonzero()
-  #debug: print("number of active points", len(xin[0]), flush=True)
+  #debug: 
+  print("number of active points", len(xin[0]), flush=True)
   #debug: exit(0)
 
-  #----------------------------- Begin Graph --------------------
+  #----------------------------- Begin Graph ---------------------------------------
   #Not a directed graph
   G = netx.Graph()
   
@@ -248,3 +267,5 @@ for hhh in range (0, 193, 6):
   
   #---------- -- Graphics -----------------------------
   show(tlats, tlons, tag, hours=hhh, cost = pseudo_length, reference = 3686.) 
+
+  # ------------ Geopandas --> shapefile --------------
