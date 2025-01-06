@@ -134,7 +134,7 @@ def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, i2 = 0, j
       return 1 #RG: temporary
   elif (case == 4):
     if (lon1 == 0 and lat1 == 0 and lon2 == 0 and lat2 == 0):
-      print("Must give lat,lon of points to compute area-distance weighting")
+      print("Must give lat,lon of points to compute concentration-distance weighting")
       return 1.
     else:
       return 1.1*calculate_distance(lat1, lon1, lat2, lon2) / (1.1 - aice)

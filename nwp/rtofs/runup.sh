@@ -20,7 +20,7 @@ export exdir=/home/Robert.Grumbine/rgdev/toolbox/nwp
 cd $exdir
 
 # This must be more or less exactly this:
-source /home/Robert.Grumbine/rgref/env3.12/bin/activate
+source /home/Robert.Grumbine/rg/env3.12c/bin/activate
 export PYTHONPATH=$PYTHONPATH:/home/Robert.Grumbine/rgdev/toolbox/nwp/
 
 #These can be anything of convenience
@@ -31,11 +31,12 @@ export OUTDIR=$HOME/rgdev/rtofs_nwp
 #tag=20220401
 #End of the v2.4 archive: end=20220912
 #tag=20241020
-export tag=20241120
+export tag=20241201
 
 #reverse -- now to past
 #end=20220401
-export end=20241020
+#export end=20241020
+export end=20241115
 
 cd rtofs
 while [ $tag -ge $end ]

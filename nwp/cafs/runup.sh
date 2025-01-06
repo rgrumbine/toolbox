@@ -25,7 +25,7 @@ export OUTDIR=$HOME/rgdev/cafs_nwp
 #------------------------------------------------------
 
 # These must be more or less exactly this:
-source /home/Robert.Grumbine/rgref/env3.12/bin/activate
+source /home/Robert.Grumbine/rg/env3.12/bin/activate
 export PYTHONPATH=$PYTHONPATH:/home/Robert.Grumbine/rgdev/toolbox/nwp
 
 #------------------------------------------------------
@@ -47,10 +47,10 @@ do
   yy=`echo $tag | cut -c1-4`
   mm=`echo $tag | cut -c5-6`
   dd=`echo $tag | cut -c7-8`
-  #if [ ! -f $OUTDIR/${yy}/out.$tag -o ! -f $OUTDIR/${yy}/nwp_${tag}_240.png \
-  #       -o ! -f $OUTDIR/${yy}/path_${tag}_240.kml ] ; then
+  if [ ! -f $OUTDIR/${yy}/out.$tag -o ! -f $OUTDIR/${yy}/nwp_${tag}_240.png \
+         -o ! -f $OUTDIR/${yy}/path_${tag}_240.kml ] ; then
     time python3 new_cafs.py $yy $mm $dd > $OUTDIR/${yy}/out.$tag
-  #fi
+  fi
   if [ -f nwp_${tag}_240.png ] ; then
     mv nwp_${tag}_*.png $OUTDIR/${yy}
   fi  
