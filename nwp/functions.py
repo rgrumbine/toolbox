@@ -21,10 +21,8 @@ def calculateCost(PolarClass, iceCon, iceThick):
 """
 #--------------------------------------------------------
 def find(lons, lats, lonin, latin):
-  #debug print("lon, lat in:",lonin, latin, flush=True)
   tmpx = lons - lonin
   tmpy = lats - latin
-  #debug print("x ",tmpx.max(), tmpx.min(), lons.max(), lons.min(), flush=True )
 
   xmask = ma.masked_outside(tmpx, -0.5, 0.5)
   xin = xmask.nonzero() 
@@ -39,15 +37,12 @@ def find(lons, lats, lonin, latin):
   for k in range(0, len(win[0]) ):
     i = win[1][k]
     j = win[0][k] 
-    #debug print(k,i,j,abs(tmpx[j,i]), abs(tmpy[j,i]), dxmin, dymin, dmin, flush=True)
-    #if (abs(tmpx[j,i]) < dxmin and abs(tmpy[j,i]) < dymin):
     if (sqrt(tmpx[j,i]**2 + tmpy[j,i]**2) < dmin):
       imin = i
       jmin = j
       dxmin = abs(tmpx[j,i])
       dymin = abs(tmpy[j,i])
       dmin  = sqrt(tmpx[j,i]**2 + tmpy[j,i]**2)
-  #print("dmin:",imin, jmin, dmin, dxmin, dymin)
   return (imin,jmin)
 #--------------------------------------------------------
 # Polar ship class
@@ -131,7 +126,7 @@ def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, i2 = 0, j
       print("Must give i,j of points when weighting by polar class")
       return 1
     else:
-      return 1 #RG: temporary
+      return 1 
   elif (case == 4):
     if (lon1 == 0 and lat1 == 0 and lon2 == 0 and lat2 == 0):
       print("Must give lat,lon of points to compute concentration-distance weighting")
@@ -180,7 +175,6 @@ def wrap_lons(lons):
       i = lin[1][k]
       j = lin[0][k]
       lons[j,i] -= 3.*360.
-    #debug: print("lons: ",lons.max(), lons.min(), flush=True )
   
     lmask = ma.masked_array(lons > 1.*360.+180.)
     lin = lmask.nonzero()
@@ -188,7 +182,6 @@ def wrap_lons(lons):
       i = lin[1][k]
       j = lin[0][k]
       lons[j,i] -= 2.*360.
-    #debug: print("lons: ",lons.max(), lons.min(), flush=True )
   
     #most (10.6 million of 14.7 million) rtofs points have lons > 180, so subtract 360 and
     # then correct the smaller number that are < -180 as a result
@@ -203,8 +196,3 @@ def wrap_lons(lons):
   
   if ( lons.max() > 180. ):
       lons -= 360.
-  #debug: print("lons: ",lons.max(), lons.min(), flush=True )
-  
-  #debug: for i in range(0,nx):
-  #debug:   print(i,lats[ny-1,i], lons[ny-1,i], lats[ny-2,i], lons[ny-2,i])
-

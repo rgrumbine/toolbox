@@ -25,7 +25,7 @@ export OUTDIR=$HOME/rgdev/cafs_nwp
 #------------------------------------------------------
 
 # These must be more or less exactly this:
-source /home/Robert.Grumbine/rg/env3.12/bin/activate
+source /home/Robert.Grumbine/rg/env3.12c/bin/activate
 export PYTHONPATH=$PYTHONPATH:/home/Robert.Grumbine/rgdev/toolbox/nwp
 
 #------------------------------------------------------
