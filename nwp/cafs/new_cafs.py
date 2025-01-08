@@ -24,7 +24,10 @@ lonmin = 185.0
 lonmax = 290.0
 
 def cafs_fname(base, tag):
-    fname = base+'/'+"/"+"REB2."+tag.strftime("%Y-%m-%d") + ".nc"
+    #PSL
+    #fname = base+'/'+"/"+"REB2."+tag.strftime("%Y-%m-%d") + ".nc"
+    #EMC
+    fname = base+'/'+tag.strftime("%Y%m%d") +"/"+"REB2."+tag.strftime("%Y-%m-%d") + ".nc"
     return fname
 #--------------------------------------------------------
 base = os.environ['base']
@@ -98,7 +101,9 @@ for tstep in range(0,40):
           lons[j,i] > lonmin and lons[j,i] < lonmax     ):
         if (land[j,i] == 0):
           nodemap[j,i] = int(k)
-          G.add_node(k, i = i, j =j, lat = lats[j,i], lon = lons[j,i],  aice=aice[j,i], hi = hi[j,i])
+          #n.b.: It is necessary to include explicit cast or the printing 
+          #        lists np.float32(value) rather than value
+          G.add_node(k, i = i, j =j, lat = float(lats[j,i]), lon = float(lons[j,i]),  aice= float(aice[j,i]), hi = float(hi[j,i]) )
           k += int(1)
   #debug: print("Done adding nodes, k=",k, flush=True)
   

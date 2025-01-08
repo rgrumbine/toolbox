@@ -93,11 +93,10 @@ for hhh in range (0, 193, 6):
   for k in range(0, len(xin[0])):
     i = xin[1][k]
     j = xin[0][k]
-    #debug:
-    if (k%50000 == 0):
-      print("adding nodes, k = ",k, flush=True)
+    #debug: if (k%50000 == 0):
+    #debug:   print("adding nodes, k = ",k, flush=True)
     nodemap[j,i] = int(k)
-    G.add_node(k, i = i, j =j, lat = lats[j,i], lon = lons[j,i], aice=aice[j,i] )
+    G.add_node(k, i = int(i), j = int(j), lat = float(lats[j,i]), lon = float(lons[j,i]), aice = float(aice[j,i]) )
   #debug:
   print("Done adding nodes, k=",k, flush=True)
 
@@ -173,8 +172,8 @@ for hhh in range (0, 193, 6):
 
   #debug: print(i_bering, j_bering, i_finish, j_finish, start, finish, nodemap[j_bering, i_bering], nodemap[j_finish, i_finish], flush=True)
 
-  print(G.nodes[start])
-  print(G.nodes[finish])
+  #debug: print(G.nodes[start])
+  #debug: print(G.nodes[finish])
   
   print("Is there a path from start to finish? ",netx.has_path(G,start,finish ), flush=True )
   if (not netx.has_path(G,start,finish )):
@@ -186,15 +185,12 @@ for hhh in range (0, 193, 6):
     print("still no path, Bering to Banks Island, exiting", flush=True)
     exit(1)
   
-  path = netx.dijkstra_path(G,start, finish)
-  
-  pseudo_length = netx.dijkstra_path_length(G,start, finish)
-  
+  path = netx.dijkstra_path(G, start, finish)
+  pseudo_length = netx.dijkstra_path_length(G, start, finish)
   print("dijkstra length ", len(path), pseudo_length, flush=True)
   
   tlons = np.zeros((len(path)))
   tlats = np.zeros((len(path)))
-  
   for k in range(0,len(path)):
     print(k,G.nodes[path[k]])
     tlons[k] = G.nodes[path[k]]['lon']

@@ -119,7 +119,7 @@ for hhh in range (0, 13, 6):
     if (k%50000 == 0):
       print("adding nodes, k = ",k, flush=True)
     nodemap[j,i] = int(k)
-    G.add_node(k, i = i, j =j, lat = lats[j,i], lon = lons[j,i], aice=aice[j,i] )
+    G.add_node(k, i = i, j =j, lat = float(lats[j,i]), lon = float(lons[j,i]), aice= float(aice[j,i]) )
   #debug:
   print("Done adding nodes, k=",k, flush=True)
 
@@ -193,8 +193,8 @@ for hhh in range (0, 13, 6):
   start  = nodemap[j_bering, i_bering]
   finish = nodemap[j_finish, i_finish]
 
-  print(G.nodes[start])
-  print(G.nodes[finish])
+  #debug: print(G.nodes[start])
+  #debug: print(G.nodes[finish])
   
   print("Is there a path from start to finish? ",netx.has_path(G,start,finish ), flush=True )
   if (not netx.has_path(G,start,finish )):
