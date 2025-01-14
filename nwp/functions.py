@@ -90,6 +90,7 @@ def calculateCost(PolarClass, iceCon, iceThick):
             return 999
     return cost
 
+#-----------------------------------------------------------------
 #Calculates the distance of two points based on the longitude and latitude points of each point
 def calculate_distance(lat1, lon1, lat2, lon2):
     # Radius of the Earth in kilometers
@@ -112,6 +113,7 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 
     return distance
 
+#-----------------------------------------------------------------
 def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, i2 = 0, j2 = 0, aice = 0, hi = 0):
   if (case == 1):
     return 1.
@@ -196,3 +198,38 @@ def wrap_lons(lons):
   
   if ( lons.max() > 180. ):
       lons -= 360.
+
+#--------------------------------------------------------
+class llbox:
+    def __init__(self, lonmin = -180., lonmax = 180., latmin = -90., latmax = 90.):
+        self.lonmin = lonmin
+        self.lonmax = lonmax
+        self.latmin = latmin
+        self.latmax = latmax
+
+    def inbox(self, lon, lat):
+        return (lon > self.lonmin and lon < self.lonmax and 
+                lat > self.latmin and lat < self.latmax)
+
+#Bounding boxes:
+nwp = llbox(lonmin = 185-360., lonmax = 290-360., latmin = 64., latmax = 84.)
+nep = llbox(lonmin = -180., lonmax = 180., latmin = 64., latmax = 82.)
+
+# Locations:
+Bering_Strait = [-168.43, 65.46]
+
+#NWP points
+S_Banks_Island = [-126, 71.0]
+N_Banks_Island = [-124.0, 75.1]
+NWP_Central    = [-103.0, 74.35]
+#NWP Terminus
+Baffin_Bay = [-75.50, 73.97 ]
+
+#NEP Termini
+Hammerfest      = [  21.4, 71.4 ]
+Wrangel_Strait  = [ 178.0, 70.3 ]
+S_Anzhu_Islands = [ 153.7, 73.1 ]
+N_Anzhu_Islands = [ 154.3, 77.0 ]
+S_Novaya_Zemlya = [  58.0, 70.4 ]
+N_Novaya_Zemlya = [  68.9, 77.2 ]
+
