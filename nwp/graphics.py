@@ -19,7 +19,7 @@ import cartopy.feature as cfeature
 matplotlib.use('Agg') #for batch mode
 #matplotlib.use('Qt5Agg') #for interactive mode
 
-def show( tlats, tlons, tag, hours = 6, cost = 3482, reference = 3482):
+def show( tlats, tlons, tag, hours = 6, cost = 3482, reference = 3482, close = False):
 
   proj = ccrs.LambertConformal(central_longitude = -120, 
                                central_latitude = 75., cutoff = 45.)
@@ -74,9 +74,17 @@ def show( tlats, tlons, tag, hours = 6, cost = 3482, reference = 3482):
   #plt.title("nwp_"+tag.strftime("%Y%m%d")+"_00")
   
   plt.scatter(tlons, tlats, transform = ccrs.PlateCarree(),  
-              marker = ".", s = 10, color = "purple")
-##  plt.savefig("nwp_"+tag.strftime("%Y%m%d")+"_"+"{:03d}".format(hours)+".png")
-  plt.savefig("nwp_"+"{:03d}".format(hours)+".png")
+              marker = ".", s = 4, color = "purple")
+#NCEP:  
+  plt.savefig("nwp_"+tag.strftime("%Y%m%d")+"_"+"{:03d}".format(hours)+".png")
+#PSL:  plt.savefig("nwp_"+"{:03d}".format(hours)+".png")
   
-  plt.close('all')
+  if (close):
+    plt.close('all')
 
+# To overlay lines, cannot close plt
+def overlay(proj, ax, fig, tlats, tlons, color = "blue"):
+
+  plt.scatter(tlons, tlats, transform = ccrs.PlateCarree(),
+              marker = "*", s = 4, color = color)
+  #debug: plt.savefig("tmp.png")

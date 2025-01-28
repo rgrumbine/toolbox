@@ -12,6 +12,7 @@ Functions present:
 
 def find(lons, lats, lonin, latin):
 def kmlout_path(fname, G, path):
+def shape_out(lats, lons):
 
 def calculate_distance(lat1, lon1, lat2, lon2):
 def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, 
@@ -167,6 +168,28 @@ def kmlout_path(fname, G, path):
   print("</Folder>",file=kmlout)
   print("</kml>",file=kmlout)
   kmlout.close()
+#--------------------------------------------------------
+import pandas as pd
+import geopandas
+
+def shape_out(lats, lons, fname):
+  # Make a Pandas data frame:
+  df = pd.DataFrame(
+    {
+        "Latitude": lats,
+        "Longitude": lons,
+    }
+  )
+
+  # Make a geopandas geodataframe from the pandas dataframe
+  gdf = geopandas.GeoDataFrame( df, 
+          geometry=geopandas.points_from_xy(df.Longitude, df.Latitude), 
+          crs="EPSG:4326")
+
+  # Write out:
+  gdf.to_file(fname)
+  # -- will make a directory with .cpg, .prj, .shx, .shp, .dbf files
+
 #--------------------------------------------------------
 def wrap_lons(lons):
 

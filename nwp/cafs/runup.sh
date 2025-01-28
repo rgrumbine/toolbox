@@ -38,7 +38,7 @@ tag=`$HOME/bin/dtgfix3 $tag`
 #tag=20241104
 
 #reverse -- now to past
-end=20240601
+end=20250101
 #debug: end=20241011
 
 set -x
@@ -56,6 +56,7 @@ do
   if [ ! -f $OUTDIR/${yy}/out.$tag -o ! -f $OUTDIR/${yy}/nwp_${tag}_240.png \
          -o ! -f $OUTDIR/${yy}/path_${tag}_240.kml \
          -o $overwrite == 'T' ] ; then
+    echo processing $tag
     time python3 new_cafs.py $yy $mm $dd > $OUTDIR/${yy}/out.$tag
   fi
   if [ -f nwp_${tag}_240.png ] ; then
