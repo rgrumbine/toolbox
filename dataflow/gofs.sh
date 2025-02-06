@@ -16,7 +16,7 @@ tag=`date +"%Y%m%d"`
   tag=`expr $tag - 1`
   tag=`$HOME/bin/dtgfix3 $tag`
 
-while [ $tag -gt 20230401 ]
+while [ $tag -gt 20230901 ]
 do
 
   if [ ! -d gofs.$tag ] ; then
