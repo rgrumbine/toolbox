@@ -1,7 +1,7 @@
 #!/bin/sh
-#SBATCH -J dec_rtofs
-#SBATCH -e dec_rtofs.err
-#SBATCH -o dec_rtofs.out
+#SBATCH -J feb_rtofs
+#SBATCH -e feb_rtofs.err
+#SBATCH -o feb_rtofs.out
 #SBATCH -t 7:55:00
 #  #SBATCH -t 0:25:00
 #SBATCH -q batch
@@ -29,12 +29,12 @@ export OUTDIR=$HOME/rgdev/rtofs_nwp
 
 #------------------------------------------------------
 #End of the v2.4 archive: end=20220912
-export tag=20241228
+export tag=20250210
 
 #reverse -- now to past
-export end=20241201
+export end=20250101
 
-export overwrite='T'
+export overwrite='F'
 cd rtofs
 while [ $tag -ge $end ]
 do
