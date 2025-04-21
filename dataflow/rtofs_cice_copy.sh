@@ -28,7 +28,7 @@ echo zzz ops = $ops
 
 cd $ops
 base=$HOME/noscrub/model_intercompare/rtofs_cice/
-tag=20240920
+tag=20240413
 end=`date +"%Y%m%d"`
 end=`expr $end - 1`
 end=`$HOME/bin/dtgfix3 $end`
@@ -38,6 +38,7 @@ do
   if [ ! -d ${base}/rtofs.$tag ] ; then
     if [ -d rtofs.$tag ] ; then
       find rtofs.$tag -name '*cice_inst*' | cpio -pamdv $base
+      find rtofs.$tag -name '*2ds*_ice*' | cpio -pamdv $base
     else
       echo no rtofs for $tag
     fi

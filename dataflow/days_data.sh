@@ -43,7 +43,7 @@ time $EXDIR/riops.sh           # --  6.5 Gb/day
 time $EXDIR/gofs.sh            # -- 13.3 Gb/day
 time $EXDIR/giops.sh           # -- 28 Gb/day 
 
-#/opt/pbs/bin/qsub ./rtofs_cice_copy.sh # -- 27 Gb/day
+/opt/pbs/bin/qsub ./rtofs_cice_copy.sh # -- 27 Gb/day
 
 #viirs -- 32 Gb/day
 
