@@ -28,17 +28,20 @@ echo zzz ops = $ops
 
 cd $ops
 base=$HOME/noscrub/model_intercompare/rtofs_cice/
-tag=20240513
+tag=20250513
 end=`date +"%Y%m%d"`
-end=`expr $end - 1`
-end=`$HOME/bin/dtgfix3 $end`
+#end=`expr $end - 1`
+#end=`$HOME/bin/dtgfix3 $end`
 
-while [ $tag -lt $end ]
+while [ $tag -le $end ]
 do
   if [ ! -d ${base}/rtofs.$tag ] ; then
+    mkdir ${base}/rtofs.$tag 
     if [ -d rtofs.$tag ] ; then
-      find rtofs.$tag -name '*cice_inst*' | cpio -pamdv $base
-      find rtofs.$tag -name '*2ds*_ice*' | cpio -pamdv $base
+      #find rtofs.$tag -name '*cice_inst*' | cpio -pamdv $base
+      #find rtofs.$tag -name '*2ds*_ice*' | cpio -pamdv $base
+      cp -p rtofs.$tag/*cice_inst* ${base}/rtofs.$tag
+      cp -p rtofs.$tag/*2ds*_ice* ${base}/rtofs.$tag
     else
       echo no rtofs for $tag
     fi
