@@ -10,6 +10,7 @@ fi
 
 cd $HOME/noscrub/verification/
 if [ $x -eq 0 -o $arg == "f" ] ; then
+  wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2025/
   wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2024/
   wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2023/
   wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2022/
