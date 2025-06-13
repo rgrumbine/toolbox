@@ -6,7 +6,11 @@ Show shaded ice concs
 Overlay both cafs and rtofs and ...
 Express confidence between multiple models' concentrations
 # --------- ------------- ----------------------------
-"""
+more efficient -- establish the nodes and edges only once, only update properties (aice) each time step
+
+
+# --------- ------------- ----------------------------
+
 Reference:
 USCG Healy
 maximum speed = 31 km/h
@@ -14,12 +18,8 @@ cruising      = 26 km/h
 1.4 m ice     =  5.6 km/h
 
 At cruising speed, 2965 km = 114 hours; about 5 days vs. the 10 of CAFS model lead time
-"""
-
 
 # --------- from inline ----------------------------
-return 1 #RG: temporary
-
 # RG: RTOFS: auxiliary file with lats, lons wrapped in to range
 # RG: RTOFS: auxiliary file with tmask, tarea for rtofs grid(s)
 # RG: RTOFS, UFS: tripolar grid means adjacent geographic points aren't always i,j adjacent

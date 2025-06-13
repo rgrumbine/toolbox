@@ -12,6 +12,7 @@ Functions present:
 
 def find(lons, lats, lonin, latin):
 def kmlout_path(fname, G, path):
+def shape_out(lats, lons):
 
 def calculate_distance(lat1, lon1, lat2, lon2):
 def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, 
@@ -21,10 +22,8 @@ def calculateCost(PolarClass, iceCon, iceThick):
 """
 #--------------------------------------------------------
 def find(lons, lats, lonin, latin):
-  #debug print("lon, lat in:",lonin, latin, flush=True)
   tmpx = lons - lonin
   tmpy = lats - latin
-  #debug print("x ",tmpx.max(), tmpx.min(), lons.max(), lons.min(), flush=True )
 
   xmask = ma.masked_outside(tmpx, -0.5, 0.5)
   xin = xmask.nonzero() 
@@ -39,15 +38,12 @@ def find(lons, lats, lonin, latin):
   for k in range(0, len(win[0]) ):
     i = win[1][k]
     j = win[0][k] 
-    #debug print(k,i,j,abs(tmpx[j,i]), abs(tmpy[j,i]), dxmin, dymin, dmin, flush=True)
-    #if (abs(tmpx[j,i]) < dxmin and abs(tmpy[j,i]) < dymin):
     if (sqrt(tmpx[j,i]**2 + tmpy[j,i]**2) < dmin):
       imin = i
       jmin = j
       dxmin = abs(tmpx[j,i])
       dymin = abs(tmpy[j,i])
       dmin  = sqrt(tmpx[j,i]**2 + tmpy[j,i]**2)
-  #print("dmin:",imin, jmin, dmin, dxmin, dymin)
   return (imin,jmin)
 #--------------------------------------------------------
 # Polar ship class
@@ -95,6 +91,7 @@ def calculateCost(PolarClass, iceCon, iceThick):
             return 999
     return cost
 
+#-----------------------------------------------------------------
 #Calculates the distance of two points based on the longitude and latitude points of each point
 def calculate_distance(lat1, lon1, lat2, lon2):
     # Radius of the Earth in kilometers
@@ -117,6 +114,7 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 
     return distance
 
+#-----------------------------------------------------------------
 def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, i2 = 0, j2 = 0, aice = 0, hi = 0):
   if (case == 1):
     return 1.
@@ -131,10 +129,10 @@ def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, i2 = 0, j
       print("Must give i,j of points when weighting by polar class")
       return 1
     else:
-      return 1 #RG: temporary
+      return 1 
   elif (case == 4):
     if (lon1 == 0 and lat1 == 0 and lon2 == 0 and lat2 == 0):
-      print("Must give lat,lon of points to compute area-distance weighting")
+      print("Must give lat,lon of points to compute concentration-distance weighting")
       return 1.
     else:
       return 1.1*calculate_distance(lat1, lon1, lat2, lon2) / (1.1 - aice)
@@ -171,6 +169,28 @@ def kmlout_path(fname, G, path):
   print("</kml>",file=kmlout)
   kmlout.close()
 #--------------------------------------------------------
+import pandas as pd
+import geopandas
+
+def shape_out(lats, lons, fname):
+  # Make a Pandas data frame:
+  df = pd.DataFrame(
+    {
+        "Latitude": lats,
+        "Longitude": lons,
+    }
+  )
+
+  # Make a geopandas geodataframe from the pandas dataframe
+  gdf = geopandas.GeoDataFrame( df, 
+          geometry=geopandas.points_from_xy(df.Longitude, df.Latitude), 
+          crs="EPSG:4326")
+
+  # Write out:
+  gdf.to_file(fname)
+  # -- will make a directory with .cpg, .prj, .shx, .shp, .dbf files
+
+#--------------------------------------------------------
 def wrap_lons(lons):
 
   if (lons.max() > 360. or lons.min() < -360. ):
@@ -180,7 +200,6 @@ def wrap_lons(lons):
       i = lin[1][k]
       j = lin[0][k]
       lons[j,i] -= 3.*360.
-    #debug: print("lons: ",lons.max(), lons.min(), flush=True )
   
     lmask = ma.masked_array(lons > 1.*360.+180.)
     lin = lmask.nonzero()
@@ -188,7 +207,6 @@ def wrap_lons(lons):
       i = lin[1][k]
       j = lin[0][k]
       lons[j,i] -= 2.*360.
-    #debug: print("lons: ",lons.max(), lons.min(), flush=True )
   
     #most (10.6 million of 14.7 million) rtofs points have lons > 180, so subtract 360 and
     # then correct the smaller number that are < -180 as a result
@@ -203,8 +221,38 @@ def wrap_lons(lons):
   
   if ( lons.max() > 180. ):
       lons -= 360.
-  #debug: print("lons: ",lons.max(), lons.min(), flush=True )
-  
-  #debug: for i in range(0,nx):
-  #debug:   print(i,lats[ny-1,i], lons[ny-1,i], lats[ny-2,i], lons[ny-2,i])
+
+#--------------------------------------------------------
+class llbox:
+    def __init__(self, lonmin = -180., lonmax = 180., latmin = -90., latmax = 90.):
+        self.lonmin = lonmin
+        self.lonmax = lonmax
+        self.latmin = latmin
+        self.latmax = latmax
+
+    def inbox(self, lon, lat):
+        return (lon > self.lonmin and lon < self.lonmax and 
+                lat > self.latmin and lat < self.latmax)
+
+#Bounding boxes:
+nwp = llbox(lonmin = 185-360., lonmax = 290-360., latmin = 64., latmax = 84.)
+nep = llbox(lonmin = -180., lonmax = 180., latmin = 64., latmax = 82.)
+
+# Locations:
+Bering_Strait = [-168.43, 65.46]
+
+#NWP points
+S_Banks_Island = [-126, 71.0]
+N_Banks_Island = [-124.0, 75.1]
+NWP_Central    = [-103.0, 74.35]
+#NWP Terminus
+Baffin_Bay = [-75.50, 73.97 ]
+
+#NEP Termini
+Hammerfest      = [  21.4, 71.4 ]
+Wrangel_Strait  = [ 178.0, 70.3 ]
+S_Anzhu_Islands = [ 153.7, 73.1 ]
+N_Anzhu_Islands = [ 154.3, 77.0 ]
+S_Novaya_Zemlya = [  58.0, 70.4 ]
+N_Novaya_Zemlya = [  68.9, 77.2 ]
 

@@ -25,32 +25,40 @@ export OUTDIR=$HOME/rgdev/cafs_nwp
 #------------------------------------------------------
 
 # These must be more or less exactly this:
-source /home/Robert.Grumbine/rgref/env3.12/bin/activate
+source /home/Robert.Grumbine/rg/env3.12c/bin/activate
 export PYTHONPATH=$PYTHONPATH:/home/Robert.Grumbine/rgdev/toolbox/nwp
 
 #------------------------------------------------------
 tag=`date +"%Y%m%d"`
 tag=`expr $tag - 1`
 tag=`$HOME/bin/dtgfix3 $tag`
+tag=`expr $tag - 1`
+tag=`$HOME/bin/dtgfix3 $tag`
 #debug: tag=20241022
-tag=20241104
+#tag=20241104
 
 #reverse -- now to past
-end=20240901
+end=20250101
 #debug: end=20241011
 
 set -x
+export overwrite='F'
 while [ $tag -ge $end ]
 do
   echo working on $tag
 
   yy=`echo $tag | cut -c1-4`
+  if [ ! -d $OUTDIR/${yy} ] ; then
+    mkdir -p $OUTDIR/${yy}
+  fi
   mm=`echo $tag | cut -c5-6`
   dd=`echo $tag | cut -c7-8`
-  #if [ ! -f $OUTDIR/${yy}/out.$tag -o ! -f $OUTDIR/${yy}/nwp_${tag}_240.png \
-  #       -o ! -f $OUTDIR/${yy}/path_${tag}_240.kml ] ; then
+  if [ ! -f $OUTDIR/${yy}/out.$tag -o ! -f $OUTDIR/${yy}/nwp_${tag}_240.png \
+         -o ! -f $OUTDIR/${yy}/path_${tag}_240.kml \
+         -o $overwrite == 'T' ] ; then
+    echo processing $tag
     time python3 new_cafs.py $yy $mm $dd > $OUTDIR/${yy}/out.$tag
-  #fi
+  fi
   if [ -f nwp_${tag}_240.png ] ; then
     mv nwp_${tag}_*.png $OUTDIR/${yy}
   fi  

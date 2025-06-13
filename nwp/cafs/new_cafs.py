@@ -24,7 +24,10 @@ lonmin = 185.0
 lonmax = 290.0
 
 def cafs_fname(base, tag):
-    fname = base+'/'+"/"+"REB2."+tag.strftime("%Y-%m-%d") + ".nc"
+    #PSL
+    #fname = base+'/'+"/"+"REB2."+tag.strftime("%Y-%m-%d") + ".nc"
+    #EMC
+    fname = base+'/'+tag.strftime("%Y%m%d") +"/"+"REB2."+tag.strftime("%Y-%m-%d") + ".nc"
     return fname
 #--------------------------------------------------------
 base = os.environ['base']
@@ -32,8 +35,10 @@ base = os.environ['base']
 tag = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
 
 fname = cafs_fname(base, tag)
+# PSL
 #if (not os.path.exists(base+'/'+"/"+fname) ):
 #  print("could not open ",base+'/'+"/"+fname, flush=True)
+# EMC
 if (not os.path.exists(fname) ):
   print("could not open "+fname, flush=True)
   exit(1)
@@ -47,7 +52,6 @@ lats = fin.variables["TLAT"][:,:]
 tarea = fin.variables["tarea"][:,:]
 
 for tstep in range(0,40):
-#debug: for tstep in range(0,2):
   aice = fin.variables["aice_h"][tstep,:,:]
   hs   = fin.variables["hs_h"][tstep,:,:]
   hi   = fin.variables["hi_h"][tstep,:,:]
@@ -61,9 +65,6 @@ for tstep in range(0,40):
   tair = fin.variables["Tair_h"][tstep,:,:]
   aice = fin.variables["aice_h"][tstep,:,:]
   aice = fin.variables["aice_h"][tstep,:,:]
-
-  #debug: print("sample for tstep ",tstep,aice.max(), aice.min(), 
-  #debug:                tsfc.max(), sst.max(), tair.max(), flush=True )
 
   # One may/must treat these fields as masked, as in masked arrays
   indices = tair.nonzero()
@@ -100,7 +101,9 @@ for tstep in range(0,40):
           lons[j,i] > lonmin and lons[j,i] < lonmax     ):
         if (land[j,i] == 0):
           nodemap[j,i] = int(k)
-          G.add_node(k, i = i, j =j, lat = lats[j,i], lon = lons[j,i],  aice=aice[j,i], hi = hi[j,i])
+          #n.b.: It is necessary to include explicit cast or the printing 
+          #        lists np.float32(value) rather than value
+          G.add_node(k, i = i, j =j, lat = float(lats[j,i]), lon = float(lons[j,i]),  aice= float(aice[j,i]), hi = float(hi[j,i]) )
           k += int(1)
   #debug: print("Done adding nodes, k=",k, flush=True)
   
@@ -171,8 +174,6 @@ for tstep in range(0,40):
   print("findij Bering strait ",i_start, j_start)
   i_finish, j_finish = find(lons, lats, -78.0+360, 74.0)
   print("findij Baffin Bay ",i_finish, j_finish, flush=True)
-  #debug: print("start: ",lons[j_start, i_start], lats[j_start, i_start], flush=True )
-  #debug: print("finis: ",lons[j_finish, i_finish], lats[j_finish, i_finish], flush=True )
   
   # Quick check to see whether there are _any_ paths:
   start  = nodemap[j_start, i_start]
@@ -193,11 +194,6 @@ for tstep in range(0,40):
     print(k,G.nodes[path[k]])
     graphic_lats[k] = G.nodes[path[k]]['lat']
     graphic_lons[k] = G.nodes[path[k]]['lon']
-    #print(k,
-    #      G.nodes[path[k]]['i'], G.nodes[path[k]]['j'],
-    #      G.nodes[path[k]]['lon'], G.nodes[path[k]]['lat'],
-    #      G.nodes[path[k]]['aice'], G.nodes[path[k]]['hi'],
-    #      flush=True )
   print("",flush=True)
   
 #----------- kml output ---------------------------------
@@ -208,4 +204,4 @@ for tstep in range(0,40):
   del graphic_lats, graphic_lons
 
 #-----------------------------------------------------
-
+# RG: shapefile output
