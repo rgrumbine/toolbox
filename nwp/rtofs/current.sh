@@ -1,7 +1,7 @@
 #!/bin/sh
-#SBATCH -J cur_rtofs
-#SBATCH -e cur_rtofs.err
-#SBATCH -o cur_rtofs.out
+#SBATCH -J cur2_rtofs
+#SBATCH -e cur2_rtofs.err
+#SBATCH -o cur2_rtofs.out
 #SBATCH -t 7:55:00
 #  #SBATCH -t 0:25:00
 #SBATCH -q batch
@@ -36,9 +36,10 @@ tag=`expr $tag - 1`
 tag=`$HOME/bin/dtgfix3 $tag`
 tag=`expr $tag - 1`
 tag=`$HOME/bin/dtgfix3 $tag`
+#tag=20250531
 
 #reverse -- now to past
-export end=20250101
+export end=20250601
 
 cd rtofs
 while [ $tag -ge $end ]
@@ -50,6 +51,8 @@ do
   if [ ! -f $OUTDIR/out.$tag -o $overwrite == 'T' ] ; then
     echo processing $tag
     time python3 rtofs_2ds.py $yy $mm $dd > $OUTDIR/out.$tag
+  else
+    echo already have $tag
   fi
   if [ -f nwp_${tag}_000.png ] ; then
     mv nwp_${tag}_*.png $OUTDIR
