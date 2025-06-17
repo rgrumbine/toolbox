@@ -5,7 +5,7 @@
 #SBATCH -t 7:55:00
 #  #SBATCH -t 0:25:00
 #SBATCH -q batch
-#SBATCH -A marine-cpu
+# change this to your #SBATCH -A marine-cpu
 #SBATCH -N 1
 #SBATCH --mail-type FAIL
 #SBATCH --mail-user USER@system
@@ -33,13 +33,12 @@ tag=`date +"%Y%m%d"`
 tag=`expr $tag - 1`
 tag=`$HOME/bin/dtgfix3 $tag`
 #debug: tag=20241022
-tag=20241104
+tag=20241028
 
 #reverse -- now to past
-end=20240901
+end=20241104
 #debug: end=20241011
 
-set -x
 while [ $tag -ge $end ]
 do
   echo working on $tag
