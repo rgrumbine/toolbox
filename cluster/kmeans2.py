@@ -31,7 +31,7 @@ ice = 14
 
 count = 0
 for mm in (1,2,3,4,5,6):
-  tag = datetime.datetime(2025,mm,2)
+  tag = datetime.datetime(2025,mm,14)
   print(tag, flush=True)
   count = read(tag, ary, dr, count, fmax = fmax)
 
@@ -64,7 +64,7 @@ print(count, " points to consider", flush=True)
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
-for nlim in range(6,9):
+for nlim in range(2,9):
   acount = np.zeros((nlim))
   ccount = np.zeros((nlim))
 
