@@ -5,7 +5,7 @@
 #SBATCH -t 7:55:00
 #  #SBATCH -t 0:25:00
 #SBATCH -q batch
-#SBATCH -A marine-cpu
+# change this to your #SBATCH -A marine-cpu
 #SBATCH -N 1
 #SBATCH --mail-type FAIL
 #SBATCH --mail-user USER@system
@@ -40,9 +40,9 @@ tag=`$HOME/bin/dtgfix3 $tag`
 #reverse -- now to past
 end=20250101
 #debug: end=20241011
-
 set -x
 export overwrite='F'
+
 while [ $tag -ge $end ]
 do
   echo working on $tag
