@@ -16,7 +16,7 @@ set -x
 #name change 26 Feb 2020
 #  what is now dcom_prod was dcom_us007003
 
-end_date=20211231
+end_date=20250629
 
 start_date=`date +"%Y%m%d"`
 start_date=`expr $start_date - 1`
@@ -24,7 +24,7 @@ start_date=`$HOME/bin/dtgfix3 $start_date`
 start_date=`expr $start_date - 1`
 start_date=`$HOME/bin/dtgfix3 $start_date`
 
-#start_date=20230630
+#start_date=20250331
 
 base=$HOME/noscrub/ims/
 if [ ! -d $base ] ; then

@@ -1,4 +1,0 @@
-source ~/rgref/env3.12/bin/activate
-export PYTHONPATH=$PYTHONPATH:~/rgdev/toolbox/nwp/
-export MPLCONFIGDIR=~/rgref/
-

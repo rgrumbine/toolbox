@@ -10,9 +10,11 @@ fi
 
 cd $HOME/noscrub/verification/
 if [ $x -eq 0 -o $arg == "f" ] ; then
-  wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2024/
-  wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2023/
-  wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2022/
-  wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2021/
-  wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/2020/
+  for y in 2007 2010 2014 2015 2020 2021 2022 2023 2024 2025
+  do 
+    wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc/$y/
+    if [ $y -ge 2016 ] ; then
+      wget -nv --mirror ftp://osisaf.met.no/archive/ice/conc_amsr/$y/
+    fi
+  done
 fi

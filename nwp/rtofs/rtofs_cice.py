@@ -18,37 +18,25 @@ from graphics import *
 base = os.environ['base']
 tag = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
 
-# RG: auxiliary file with tmask, tarea for rtofs grid(s)
-# RG: auxiliary file with lats, lons wrapped in to range
-
-#fin = Dataset("../dcom/rtofs_glo_2ds_f000_prog.nc","r")
-#fin = Dataset("../dcom/rtofs_glo_2ds_f000_diag.nc","r")
-
 # cice_inst as data source:
-#fin = Dataset("rtofs_glo.t00z.n00.cice_inst.nc","r")
-#nx = len(fin.dimensions["ni"])
-#ny = len(fin.dimensions["nj"])
-#lons = fin.variables["TLON"][:,:]
-#lats = fin.variables["TLAT"][:,:]
-#sst   = fin.variables["sst"][0,:,:]
-#aice  = fin.variables["aice"][0,:,:]
+fin = Dataset("rtofs_glo.t00z.n00.cice_inst.nc","r")
+nx = len(fin.dimensions["ni"])
+ny = len(fin.dimensions["nj"])
+lons = fin.variables["TLON"][:,:]
+lats = fin.variables["TLAT"][:,:]
+sst   = fin.variables["sst"][0,:,:]
+aice  = fin.variables["aice"][0,:,:]
 
 # 2ds_ice
-fin = Dataset("rtofs_glo_2ds_f000_ice.nc","r")
-nx = len(fin.dimensions['X'])
-ny = len(fin.dimensions['Y'])
-lons = fin.variables["Longitude"][:,:]
-lats = fin.variables["Latitude"][:,:]
+#fin = Dataset("rtofs_glo_2ds_f000_ice.nc","r")
+#nx = len(fin.dimensions['X'])
+#ny = len(fin.dimensions['Y'])
+#lons = fin.variables["Longitude"][:,:]
+#lats = fin.variables["Latitude"][:,:]
 #not available: sst   = fin.variables["sst"][0,:,:]
-aice  = fin.variables["ice_coverage"][0,:,:]
+#aice  = fin.variables["ice_coverage"][0,:,:]
 #debug: check distance of ice-free arctic  #aice.fill(0.)
 
-
-#debug: print("lons: ",lons.max(), lons.min() )
-#debug: print("lats: ",lats.max(), lats.min() )
-#debug: print("aice: ",aice.max(), aice.min(), flush=True )
-
-#debug: exit(0)
 
 #--------------------------------------------------------------
 # Ensure lons are  <= 360.
@@ -56,46 +44,29 @@ wrap_lons(lons)
 
 #----------------------------------------------------------------
 
-#tlat = 74.0
-#for iii in range (0, 400):
-#  ilon = -107.9 + 0.01*iii
-#  (i,j) = find(lons, lats, ilon, tlat) 
-#  print(i,j,tlat, ilon)
-
 #start in Bering strait
 (i_bering, j_bering) = find(lons, lats, -168.59, 65.68) #Bering Strait
-#(i_bering, j_bering) = find(lons, lats, -126, 71.0) # S of banks island
-#(i_bering, j_bering) = find(lons, lats, -124.0, 75.1) # N of banks island
-#(i_bering, j_bering) = find(lons, lats, -103.0, 74.35) # Central passage
 print("bering:",i_bering,j_bering, flush=True)
 
 #finish in ... Baffin Bay
-#Lat = 74.0 N, -78.0 
 (i_finish, j_finish) = find(lons, lats, -74.0, 74.0)
 print("finish",i_finish, j_finish, flush=True)
 
-#debug: exit(0)
 #--------------------------------------------------------------
 
 # Construct nodes -- limit area to keep run time manageable:
 # NWP Domain
 latmin = 64.0
 latmax = 82.0
-#lonmin = 185.0-360.
-#lonmax = 290.0-360.
 lonmin = -175.0
 lonmax =  -70.0
 xmask = ma.masked_outside(lons, lonmin, lonmax)
 xin = xmask.nonzero()
-#debug: print('lons',len(xin), len(xin[0]), flush=True)
 xmask = ma.logical_and(xmask, ma.masked_outside(lats, latmin, latmax))
 xin = xmask.nonzero()
-#debug: print("number of points:", len(xin[0]), flush=True)
 
 xmask = ma.logical_and(xmask, aice < 1000.)
 xin = xmask.nonzero()
-#debug: print("number of active points", len(xin[0]), flush=True)
-#debug: exit(0)
 
 #----------------------------- Begin Graph --------------------
 #Not a directed graph
@@ -109,12 +80,10 @@ for k in range(0, len(xin[0])):
   #debug:
   if (k%30000 == 0):
     print("adding nodes, k = ",k, flush=True)
-  #debug print("node:",k,i,j,lats[j,i], lons[j,i], aice[j,i], flush=True)
   nodemap[j,i] = int(k)
   G.add_node(k, i = i, j =j, lat = lats[j,i], lon = lons[j,i], aice=aice[j,i] )
 #debug:
 print("Done adding nodes, k=",k, flush=True)
-#debug: exit(0)
 
 #---------------------------------------------------------
 # RG: tripolar grid means adjacent geographic points aren't always i,j adjacent
@@ -185,8 +154,6 @@ for k in range(0, len(xin[0])):
 
 #debug:
 print("Have constructed graph, number of nodes, edges =",k, len(G.edges), flush=True)
-#debug: exit(0)
-
 
 #--------------------------------------------------------------
 start  = nodemap[j_bering, i_bering]
@@ -200,9 +167,6 @@ print(G.nodes[finish])
 print("Is there a path from start to finish? ",netx.has_path(G,start,finish ), flush=True )
 if (not netx.has_path(G,start,finish )):
   (i_finish, j_finish) = find(lons, lats, -126, 71.0)
-  #(i_finish, j_finish) = find(lons, lats, -103, 74.35)
-  #orig (i_finish, j_finish) = find(lons, lats, -78.0, 74.0)
-  #exit(1)
   print("retrying with ",i_finish, j_finish)
   finish = nodemap[j_finish, i_finish]
 
@@ -221,12 +185,6 @@ tlats = np.zeros((len(path)))
 
 for k in range(0,len(path)):
   print(k,G.nodes[path[k]])
-  #print(k, 
-  #      G.nodes[path[k]]['i'],
-  #      G.nodes[path[k]]['j'],
-  #      G.nodes[path[k]]['lon'],
-  #      G.nodes[path[k]]['lat'],
-  #      flush=True )
   tlons[k] = G.nodes[path[k]]['lon']
   tlats[k] = G.nodes[path[k]]['lat']
 

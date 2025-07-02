@@ -1,7 +1,7 @@
 #!/bin/sh
-#SBATCH -J nwp_rtofs
-#SBATCH -e nwp_rtofs.err
-#SBATCH -o nwp_rtofs.out
+#SBATCH -J feb_rtofs
+#SBATCH -e feb_rtofs.err
+#SBATCH -o feb_rtofs.out
 #SBATCH -t 7:55:00
 #  #SBATCH -t 0:25:00
 #SBATCH -q batch
@@ -20,7 +20,7 @@ export exdir=/home/Robert.Grumbine/rgdev/toolbox/nwp
 cd $exdir
 
 # This must be more or less exactly this:
-source /home/Robert.Grumbine/rgref/env3.12/bin/activate
+source /home/Robert.Grumbine/rg/env3.12c/bin/activate
 export PYTHONPATH=$PYTHONPATH:/home/Robert.Grumbine/rgdev/toolbox/nwp/
 
 #These can be anything of convenience
@@ -28,15 +28,13 @@ export MPLCONFIGDIR=$HOME/rgexpt/
 export OUTDIR=$HOME/rgdev/rtofs_nwp
 
 #------------------------------------------------------
-#tag=20220401
 #End of the v2.4 archive: end=20220912
-#tag=20241020
-export tag=20241011
+export tag=20250210
 
 #reverse -- now to past
-#end=20220401
-export end=20240921
+export end=20250101
 
+export overwrite='F'
 cd rtofs
 while [ $tag -ge $end ]
 do
@@ -44,7 +42,7 @@ do
   yy=`echo $tag | cut -c1-4`
   mm=`echo $tag | cut -c5-6`
   dd=`echo $tag | cut -c7-8`
-  if [ ! -f $OUTDIR/out.$tag ] ; then
+  if [ ! -f $OUTDIR/out.$tag -o $overwrite == 'T' ] ; then
     time python3 rtofs_2ds.py $yy $mm $dd > $OUTDIR/out.$tag
   fi
   if [ -f nwp_${tag}_000.png ] ; then

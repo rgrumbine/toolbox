@@ -30,20 +30,21 @@ source /usr/share/lmod/lmod/init/bash
 module list
 echo zzz preceding was list of modules from days_data.sh
 
-/opt/pbs/bin/qsub $EXDIR/reget.2yr.sh # -- 2Gb/day, ssmi-s, amsr2
+/opt/pbs/bin/qsub $EXDIR/reget.2yr.sh # -- 2Gb/day, ssmi-s, amsr2, from hpss
 
-/opt/pbs/bin/qsub $EXDIR/gefs_get.sh   #  ./gefs_thin.sh, ./gefs_clean.sh -- 1 Gb/day
+/opt/pbs/bin/qsub $EXDIR/gefs_get.sh  # 1gb/dy, 21:30, from hpss
+                             #  ./gefs_thin.sh, ./gefs_clean.sh -- 1 Gb/day
 time   $EXDIR/gefs_thin.sh   # this winds up cleaning yesterday and before, 
-                        # since the queue won't respond instantly
+                             # since the queue won't respond instantly
 
-#/opt/pbs/bin/qsub $EXDIR/sice.reget.sh   # 5-10 Gb/day, opnl sea ice analysis
+#/opt/pbs/bin/qsub $EXDIR/sice.reget.sh   # 5-10 Gb/day, opnl sea ice analysis, from hpss
 
 #While large volumes, these are disk to disk copy from com to my space
-time $EXDIR/riops.sh           # --  6.5 Gb/day
-time $EXDIR/gofs.sh            # -- 13.3 Gb/day
-time $EXDIR/giops.sh           # -- 28 Gb/day 
+time $EXDIR/riops.sh           # --  6.5 Gb/day, from hpss
+time $EXDIR/gofs.sh            # -- 13.3 Gb/day, from hpss
+time $EXDIR/giops.sh           # -- 28 Gb/day, from hpss 
 
-#/opt/pbs/bin/qsub ./rtofs_cice_copy.sh # -- 27 Gb/day
+/opt/pbs/bin/qsub $EXDIR/rtofs_cice_copy.sh # -- 27 Gb/day, 15:45, from comroot
 
 #viirs -- 32 Gb/day
 

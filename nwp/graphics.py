@@ -19,7 +19,7 @@ import cartopy.feature as cfeature
 matplotlib.use('Agg') #for batch mode
 #matplotlib.use('Qt5Agg') #for interactive mode
 
-def show( tlats, tlons, tag, hours = 6, cost = 2965, reference = 2965):
+def show( tlats, tlons, tag, hours = 6, cost = 3482, reference = 3482, close = False):
 
   proj = ccrs.LambertConformal(central_longitude = -120, 
                                central_latitude = 75., cutoff = 45.)
@@ -51,7 +51,7 @@ def show( tlats, tlons, tag, hours = 6, cost = 2965, reference = 2965):
                             +"{:.0f}".format(reference)+" of completely ice-free path",
           (0.05, 0.88),  xycoords = 'figure fraction', size = 16 )
   plt.annotate("Cost is defined as 1.1/(1.1-Ai) – 1 at zero ice concentration.",(0.05, 0.835), xycoords = 'figure fraction', size = 16 )
-  plt.annotate("For a completely ice-free route, the minimum penalty is 2965.",(0.05, 0.805), xycoords = 'figure fraction', size = 16 )
+  plt.annotate("For a completely ice-free route, the minimum penalty is 3482.",(0.05, 0.805), xycoords = 'figure fraction', size = 16 )
   plt.annotate("Any cost greater than this indicates at least some ice.",(0.05, 0.775), xycoords = 'figure fraction', size = 16 )
   plt.annotate("Costs can be over 10K in winter.",(0.05, 0.745), xycoords = 'figure fraction', size = 16 )
   plt.annotate("These northwest passage maps are suggestive, not actual guidance.",(0.05, 0.22), xycoords = 'figure fraction', size = 16 )
@@ -74,9 +74,17 @@ def show( tlats, tlons, tag, hours = 6, cost = 2965, reference = 2965):
   #plt.title("nwp_"+tag.strftime("%Y%m%d")+"_00")
   
   plt.scatter(tlons, tlats, transform = ccrs.PlateCarree(),  
-              marker = ".", s = 10, color = "purple")
-##  plt.savefig("nwp_"+tag.strftime("%Y%m%d")+"_"+"{:03d}".format(hours)+".png")
-  plt.savefig("nwp_"+"{:03d}".format(hours)+".png")
+              marker = ".", s = 4, color = "purple")
+#NCEP:  
+  plt.savefig("nwp_"+tag.strftime("%Y%m%d")+"_"+"{:03d}".format(hours)+".png")
+#PSL:  plt.savefig("nwp_"+"{:03d}".format(hours)+".png")
   
-  plt.close('all')
+  if (close):
+    plt.close('all')
 
+# To overlay lines, cannot close plt
+def overlay(proj, ax, fig, tlats, tlons, color = "blue"):
+
+  plt.scatter(tlons, tlats, transform = ccrs.PlateCarree(),
+              marker = "*", s = 4, color = color)
+  #debug: plt.savefig("tmp.png")
