@@ -1,5 +1,6 @@
 import os
 import sys
+from math import *
 
 import numpy as np
 
@@ -12,21 +13,31 @@ except:
 
 markersize = float(sys.argv[3])
 
-parm = []
 i = []
 j = []
 lon = []
 lat = []
+mean = []
+sd   = []
+count = []
 
 for line in fin:
   if ("grid" in line):
     words = line.split()
-    i.append(int(words[1]))
-    j.append(int(words[2]))
-    lat.append(float(words[3]))
-    lon.append(float(words[4]))
+    tcount = int(words[7])
+    tsd    = float(words[6])
+    tmean  = float(words[5])
+    tlat   = float(words[3])
+    if (tcount > 256*cos(tlat*pi/180) and tsd < 0.1*tmean):
+      i.append(int(words[1]))
+      j.append(int(words[2]))
+      lat.append(float(words[3]))
+      lon.append(float(words[4]))
+      mean.append(tmean)
+      sd.append(tsd)
+      count.append(tcount)
 
-print("found ",len(i)," points")
+print("found ",len(i),"usable points")
 if (len(i) == 0):
     exit(0)
 
@@ -78,8 +89,8 @@ plt.title(title_tag)
 # Arctic
 xlocs = list(range(-180,181,30))
 ylocs = list(range(30,90,5))
-ax.set_extent([-180,180,35,90], crs=ccrs.PlateCarree())
-#Bering sea-ish
+ax.set_extent([-180,180,40,90], crs=ccrs.PlateCarree())
+##Bering sea-ish
 #ax.set_extent([-180,-90,35,90], crs=ccrs.PlateCarree())
 
 ax.gridlines(crs=ccrs.PlateCarree(), xlocs=xlocs, ylocs=ylocs )
@@ -94,4 +105,3 @@ plt.scatter(lon, lat, transform=ccrs.PlateCarree(), s = markersize, alpha = alph
 plt.savefig("ll_"+title_tag+".png")
 plt.close()
 
-#debug: print(markersize)
