@@ -31,7 +31,7 @@ ice = 14
 
 count = 0
 for mm in (1,2,3,4,5,6):
-  tag = datetime.datetime(2025,mm,14)
+  tag = datetime.datetime(2025,mm,8)
   print(tag, flush=True)
   count = read(tag, ary, dr, count, fmax = fmax)
 

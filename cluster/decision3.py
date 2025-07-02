@@ -103,7 +103,7 @@ for i in range(0,count):
 import sklearn
 from sklearn.tree import DecisionTreeClassifier
 
-for depth in range(1,8):
+for depth in range(1,2):
   fout = open("fout."+"{:02d}".format(int(depth)), "w" )
   
   tree = DecisionTreeClassifier(max_depth = depth)
@@ -153,12 +153,10 @@ for depth in range(1,8):
   csi = count11/(count11 + count01 + count10)
   print(depth,"totbayes", "{:.3f}".format(pice) , "{:.3f}".format(pclass) , "{:.3f}".format(pice_given_class) , "{:.3f}".format(pclass_given_ice), "{:.3f}".format(csi), flush=True )
 
-  # write out the augmented ary, 1-12,19-23, category, pice(category)
+  # write out the augmented ary, 1-17 category, sst, pice(category)
   for i in range(0, count):
     if (pices[leaf[i]] != 0):
-      for k in range(0,12):
-        print("{:6.2f}".format(ary[i, k]), end=" ", file=fout)
-      for k in range(18,23):
+      for k in range(0,17):
         print("{:6.2f}".format(ary[i, k]), end=" ", file=fout)
       print("",file=fout)
   fout.close()

@@ -22,19 +22,15 @@ from reader import *
 
 #----------------------------------------------------------
 # ndarray to save for use in finding clusters
-countmax = 10123456 
+countmax = 14123456
 fmax     = int(countmax/5)
 #countmax = 225488
-ary = np.zeros((countmax,23))
+ary = np.zeros((countmax,17))
 dr  = np.zeros((countmax,66+12))
 ice = 14 
 
 count = 0
-#for mm in (1,2,3,4,5):
-#  tag = datetime.datetime(2025,mm,28)
-#  print(tag, flush=True)
-#  count = read(tag, ary, dr, count, fmax = fmax)
-fname = "first_pass"
+fname = sys.argv[1]
 count = reread(fname, ary, dr, count, fmax = countmax)
 
 count = min(count, countmax)
@@ -80,7 +76,7 @@ for nlim in range(2,8):
       print("{:7.2f}".format(beta.cluster_centers_[k][l]),end=" ")
     print("", flush=True)
 
-  print("inertia ",beta.inertia_, flush=True)
+  #print("inertia ",beta.inertia_, flush=True)
   # computationally expensive -- much more than everything else combined
   #print("silhouette ",silhouette_score(ary, beta.labels_), flush=True)
 
@@ -104,7 +100,9 @@ for nlim in range(2,8):
     pclass = ccount[k] / count
     pice_given_class[k] = acount[k] / ccount[k]
     pclass_given_ice[k] = pice_given_class[k] * pclass / pice
-    print(k,"{:.3f}".format(pice) , "{:.3f}".format(pclass) , "{:.3f}".format(pice_given_class[k]) , "{:.3f}".format(pclass_given_ice[k]), flush=True )
+    print("bayes", k,"{:.3f}".format(pice) , "{:.3f}".format(pclass) , 
+            "{:.3f}".format(pice_given_class[k]) , 
+            "{:.3f}".format(pclass_given_ice[k]), flush=True )
     if pice_given_class[k] > 0.9:
         tot += pclass
 

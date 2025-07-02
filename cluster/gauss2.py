@@ -25,16 +25,16 @@ from reader import *
 #---------------------------------------------------------
 
 # ndarray to save for use in finding clusters
-countmax = 9123456
-fmax = int(countmax/4)
+countmax = 14123456
+fmax = int(countmax/5)
 #fmax = 10000
-ary = np.zeros((countmax,23))
+ary = np.zeros((countmax,17))
 dr  = np.zeros((countmax,66+12))
 ice = 14 
 
 count = 0
 for mm in (1,2,3,4,5,6):
-  tag = datetime.datetime(2025,mm,14)
+  tag = datetime.datetime(2025,mm,8)
   print(tag, flush=True)
   count = read(tag, ary, dr, count, fmax = fmax)
 
@@ -72,7 +72,7 @@ for nlim in range(2,8):
 
   # print out cluster assignments
   for i in range(0, count):
-    for k in range(0,23):
+    for k in range(0,17):
       print("{:6.2f}".format(ary[i, k]), end=" ", file=fout)
     print("c {:d}".format(y_pred[i]) , file=fout)
 
