@@ -57,9 +57,9 @@ def bayes(tree, dr, ary, preds, pices, count):
         pices[ileaf] = 0.
       else:
         pice   = totice/count
-        pices[ileaf] = pice
         pclass = tot/count
-        pice_given_class = count11/tot
+        pice_given_class = (count01+count11)/tot
+        pices[ileaf] = pice_given_class
 
         if (pice == 0):
           pclass_given_ice = 0
@@ -74,7 +74,7 @@ def bayes(tree, dr, ary, preds, pices, count):
 #--------------------------------------------------------------------------
 countmax = 14123456
 fmax = int(countmax / 5)
-thin = 20
+thin = 32
 print("thin = ",thin)
 ice = 14 
 # ndarray to save for use in finding clusters
@@ -86,10 +86,13 @@ from reader import *
 count = 0
 dt = datetime.timedelta(1)
 end = datetime.datetime(2025,6,14)
-for mm in (1,2,3,4,5,6):
-  tag = datetime.datetime(2025,mm,2)
+tag = datetime.datetime(2025,1,2)
+#for mm in (1,2,3,4,5,6):
+#  tag = datetime.datetime(2025,mm,2)
+while (tag <= end):
   print(tag, flush=True)
   count = read(tag, ary, dr, count, fmax = fmax, countmax = countmax, thin = thin)
+  tag += dt
 
 count = min(count, countmax)
 print(count, " points to consider v countmax",countmax, flush=True)
@@ -99,9 +102,9 @@ x = ary[:count,ice]*100
 y = x.astype(dtype=np.int32)
 # can actually run with just the percents as targets, but start with ice binary
 # binary
-#for i in range(0,count):
-#   if (y[i] > 0):
-#       y[i] = 1
+for i in range(0,count):
+   if (y[i] > 0):
+       y[i] = 1
 # wavewatch critical levels
 #for i in range(0,count):
 #  if (y[i] > 70):
@@ -125,7 +128,7 @@ for depth in range(1,3):
   # want to do this only once; it's in bayes right now
   leaf = tree.apply(dr[:count])
 
-  t     = sklearn.tree.export_text(tree, max_depth = 7, decimals=3)
+  t     = sklearn.tree.export_text(tree, max_depth = 7, decimals = 3)
   print("\ndepth, leaves",tree.get_depth(), tree.get_n_leaves() )
   print("decision tree top for depth ",depth,"\n",t)
   importance = tree.feature_importances_
@@ -155,7 +158,7 @@ for depth in range(1,3):
 
   pice   = (count01 + count11)/count
   pclass = 1
-  pice_given_class = count11/count
+  pice_given_class = (count01+count11)/count
 
   if pice == 0:
     pclass_given_ice = 0
