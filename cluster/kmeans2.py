@@ -95,6 +95,7 @@ for nlim in range(2,9):
   allice   = acount.sum()
   allcount = ccount.sum()
   pice     = allice / count
+  print('allcount, count',allcount,count)
   pice_given_class = np.zeros((nlim))
   pclass_given_ice = np.zeros((nlim))
   tot = 0

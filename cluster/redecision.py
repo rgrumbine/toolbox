@@ -47,14 +47,17 @@ def bayes(tree, dr, ary, preds, pices, count):
       tot    =  count00 + count01 + count10 + count11
       if (tot == 0):
         noop()
-      elif (count10+count11 == 0):
+      elif (count01+count11 == 0):
         print(ileaf, "no ice in leaf ",tot, tot/count)
         pices[ileaf] = 0.
       else:
         pice   = (count01 + count11)/tot
         pices[ileaf] = pice
         pclass = tot/count
-        pice_given_class = count11/(count10+count11)
+        if (count10+count11 == 0):
+          pice_given_class = 0
+        else:
+          pice_given_class = count11/(count10+count11)
         pclass_given_ice = pice_given_class * pclass / pice
         csi = count11/(count11 + count01 + count10)
         print(ileaf,"leaf", "{:.3f}".format(pice) , "{:.3f}".format(pclass) , 
@@ -62,12 +65,12 @@ def bayes(tree, dr, ary, preds, pices, count):
 
 
 #--------------------------------------------------------------------------
-countmax = 12123456
+countmax = 14123456
 fmax = countmax
 #fmax = 10000
 ice = 14
 # ndarray to save for use in finding clusters
-ary   = np.zeros((countmax,23))
+ary   = np.zeros((countmax,17))
 dr    = np.zeros((countmax,66+12))
 
 from reader import *
@@ -83,9 +86,9 @@ print(count, " points to consider v countmax",countmax, flush=True)
 x = ary[:count,ice]*100
 y = x.astype(dtype=np.int32)
 # can actually run with just the percents as targets, but start with ice binary
-for i in range(0,count):
-   if (y[i] > 0):
-       y[i] = 1
+#for i in range(0,count):
+#   if (y[i] > 0):
+#       y[i] = 1
 # slightly more complex -- WWIII critical points
 #for i in range(0,count):
 #  if (y[i] > 70):
@@ -100,7 +103,7 @@ for i in range(0,count):
 import sklearn
 from sklearn.tree import DecisionTreeClassifier
 
-for depth in range(1,8):
+for depth in range(1,2):
   fout = open("fout."+"{:02d}".format(int(depth)), "w" )
   
   tree = DecisionTreeClassifier(max_depth = depth)

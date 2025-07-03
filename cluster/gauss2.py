@@ -87,7 +87,7 @@ for nlim in range(2,8):
   pice_given_class = np.zeros((nlim))
   pclass_given_ice = np.zeros((nlim))
   tot = 0
-  print("ccount",ccount)
+  print("ccount, count",ccount,count)
   print("acount",acount)
   print("pice ",pice)
   for k in range(0, nlim):
