@@ -23,8 +23,8 @@ from reader import *
 #----------------------------------------------------------
 # ndarray to save for use in finding clusters
 countmax = 14123456
-fmax     = int(countmax/5)
 #countmax = 225488
+fmax     = countmax
 ary = np.zeros((countmax,17))
 dr  = np.zeros((countmax,66+12))
 ice = 14 
