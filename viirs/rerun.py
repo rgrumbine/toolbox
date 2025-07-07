@@ -8,6 +8,7 @@ import datetime
 '''
 bring together the viirs l3 merge with the ims for that date and place
 
+rerun -- using pre-spliced and analyzed data
 
 
 '''
@@ -17,47 +18,28 @@ tag = datetime.datetime(2025,6,19)
 old = datetime.datetime(2024,12,31)
 print(tag.toordinal()-old.toordinal())
 
-ary = np.zeros((500000,4))
-loc = np.zeros((500000,2))
-y   = np.zeros((500000))
+ary = np.zeros((500000*7,4))
+loc = np.zeros((500000*7,2))
+y   = np.zeros((500000*7))
 
-analy = nc.Dataset(sys.argv[1])
-ims = analy.variables['IMS_Surface_Values'][0,:,:]
-#1 = open water
-#3 = sea or lake ice
-
-fin = open(sys.argv[2],"r")
+fin = open(sys.argv[1],"r")
 count = 0
 for line in fin:
+#100.00   0.00   1.00 458.37  89.88 129.54  1 0.000
     words = line.split()
     #i,j,lat,lon,mean,sigma,count
-    i = int(words[0])
-    j = int(words[1])
-    ice = ims[j,i]
-    if (ice == 1):
-        ice = 0
-    elif (ice == 3):
-        ice = 1
-    else:
-        continue
-    lat = float(words[2])
-    if (lat < 20):
-        continue
-    lon = float(words[3])
-    loc[count,0] = lat
-    loc[count,1] = lon
-    mean = float(words[4])
-    sigma = float(words[5])
-    ocount = float(words[6])
-    #ary[count,0] = float(i)
-    #ary[count,1] = float(j)
-    #ary[count,0] = lat
-    #ary[count,1] = lon
+    mean = float(words[0])
+    sigma = float(words[1])
+    ocount = float(words[2])
+    scaled = float(words[3])
     ary[count,0] = mean
     ary[count,1] = sigma
     ary[count,2] = ocount
-    ary[count,3] = ocount / cos(pi*lat/180.)
-    y[count] = ice
+    ary[count,3] = scaled
+
+    loc[count,0] = float(words[4])
+    loc[count,1] = float(words[5])
+    y[count] = float(words[6])
     
     count += 1
 
@@ -113,7 +95,7 @@ def bayes(tree, ary, y, preds, pices, count):
 import sklearn
 from sklearn.tree import DecisionTreeClassifier
 
-for depth in range(1,5):
+for depth in range(4,5):
   tree = DecisionTreeClassifier(max_depth = depth)
   tree.fit(ary[:count], y[:count])
   preds = tree.predict(ary[:count])
@@ -137,13 +119,13 @@ for depth in range(1,5):
   count10 = 0
   count11 = 0
   for i in range (0, count):
-    if (preds[i] == 0 and ary[i,ice] == 0):
+    if (preds[i] == 0 and y[i] == 0):
         count00 += 1
-    if (preds[i] > 0 and ary[i,ice] > 0):
+    if (preds[i] > 0 and y[i] > 0):
         count11 += 1
-    if (preds[i] == 0 and ary[i,ice] > 0):
+    if (preds[i] == 0 and y[i] > 0):
         count01 += 1
-    if (preds[i] > 0 and ary[i,ice] == 0):
+    if (preds[i] > 0 and y[i] == 0):
         count10 += 1
 
   print("depth",depth, "tot%correct ",count00, count01, count10, count11, (count00+count11)/(count00 + count01 + count10 + count11))
