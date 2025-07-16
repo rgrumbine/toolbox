@@ -21,7 +21,7 @@ start_date=`date +"%Y%m%d"`
 #start_date=`expr $start_date - 1`
 #start_date=`$HOME/bin/dtgfix3 $start_date`
 
-start_date=20250614
+start_date=20250714
 
 base=$HOME/noscrub/sice/
 if [ ! -d $base ] ; then

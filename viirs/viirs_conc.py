@@ -15,7 +15,7 @@ target_grid = global_5min()
 tsumx  = np.zeros((target_grid.ny,target_grid.nx))
 tsumx2 = np.zeros((target_grid.ny,target_grid.nx))
 gcount = np.zeros((target_grid.ny,target_grid.nx),dtype=int)
-print("target grid dimensions",target_grid.ny,target_grid.nx)
+print("target grid dimensions",target_grid.ny,target_grid.nx, file=sys.stderr)
 
 n = 0
 nvalid = 0
@@ -29,7 +29,7 @@ for fname in sys.argv[1:]:
   try:
     viirs = netCDF4.Dataset(fname, 'r')
   except:
-    print("Could not open fname: ",fname,flush=True)
+    print("Could not open fname: ",fname,flush=True, file=sys.stderr)
     continue
 
   #debug: print("dimensions ",len(viirs.dimensions['Columns']), len(viirs.dimensions['Rows']) )
@@ -37,7 +37,7 @@ for fname in sys.argv[1:]:
   
   #This is a masked array, determined by fill value
   conc = viirs.variables['IceConc'][:,:]
-  print(n,"conc ",conc.max(), conc.min(),flush=True )
+  print(n,"conc ",conc.max(), conc.min(),flush=True, file=sys.stderr )
   indices = conc.nonzero()
   #debug: print("len indices:",len(indices), len(indices[0]), flush=True)
   np = len(indices[0])
@@ -71,12 +71,12 @@ for fname in sys.argv[1:]:
   #debug if (n > 300) :
   #debug break
 
-print("number of files with valid ice conc: ",nvalid)
-print("total number of ice conc observations: ",totnp)
-print("Histogram: conc , # points")
+print("number of files with valid ice conc: ",nvalid, file=sys.stderr)
+print("total number of ice conc observations: ",totnp, file=sys.stderr)
+print("Histogram: conc , # points", file=sys.stderr)
 for k in range(0,101):
-    print(k,counts[k])
-print(flush=True)
+    print(k,counts[k], file=sys.stderr)
+print(flush=True, file=sys.stderr)
 
 z = latpt()
 cellcount = 0
@@ -88,11 +88,11 @@ for k in range(0,len(indices[0])):
     tsumx[j,i] /= gcount[j,i]
     tsumx2[j,i] = sqrt(max(0., tsumx2[j,i]/gcount[j,i] - tsumx[j,i]*tsumx[j,i]) )
     target_grid.locate(i,j,z)
-    print("grid ",i,j,z.lat, z.lon, tsumx[j,i], tsumx2[j,i], gcount[j,i], flush=True)
+    print(i,j,z.lat, z.lon, tsumx[j,i], tsumx2[j,i], gcount[j,i], flush=True, file=sys.stdout)
     cellcount += 1
 
-print("gcount, avg: ",gcount.max(), gcount.min(), tsumx.max(), tsumx.min(), tsumx2.max(), tsumx2.min()  )
-print("cellcount = ",cellcount)
+print("gcount, avg: ",gcount.max(), gcount.min(), tsumx.max(), tsumx.min(), tsumx2.max(), tsumx2.min(),file=sys.stderr  )
+print("cellcount = ",cellcount,file=sys.stderr)
 
 #write out netcdf of file
 #open

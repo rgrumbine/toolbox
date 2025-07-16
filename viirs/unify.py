@@ -1,30 +1,38 @@
 import sys
+import datetime
 from math import *
 import numpy as np
 import netCDF4 as nc
-import datetime
+import pygrib
 
+
+from grid import *
 
 '''
 bring together the viirs l3 merge with the ims for that date and place
-
+  and the sst analysis, sea ice concentration analysis. Not used here, but for later examination.
 
 
 '''
 
 #-------------------------------------------------------------
-tag = datetime.datetime(2025,6,19)
-old = datetime.datetime(2024,12,31)
-print(tag.toordinal()-old.toordinal())
-
-ary = np.zeros((500000,4))
-loc = np.zeros((500000,2))
-y   = np.zeros((500000))
+npts = 1000000
+ary = np.zeros((npts,4))
+loc = np.zeros((npts,2))
+obs = np.zeros((npts,2))
+y   = np.zeros((npts))
 
 analy = nc.Dataset(sys.argv[1])
 ims = analy.variables['IMS_Surface_Values'][0,:,:]
 #1 = open water
 #3 = sea or lake ice
+
+target_grid = global_5min()
+ncep = pygrib.open(sys.argv[3])
+nsst = pygrib.open(sys.argv[4])
+svals = nsst[1].values
+avals = ncep[1].values
+
 
 fin = open(sys.argv[2],"r")
 count = 0
@@ -49,14 +57,20 @@ for line in fin:
     mean = float(words[4])
     sigma = float(words[5])
     ocount = float(words[6])
-    #ary[count,0] = float(i)
-    #ary[count,1] = float(j)
-    #ary[count,0] = lat
-    #ary[count,1] = lon
+
     ary[count,0] = mean
     ary[count,1] = sigma
     ary[count,2] = ocount
     ary[count,3] = ocount / cos(pi*lat/180.)
+
+    iloc = target_grid.inv_locate(lat,lon)
+    ti = int(iloc[0]+0.5)
+    if (ti == target_grid.nx):
+      ti = 0
+    tj = int(iloc[1]+0.5)
+    obs[count,0 ] = svals[tj, ti] 
+    obs[count,1 ] = avals[tj, ti] 
+
     y[count] = ice
     
     count += 1
@@ -160,10 +174,15 @@ for depth in range(1,5):
   print(depth,"totbayes", "{:.3f}".format(pice) , "{:.3f}".format(pclass) , "{:.3f}".format(pice_given_class) , "{:.3f}".format(pclass_given_ice), "{:.3f}".format(csi), flush=True )
 
   # write out the used part of the ary, y, pice(leaf#)
+  # add write out of sst and analyzed concentration
   fout = open("fout."+"{:02d}".format(int(depth)), "w" )
   for i in range(0, count):
     for k in range(0,4):
       print("{:6.2f}".format(ary[i, k]), end=" ", file=fout)
     print("{:7.3f}".format(loc[i,0]), "{:7.3f}".format(loc[i,1]),end=" ", file=fout)
+    print("{:6.2f}".format(obs[i,0]), "{:6.2f}".format(obs[i,1]), end=" ",file=fout)
     print("{:2.0f}".format(y[i]), "{:5.3f}".format(pices[int(leaf[i])]), file=fout)
   fout.close()
+
+  #x = sklearn.feature_selection.r_regression(ary[:count,:], obs[:count,1])
+  #print("correlations ",x)

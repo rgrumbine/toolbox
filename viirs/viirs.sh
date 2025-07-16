@@ -6,7 +6,7 @@ DCOMDEV=$DCOMROOT/../../dev/dcom
 ls -l $DCOMDEV
 #echo zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 
-tag=20250625
+tag=20250627
 
 echo $DCOMDEV/$tag
 ls -l ${DCOMDEV}/${tag}
@@ -17,7 +17,7 @@ ls -l ${DCOMDEV}/${tag}/seaice/pda/JRR*
 #exit
 
 #while [ $tag -le `date +"%Y%m%d"` ]
-while [ $tag -le 20250707 ]
+while [ $tag -le 20250715 ]
 do
   if [ ! -d $tag ] ; then
     mkdir -p $HOME/noscrub/satellites/viirs/$tag
