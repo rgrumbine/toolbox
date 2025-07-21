@@ -1,52 +1,72 @@
 import sys
+import datetime
 from math import *
 import numpy as np
 import netCDF4 as nc
-import datetime
+import pygrib
 
+
+from grid import *
 
 '''
-bring together the viirs l3 merge with the ims for that date and place
+bring together the viirs l3 merge with the sst analysis, sea ice concentration analysis. 
+SST not used here, but for later examination.
 
-rerun -- using pre-spliced and analyzed data
-
+This is for the Antarctic, so IMS is not usable
 
 '''
 
 #-------------------------------------------------------------
-tag = datetime.datetime(2025,6,19)
-old = datetime.datetime(2024,12,31)
-print(tag.toordinal()-old.toordinal())
-
-npts = 10*1000000
+npts = 1000000
 ary = np.zeros((npts,4))
 loc = np.zeros((npts,2))
 obs = np.zeros((npts,2))
 y   = np.zeros((npts))
 
+
+target_grid = global_5min()
+ncep = pygrib.open(sys.argv[2])
+nsst = pygrib.open(sys.argv[3])
+svals = nsst[1].values
+avals = ncep[1].values
+
+
 fin = open(sys.argv[1],"r")
 count = 0
 for line in fin:
-#100.00   0.00   1.00 458.37  89.88 129.54  1 0.000
     words = line.split()
-    # skip points sst filter would get
-    if float(words[6]) > 275.3:
-        continue
     #i,j,lat,lon,mean,sigma,count
-    mean = float(words[0])
-    sigma = float(words[1])
-    ocount = float(words[2])
-    scaled = float(words[3])
+    i = int(words[0])
+    j = int(words[1])
+
+    lat = float(words[2])
+    if (lat > -20):
+        continue
+    lon = float(words[3])
+    loc[count,0] = lat
+    loc[count,1] = lon
+    mean = float(words[4])
+    sigma = float(words[5])
+    ocount = float(words[6])
+
     ary[count,0] = mean
     ary[count,1] = sigma
     ary[count,2] = ocount
-    ary[count,3] = scaled
+    ary[count,3] = ocount / cos(pi*lat/180.)
 
-    loc[count,0] = float(words[4])
-    loc[count,1] = float(words[5])
-    obs[count,0] = float(words[6])
-    obs[count,1] = float(words[7])
-    y[count] = float(words[8])
+    iloc = target_grid.inv_locate(lat,lon)
+    ti = int(iloc[0]+0.5)
+    if (ti == target_grid.nx):
+      ti = 0
+    tj = int(iloc[1]+0.5)
+    obs[count,0 ] = svals[tj, ti] 
+    obs[count,1 ] = avals[tj, ti] 
+
+    #y[count] = obs[count,1]
+    if (obs[count,1] > 0):
+        y[count] = 1
+    else:
+        y[count] = 0
     
     count += 1
 
@@ -102,7 +122,7 @@ def bayes(tree, ary, y, preds, pices, count):
 import sklearn
 from sklearn.tree import DecisionTreeClassifier
 
-for depth in range(1,4):
+for depth in range(1,5):
   tree = DecisionTreeClassifier(max_depth = depth)
   tree.fit(ary[:count], y[:count])
   preds = tree.predict(ary[:count])
@@ -149,6 +169,7 @@ for depth in range(1,4):
   print(depth,"totbayes", "{:.3f}".format(pice) , "{:.3f}".format(pclass) , "{:.3f}".format(pice_given_class) , "{:.3f}".format(pclass_given_ice), "{:.3f}".format(csi), flush=True )
 
   # write out the used part of the ary, y, pice(leaf#)
+  # add write out of sst and analyzed concentration
   fout = open("fout."+"{:02d}".format(int(depth)), "w" )
   for i in range(0, count):
     for k in range(0,4):
@@ -157,3 +178,13 @@ for depth in range(1,4):
     print("{:6.2f}".format(obs[i,0]), "{:6.2f}".format(obs[i,1]), end=" ",file=fout)
     print("{:2.0f}".format(y[i]), "{:5.3f}".format(pices[int(leaf[i])]), file=fout)
   fout.close()
+
+  x = sklearn.feature_selection.r_regression(ary[:count,:], obs[:count,1])
+  print("correlations ",x)
+
+  average = (obs[:,1]*100 - ary[:,0]).sum() / count
+  ms = ((obs[:,1]*100 - ary[:,0])*(obs[:,1]*100 - ary[:,0])).sum()/count
+  print("raw bias = ",average )
+  print("raw rms  = ",sqrt(ms) )
+  print("raw var  = ",sqrt(ms - average*average ) )
+

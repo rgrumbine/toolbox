@@ -9,9 +9,9 @@ if [ ! -f ims ] ; then
 fi
 
 base=$HOME/noscrub/satellites/viirs
-tag=20250627
+tag=20250709
 
-while [ $tag -le 20250627 ]
+while [ $tag -le 20250709 ]
 do
   for inst in n21 j01 npp
   do
@@ -33,7 +33,7 @@ do
   cat *${inst}*.out > allout.$inst
 done
 
-#  unify.py
+#  unify.sh, unify.py
 #  rerun.py
 #
 #(once decision tree is decided, this becomes #1)

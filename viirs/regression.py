@@ -18,11 +18,10 @@ tag = datetime.datetime(2025,6,19)
 old = datetime.datetime(2024,12,31)
 print(tag.toordinal()-old.toordinal())
 
-npts = 10*1000000
-ary = np.zeros((npts,4))
-loc = np.zeros((npts,2))
-obs = np.zeros((npts,2))
-y   = np.zeros((npts))
+ary = np.zeros((500000*9,4))
+loc = np.zeros((500000*9,2))
+obs = np.zeros((500000*9,2))
+y   = np.zeros((500000*9))
 
 fin = open(sys.argv[1],"r")
 count = 0
@@ -46,7 +45,8 @@ for line in fin:
     loc[count,1] = float(words[5])
     obs[count,0] = float(words[6])
     obs[count,1] = float(words[7])
-    y[count] = float(words[8])
+    #y[count] = float(words[8])
+    y[count] = float(words[7])
     
     count += 1
 
@@ -101,9 +101,11 @@ def bayes(tree, ary, y, preds, pices, count):
 #-------------------------------------------------------------
 import sklearn
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeRegressor
 
 for depth in range(1,4):
-  tree = DecisionTreeClassifier(max_depth = depth)
+  #tree = DecisionTreeClassifier(max_depth = depth)
+  tree = DecisionTreeRegressor(max_depth = depth)
   tree.fit(ary[:count], y[:count])
   preds = tree.predict(ary[:count])
   # want to do this only once; it's in bayes right now
@@ -148,12 +150,16 @@ for depth in range(1,4):
   csi = count11/(count11 + count01 + count10)
   print(depth,"totbayes", "{:.3f}".format(pice) , "{:.3f}".format(pclass) , "{:.3f}".format(pice_given_class) , "{:.3f}".format(pclass_given_ice), "{:.3f}".format(csi), flush=True )
 
+  x = sklearn.feature_selection.r_regression(ary[:count,:], obs[:count,1])
+  print("correlations ",x)
+
   # write out the used part of the ary, y, pice(leaf#)
-  fout = open("fout."+"{:02d}".format(int(depth)), "w" )
-  for i in range(0, count):
-    for k in range(0,4):
-      print("{:6.2f}".format(ary[i, k]), end=" ", file=fout)
-    print("{:7.3f}".format(loc[i,0]), "{:7.3f}".format(loc[i,1]),end=" ", file=fout)
-    print("{:6.2f}".format(obs[i,0]), "{:6.2f}".format(obs[i,1]), end=" ",file=fout)
-    print("{:2.0f}".format(y[i]), "{:5.3f}".format(pices[int(leaf[i])]), file=fout)
-  fout.close()
+#  fout = open("fout."+"{:02d}".format(int(depth)), "w" )
+#  for i in range(0, count):
+#    for k in range(0,4):
+#      print("{:6.2f}".format(ary[i, k]), end=" ", file=fout)
+#    print("{:7.3f}".format(loc[i,0]), "{:7.3f}".format(loc[i,1]),end=" ", file=fout)
+#    print("{:6.2f}".format(obs[i,0]), "{:6.2f}".format(obs[i,1]), end=" ",file=fout)
+#    print("{:2.0f}".format(y[i]), "{:5.3f}".format(pices[int(leaf[i])]), file=fout)
+#  fout.close()
+

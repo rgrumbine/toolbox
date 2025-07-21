@@ -46,7 +46,11 @@ for line in fin:
     loc[count,1] = float(words[5])
     obs[count,0] = float(words[6])
     obs[count,1] = float(words[7])
-    y[count] = float(words[8])
+
+    if (obs[count,1] > 0):
+        y[count] = 1
+    else:
+        y[count] = 0
     
     count += 1
 
@@ -149,11 +153,21 @@ for depth in range(1,4):
   print(depth,"totbayes", "{:.3f}".format(pice) , "{:.3f}".format(pclass) , "{:.3f}".format(pice_given_class) , "{:.3f}".format(pclass_given_ice), "{:.3f}".format(csi), flush=True )
 
   # write out the used part of the ary, y, pice(leaf#)
-  fout = open("fout."+"{:02d}".format(int(depth)), "w" )
-  for i in range(0, count):
-    for k in range(0,4):
-      print("{:6.2f}".format(ary[i, k]), end=" ", file=fout)
-    print("{:7.3f}".format(loc[i,0]), "{:7.3f}".format(loc[i,1]),end=" ", file=fout)
-    print("{:6.2f}".format(obs[i,0]), "{:6.2f}".format(obs[i,1]), end=" ",file=fout)
-    print("{:2.0f}".format(y[i]), "{:5.3f}".format(pices[int(leaf[i])]), file=fout)
-  fout.close()
+  #fout = open("fout."+"{:02d}".format(int(depth)), "w" )
+  #for i in range(0, count):
+  #  for k in range(0,4):
+  #    print("{:6.2f}".format(ary[i, k]), end=" ", file=fout)
+  #  print("{:7.3f}".format(loc[i,0]), "{:7.3f}".format(loc[i,1]),end=" ", file=fout)
+  #  print("{:6.2f}".format(obs[i,0]), "{:6.2f}".format(obs[i,1]), end=" ",file=fout)
+  #  print("{:2.0f}".format(y[i]), "{:5.3f}".format(pices[int(leaf[i])]), file=fout)
+  #fout.close()
+
+  x = sklearn.feature_selection.r_regression(ary[:count,:], obs[:count,1])
+  print("correlations ",x)
+  sumx = 0.
+  sumx2 = 0.
+  average = (obs[:,1]*100 - ary[:,0]).sum() / count
+  ms = ((obs[:,1]*100 - ary[:,0])*(obs[:,1]*100 - ary[:,0])).sum()/count
+  print("raw bias = ",average )
+  print("raw rms  = ",sqrt(ms) )
+  print("raw var  = ",sqrt(ms - average*average ) )
