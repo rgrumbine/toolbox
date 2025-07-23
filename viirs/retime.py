@@ -1,4 +1,5 @@
 import sys
+import time
 
 import numpy as np
 import numpy.ma as ma
@@ -8,21 +9,19 @@ from grid import *
 
 #---------------------------------------------------------------------------
 #Loop over input arg list (JRR-IceConcentration*)
-#fname = "20220828/JRR-IceConcentration_v2r3_j01_s202208281036198_e202208281037426_c202208281059540.nc"
 
 #For output grid:
 target_grid = global_5min()
 tsumx  = np.zeros((target_grid.ny,target_grid.nx))
 tsumx2 = np.zeros((target_grid.ny,target_grid.nx))
 gcount = np.zeros((target_grid.ny,target_grid.nx),dtype=int)
-print("target grid dimensions",target_grid.ny,target_grid.nx, file=sys.stderr)
 
 n = 0
 nvalid = 0
 totnp = 0
+ttot = 0
 
 for fname in sys.argv[1:]:
-  #debug: print(n, fname,flush=True)
 
   try:
     viirs = netCDF4.Dataset(fname, 'r')
@@ -30,14 +29,12 @@ for fname in sys.argv[1:]:
     print("Could not open fname: ",fname,flush=True, file=sys.stderr)
     continue
 
-  #debug: print("dimensions ",len(viirs.dimensions['Columns']), len(viirs.dimensions['Rows']) )
   n += 1
   
   #This is a masked array, determined by fill value
   conc = viirs.variables['IceConc'][:,:]
-  print(n,"conc ",conc.max(), conc.min(),flush=True, file=sys.stderr )
+  #debug: print(n,"conc ",conc.max(), conc.min(),flush=True, file=sys.stderr )
   indices = conc.nonzero()
-  #debug: print("len indices:",len(indices), len(indices[0]), flush=True)
   np = len(indices[0])
   if (np == 0):
       continue
@@ -47,13 +44,11 @@ for fname in sys.argv[1:]:
   lats = viirs.variables['Latitude'][:,:]
   lons = viirs.variables['Longitude'][:,:]
 
-  #QC:
-
   #Start Working:
+  tstart = time.process_time()
   for k in range(0,len(indices[0])):
       i = indices[1][k]
       j = indices[0][k]
-      #verbose: print(lons[j,i], lats[j,i], conc[j,i], " pt")
       # for gridding
       iloc = target_grid.inv_locate(lats[j,i],lons[j,i])
       ti = int(iloc[0]+0.5)
@@ -61,20 +56,22 @@ for fname in sys.argv[1:]:
         ti = 0
       tj = int(iloc[1]+0.5)
       gcount[tj,ti] += 1
-      c =  conc[j,i]
+      c = conc[j,i]
       tsumx[tj,ti]  += c
       tsumx2[tj,ti] += c*c
-      #debug print(j, i, tj, ti, lons[j,i], lats[j,i], conc[j,i], " pt", flush=True)
-  #debug if (n > 300) :
-  #debug break
+  dt = time.process_time() - tstart
+  ttot += dt
+  print("process ",len(indices[0]),'obs in ',dt ,'seconds',file=sys.stderr, flush=True)
 
 print("number of files with valid ice conc: ",nvalid, file=sys.stderr)
 print("total number of ice conc observations: ",totnp, file=sys.stderr)
+print("total obs processing time: ",ttot, file=sys.stderr)
 
 z = latpt()
 cellcount = 0
 mask = ma.masked_array(gcount > 0)
 indices = mask.nonzero()
+tstart = time.process_time()
 for k in range(0,len(indices[0])):
     i = indices[1][k]
     j = indices[0][k]
@@ -86,6 +83,7 @@ for k in range(0,len(indices[0])):
 
 print("gcount, avg: ",gcount.max(), gcount.min(), tsumx.max(), tsumx.min(), tsumx2.max(), tsumx2.min(),file=sys.stderr  )
 print("cellcount = ",cellcount,file=sys.stderr)
+print("writeout took ",time.process_time() - tstart, file=sys.stderr )
 
 #write out netcdf of file
 #open

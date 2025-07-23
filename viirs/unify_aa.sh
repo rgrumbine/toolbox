@@ -15,9 +15,9 @@ export NCEP=$HOME/noscrub/com/seaice_analysis/
 #export tag=20250714
 #export j=195
 
-export tag=20250707
+export tag=20250709
 export   j=182
-while [ $tag -le 20250708 ]
+while [ $tag -le 20250714 ]
 do
   
   export yy=`echo $tag | cut -c1-4`

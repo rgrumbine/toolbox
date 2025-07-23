@@ -6,19 +6,23 @@ DCOMDEV=$DCOMROOT/../../dev/dcom
 ls -l $DCOMDEV
 #echo zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 
-tag=20250627
+tag=20250715
+cd $HOME/noscrub/satellites/viirs
 
 echo $DCOMDEV/$tag
-ls -l ${DCOMDEV}/${tag}
-echo zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
-ls -l ${DCOMDEV}/${tag}/seaice/
-echo zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
-ls -l ${DCOMDEV}/${tag}/seaice/pda/JRR*
+#ls -l ${DCOMDEV}/${tag}
+#echo zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+#ls -l ${DCOMDEV}/${tag}/seaice/
+#echo zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+#ls -l ${DCOMDEV}/${tag}/seaice/pda/JRR*
 #exit
 
 #while [ $tag -le `date +"%Y%m%d"` ]
-while [ $tag -le 20250715 ]
+set -x
+
+while [ $tag -le 20250720 ]
 do
+  echo working on $tag
   if [ ! -d $tag ] ; then
     mkdir -p $HOME/noscrub/satellites/viirs/$tag
     time cp -p ${DCOMDEV}/${tag}/seaice/pda/JRR* $HOME/noscrub/satellites/viirs/$tag

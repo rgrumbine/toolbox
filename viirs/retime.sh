@@ -13,10 +13,11 @@ tag=20250719
 
 while [ $tag -le 20250719 ]
 do
-  for inst in n21 j01 npp
+  #for inst in n21 j01 npp
+  for inst in n21 
   do
 #1) Composite viirs data (only):
-    time python3 viirs_conc.py $base/$tag/JRR*Conc*$inst* > initial_composite.$inst.$tag
+    time python3 -m cProfile -o statout retime.py $base/$tag/JRR*Conc*$inst* > initial_composite.$inst.$tag
 
 #2) tag viirs_conc output with i,j of IMS grid:
     ./ims initial_composite.$inst.$tag > initial_composite.$inst.$tag.out 
