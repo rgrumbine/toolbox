@@ -9,9 +9,9 @@ if [ ! -f ims ] ; then
 fi
 
 base=$HOME/noscrub/satellites/viirs
-tag=20250719
+tag=20250101
 
-while [ $tag -le 20250719 ]
+while [ $tag -le 20250102 ]
 do
   for inst in n21 j01 npp
   do

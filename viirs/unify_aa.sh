@@ -15,9 +15,11 @@ export NCEP=$HOME/noscrub/com/seaice_analysis/
 #export tag=20250714
 #export j=195
 
-export tag=20250709
-export   j=182
-while [ $tag -le 20250714 ]
+#export tag=20250709
+#export   j=182
+export tag=20250101
+export   j=001
+while [ $tag -le 20250102 ]
 do
   
   export yy=`echo $tag | cut -c1-4`
@@ -36,5 +38,10 @@ do
   tag=`expr $tag + 1`
   tag=`$HOME/bin/dtgfix3 $tag`
   j=`expr $j + 1`
+  if [ $j -lt 10 ] ; then
+    j=00$j
+  elif [ $j -lt 100 ] ; then
+    j=0$j
+  fi
 
 done 

@@ -9,16 +9,17 @@ int main(int argc, char *argv[]) {
   FILE *fin;
   int i,j;
   float mean, sigma;
+  float tmean, tsigma;
   int count;
 
   fin = fopen(argv[1],"r");
   while (!feof(fin)) {
-    fscanf(fin, "%d %d %f %f %f %f %d\n",&i, &j, &ll.lat, &ll.lon, &mean, &sigma, &count);
-    //printf("%d %d %f %f\n",i,j,ll.lat, ll.lon);
+    fscanf(fin, "%d %d %f %f %f %f %f %f %d\n",&i, &j, &ll.lat, &ll.lon, &mean, &sigma, &tmean, &tsigma, &count);
+
     if (ll.lat > 20) {
       floc = x.locate(ll);
-      printf("%d %d %f %f %f %f %d\n",(int) (0.5+floc.i), (int) (0.5+floc.j), 
-              ll.lat, ll.lon, mean, sigma, count);
+      printf("%d %d %f %f %f %f %f %f %d\n",(int) (0.5+floc.i), (int) (0.5+floc.j), 
+              ll.lat, ll.lon, mean, sigma, tmean, tsigma, count);
     }
   }
 
