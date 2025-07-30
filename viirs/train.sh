@@ -9,14 +9,15 @@ if [ ! -f ims ] ; then
 fi
 
 base=$HOME/noscrub/satellites/viirs
-tag=20250101
+tag=20250103
 
-while [ $tag -le 20250102 ]
+while [ $tag -le 20250103 ]
 do
   for inst in n21 j01 npp
   do
 #1) Composite viirs data (only):
-    time python3 viirs_conc.py $base/$tag/JRR*Conc*$inst* > initial_composite.$inst.$tag
+    #time python3 viirs_conc.py $base/$tag/JRR*Conc*$inst* > initial_composite.$inst.$tag
+    time python3 conc_temp.py $base/$tag/JRR*Conc*$inst* > initial_composite.$inst.$tag
 
 #2) tag viirs_conc output with i,j of IMS grid:
     ./ims initial_composite.$inst.$tag > initial_composite.$inst.$tag.out 
