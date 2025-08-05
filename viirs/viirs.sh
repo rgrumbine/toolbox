@@ -20,7 +20,7 @@ echo $DCOMDEV/$tag
 #while [ $tag -le `date +"%Y%m%d"` ]
 set -x
 
-while [ $tag -le 20250720 ]
+while [ $tag -le 20250804 ]
 do
   echo working on $tag
   if [ ! -d $tag ] ; then
