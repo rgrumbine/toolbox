@@ -23,15 +23,15 @@ void range(float &x, float &y) {
   return;
 }
 
-
-
 void enter(grid2<float> &param, float *x) ;
 void enter(grid2<float> &param, float *x) {
   ijpt loc;
-  for (loc.j = 0; loc.j < param.ypoints(); loc.j++) {
   for (loc.i = 0; loc.i < param.xpoints(); loc.i++) {
+  for (loc.j = 0; loc.j < param.ypoints(); loc.j++) {
     if (x[loc.i+ param.xpoints()*loc.j] > 1e20) x[loc.i+ param.xpoints()*loc.j] = 0;
-    param[loc] = (float) x[loc.i+ param.xpoints()*loc.j];
+    param[loc] = (float) x[loc.i + param.xpoints()*loc.j];
+    //if (x[loc.i*param.ypoints() + loc.j] > 1e20) x[loc.i*param.ypoints() + loc.j] = 0;
+    //param[loc] = (float) x[loc.i*param.ypoints() + loc.j];
   }
   }
   #ifdef DEBUG
@@ -42,9 +42,50 @@ void enter(grid2<float> &param, float *x) {
   return;
 }
 
+template <class T>
+class tmp_north : public psgrid<T> {
+  public:
+    tmp_north(void);
+    //tmp_north(tmp_north<T> &);
+};
+template<class T>
+tmp_north<T>::tmp_north(void) {
+  this->nx = 760;
+  this->ny = 1120;
+  this->dx = 10e3;
+  this->dy = 10e3;
+  //-385, -535, 375, 585
+  //this->xorig = this->dx*(-385);
+  //this->yorig = this->dy*(-535);
+  this->xorig = this->dx*(-385 + 0.5);
+  this->yorig = this->dy*(-585 + 0.5);
+  this->sgn = 1.0;
+  this->slat = 70.0;
+  this->slon = +45.0;
+
+// Calculate parameters here for later calculation (recalculate needed when
+//   slat != 60.0
+  double eccen2 = parameters::eccen2;
+  double eccen  = sqrt(eccen2);
+  this->sl = this->slat / parameters::degrees_per_radian;
+  this->cm = cos(this->sl)/ sqrt(1.0-eccen2*sin(this->sl)*sin(this->sl) );
+  this->tnaught  = tan(M_PI_4 - this->sl/2.) /
+           pow(  ((1.0 - eccen*sin(this->sl))/(1.0+eccen*sin(this->sl))), eccen/2.);
+
+  ijpt f;
+  f.i = 0; f.j = 0;
+  this->first_longitude = (this->locate(f)).lon;
+  this->grid = new T[this->nx*this->ny] ;
+  if (this->grid == (T *) NULL) { cout << "Failed to new in tmp_north(void)\n";
+    cout.flush(); }
+
+  return;
+}
+
+
 int main(int argc, char *argv[]) {
-  osisaf_north<float> nh, lat, lon;
-  //osisaf_south<float> sh, lat, lon;
+  //tmp_north<float> nh, lat, lon;
+  osisaf_south<float> sh, lat, lon;
   global_12th<float> out;
   ijpt loc;
 
@@ -73,42 +114,45 @@ int main(int argc, char *argv[]) {
   if (retval != 0) ERR2(retval, "ice_conc");
   retval = nc_get_var_float(ncid, varid, x);
   if (retval != 0) ERR2(retval, "ice_conc");fflush(stdout);
-  //enter(sh, x);
-  enter(nh, x);
+  enter(sh, x);
+  //enter(nh, x);
 
   nc_close(ncid);
 
   printf("%f %f\n",lon.gridmax(), lon.gridmin() );
   printf("%f %f\n",lat.gridmax(), lat.gridmin() );
-  //printf("%f %f\n",sh.gridmax(), sh.gridmin() );
-  printf("%f %f\n",nh.gridmax(), nh.gridmin() );
+  printf("%f %f\n",sh.gridmax(), sh.gridmin() );
+  //printf("%f %f\n",nh.gridmax(), nh.gridmin() );
 
-  float eps = 5.e-1;
+  float eps = 5.e-2;
   latpt llx, lly;
+  float dlats = 0., dlons = 0.;
 
-  for (loc.j = 0; loc.j < nh.ypoints(); loc.j++ ) {
-  for (loc.i = 0; loc.i < nh.xpoints(); loc.i++ ) {
-    llx = nh.locate(loc);
+  for (loc.j = 0; loc.j < lon.ypoints(); loc.j++ ) {
+  for (loc.i = 0; loc.i < lon.xpoints(); loc.i++ ) {
+    llx = lon.locate(loc);
     llx.lon = -llx.lon;
     if (llx.lon >   180.) {llx.lon -= 360.;}
-    if (llx.lon <= -180. && llx.lon != -999.) {llx.lon += 360.;}
+    if (llx.lon <= -180.) {llx.lon += 360.;}
     lly.lat = lat[loc];
     lly.lon = lon[loc];
     range(llx.lon, lly.lon);
+    dlons += lly.lon-llx.lon;
+    dlats += lly.lat-llx.lat;
     if ( fabs(lly.lat-llx.lat) > eps || fabs(lly.lon-llx.lon) > eps) {
       printf("%d %d %f %f %f  %f %f %f\n",loc.i, loc.j, llx.lat, lly.lat, lly.lat-llx.lat, llx.lon, lly.lon, lly.lon-llx.lon);
     }
   }
   }
+  printf("dlons %f %f\n",dlons, dlons/lon.xpoints()/lon.ypoints() );
+  printf("dlats %f %f\n",dlats, dlats/lon.xpoints()/lon.ypoints() );
   //return 0;
 
-  float landval = -999.;
-  float nonval  = -999.;
+  float landval = 157.;
+  float nonval  = 157.;
   palette<unsigned char> gg(19, 65);
   printf("lat %f %f\n",lat.gridmax(), lat.gridmin() );
-  //out.fromall(lat, landval, nonval);
-  printf("lon %f %f\n",lon.gridmax(), lon.gridmin() );
-  out.fromall(lon, landval, nonval);
+  out.fromall(lat, landval, nonval);
   printf("out %f %f\n",out.gridmax(landval), out.gridmin() );
 
   fijpt floc;
@@ -121,10 +165,8 @@ int main(int argc, char *argv[]) {
      ijy.i = (int) (floc.i+0.5);
      ijy.j = (int) (floc.j+0.5);
      if (out[ijy] != landval) {
-       //if (fabs(out[ijy] - lat[loc]) > eps) {
-       if (fabs(out[ijy] - lon[loc]) > eps) {
-         //printf("delta %d %d  %f %f  %f\n",loc.i, loc.j, out[ijy], lat[loc], out[ijy]-lat[loc]);
-         printf("delta %d %d  %f %f  %f\n",loc.i, loc.j, out[ijy], lon[loc], out[ijy]-lon[loc]);
+       if (fabs(out[ijy] - lat[loc]) > eps) {
+         printf("delta %d %d  %f %f  %f\n",loc.i, loc.j, out[ijy], lat[loc], out[ijy]-lat[loc]);
        }
      }
   }
