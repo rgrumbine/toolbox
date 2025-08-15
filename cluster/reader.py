@@ -21,24 +21,30 @@ read:
 """
 #-----------------------------------------------------------------------
 
-def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
+def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456), thin = 100 ):
 
   base='/export/emc-lw-rgrumbi/rmg3/obs/'
   fcount = 0
+  tcount = 0
   #debug: print(tag, count, flush=True)
   ymd = tag.strftime("%Y%m%d") 
   fname = base+"seaice_analysis."+ymd+"/amsr2_"+ymd+".txt.1"
   fin = open(fname,"r")
+
   post = netCDF4.Dataset(base+"posteriori.nc")
   flag = post.variables['posteriori'][:,:]
+
   sst = pygrib.open(base+"nsst/"+ymd+"/rtgssthr_grb_0.083.grib2")
   conc = pygrib.open(base+"analy/seaice_analysis."+ymd+"/seaice.t00z.5min.grb.grib2")
-
   svals = sst[1].values
   avals = conc[1].values
 
   for line in fin:
     if ('lr' in line):
+      tcount += 1
+      if ((tcount % thin) != 0):
+        #debug: print("thinning",tcount)
+        continue
       words = line.split()
       tlat = float(words[1])
       tlon = float(words[2])
@@ -74,7 +80,7 @@ def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
       count  += 1
   
     if (fcount >= fmax):
-      print('reached fmax of ',fmax, flush=True)
+      print('reached fmax of ',fmax, tcount, flush=True)
       fin.close()
       break
     if (count >= countmax):
