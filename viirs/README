@@ -1,0 +1,31 @@
+4 -rw-r--r-- 1 robert.grumbine couple 3593 Jul  2 13:04 viirs_thick.py
+4 -rw-r--r-- 1 robert.grumbine couple 2501 Jul  2 13:04 trim.py
+4 -rw-r--r-- 1 robert.grumbine couple 2225 Jul  2 13:04 plot.py
+
+0) Copy VIIRS from production to my noscrub: viirs.sh
+
+1) Composite viirs data (only):
+  viirs_conc.py *XXX* > initial_composite.$tag
+
+2) tag viirs_conc output with i,j of IMS grid:
+  makefile
+  ims.C
+  ./ims #1 > #1.out 
+
+3) Learn what decision tree is best:
+  cat *.out > allout
+  unify.py
+  rerun.py
+
+(once decision tree is decided, this becomes #1)
+1) Filter the data from an instrument (npp, n21, j01) 
+  composite.sh
+  composite.py
+ 
+(optional)
+4) Plot the text output (fout1, fout2):
+  biplot.py fout1.$tag fout2.$tag title markersize
+
+
+Robert Grumbine
+16 July 2025

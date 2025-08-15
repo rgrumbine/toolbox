@@ -49,6 +49,7 @@ int main(int argc, char *argv[]) {
   for (int i = 0 ; i < ntargets; i++) {
     hrgrids.resize(mgrids[i]->xpoints(), mgrids[i]->ypoints() );
     lrgrids.resize(mgrids[i]->xpoints(), mgrids[i]->ypoints() );
+    //debug: printf("zzz calling scanner\n"); fflush(stdout);
     scanner(fin, fout[i], *mgrids[i], hrgrids, lrgrids);
     fclose(fout[i]);
   }
@@ -70,18 +71,25 @@ void scanner(FILE *fin, FILE *fout, metricgrid<unsigned char> &mgrid, grid2<amsr
   fijpt loc;
   ijpt iloc;
   latpt ll;
+  int count = 0;
+  size_t hread;
 
+  //debug: printf("zzz entered scanner\n"); fflush(stdout);
   rewind(fin);
   while (!feof(fin)) {
-    fread(&x, sizeof(x), 1, fin);
-    nobs = x.nspots;
+    hread = fread(&x, sizeof(x), 1, fin);
+    //debug: printf("zzz read x %d %d %d\n",count,(int) hread, x.nspots); fflush(stdout);
+    count++;
 
-    fread(&s[0], sizeof(amsr2_spot), nobs, fin);
+    nobs = x.nspots;
+    hread = fread(&s[0], sizeof(amsr2_spot), nobs, fin);
+    //debug: printf("zzz spot %d %d\n",count, (int) hread); fflush(stdout);
     if (feof(fin)) continue;
 
 // look at land fractions, land == 0
     sum = 0;
     for (i = 0; i < nobs; i++) { sum += s[i].alfr; }
+    //debug: printf("zzz total land fraction %f\n",(float) sum); fflush(stdout);
 
     nread += 1;
     if (x.clat < 25 && x.clat > -40.0) continue;

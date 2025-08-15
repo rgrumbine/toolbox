@@ -23,12 +23,16 @@ export MODULEPATH_ROOT=/usr/share/modulefiles
 module load prod_envir
 echo zzz done trying to load prod_envir
 
-ops=$COMROOT/rtofs/v2.4/
+#to 7/29/2025
+#ops=$COMROOT/rtofs/v2.4/
+#from 7/30/2025
+ops=$COMROOT/rtofs/v2.5/
 echo zzz ops = $ops
 
 cd $ops
 base=$HOME/noscrub/model_intercompare/rtofs_cice/
-tag=20250513
+#tag=20250601
+tag=20250730
 end=`date +"%Y%m%d"`
 #end=`expr $end - 1`
 #end=`$HOME/bin/dtgfix3 $end`
