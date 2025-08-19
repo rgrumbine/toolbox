@@ -23,7 +23,7 @@ read:
 
 def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456), thin = 100 ):
 
-  base='/export/emc-lw-rgrumbi/rmg3/obs/'
+  base='/export/emc-lw-rgrumbi/rmg3/amsr2.obs/'
   fcount = 0
   tcount = 0
   #debug: print(tag, count, flush=True)
@@ -96,12 +96,13 @@ def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456), thi
 #-----------------------------------------------------------------------
 
 # compute (x1^2-x2^2)/(x1^2+x1^2) rather than bilinear dr
-def read2(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
-  base='/export/emc-lw-rgrumbi/rmg3/obs/seaice_analysis.'
-  post = netCDF4.Dataset("posteriori.nc")
+def read2(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456), thin = 32 ):
+  base='/export/emc-lw-rgrumbi/rmg3/amsr2.obs/'
+  post = netCDF4.Dataset(base+"posteriori.nc")
   flag = post.variables['posteriori'][:,:]
 
   fcount = 0
+  tcount = 0
   #debug: print(tag, flush=True)
   ymd = tag.strftime("%Y%m%d") 
   fname = base+"seaice_analysis."+ymd+"/amsr2_"+ymd+".txt.1"
@@ -114,6 +115,10 @@ def read2(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
 
   for line in fin:
     if ('lr' in line):
+      tcount += 1
+      if ((tcount % thin) != 0):
+        continue
+
       words = line.split()
       tlat = float(words[1])
       tlon = float(words[2])

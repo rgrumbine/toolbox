@@ -85,8 +85,8 @@ from reader import *
 
 count = 0
 dt = datetime.timedelta(1)
-end = datetime.datetime(2025,6,14)
-tag = datetime.datetime(2025,1,2)
+tag = datetime.datetime(2025,1,1)
+end = datetime.datetime(2025,6,30)
 #for mm in (1,2,3,4,5,6):
 #  tag = datetime.datetime(2025,mm,2)
 while (tag <= end):
@@ -119,7 +119,7 @@ for i in range(0,count):
 import sklearn
 from sklearn.tree import DecisionTreeClassifier
 
-for depth in range(1,3):
+for depth in range(1,5):
   fout = open("fout."+"{:02d}".format(int(depth)), "w" )
   
   tree = DecisionTreeClassifier(max_depth = depth)
