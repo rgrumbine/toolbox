@@ -21,7 +21,7 @@ read:
 """
 #-----------------------------------------------------------------------
 
-def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456), thin = 100 ):
+def read(tag, ary, dr, count, countmax = int(30123456), fmax = int(2123456), thin = 100 ):
 
   base='/export/emc-lw-rgrumbi/rmg3/amsr2.obs/'
   fcount = 0
@@ -35,7 +35,12 @@ def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456), thi
   flag = post.variables['posteriori'][:,:]
 
   sst = pygrib.open(base+"nsst/"+ymd+"/rtgssthr_grb_0.083.grib2")
-  conc = pygrib.open(base+"analy/seaice_analysis."+ymd+"/seaice.t00z.5min.grb.grib2")
+  try:
+    conc = pygrib.open(base+"analy/seaice_analysis."+ymd+"/seaice.t00z.5min.grb.grib2")
+  except:
+    print("could not open analy/seaice_analysis."+ymd+"/seaice.t00z.5min.grb.grib2")
+    return count
+
   svals = sst[1].values
   avals = conc[1].values
 
@@ -70,7 +75,10 @@ def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456), thi
       pcount = 0
       for l in range(0,12):
         for m in range(l+1,12):
-          dr[count,pcount] = (ary[count,l] - ary[count,m])/(ary[count,l]+ary[count,m])
+          try:
+            dr[count,pcount] = (ary[count,l] - ary[count,m])/(ary[count,l]+ary[count,m])
+          except:
+            dr[count,pcount] = 0.
           pcount += 1
       for l in range(0,12):
         dr[count,l+pcount] = ary[count,l]
@@ -96,7 +104,7 @@ def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456), thi
 #-----------------------------------------------------------------------
 
 # compute (x1^2-x2^2)/(x1^2+x1^2) rather than bilinear dr
-def read2(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456), thin = 32 ):
+def read2(tag, ary, dr, count, countmax = int(30123456), fmax = int(2123456), thin = 32 ):
   base='/export/emc-lw-rgrumbi/rmg3/amsr2.obs/'
   post = netCDF4.Dataset(base+"posteriori.nc")
   flag = post.variables['posteriori'][:,:]
@@ -168,7 +176,7 @@ def read2(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456), th
 reread works from a prior run which already spliced in the flags, sst, icec
 it needs the file name input, not date
 '''
-def reread(fname, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
+def reread(fname, ary, dr, count, countmax = int(30123456), fmax = int(2123456) ):
   fcount = 0
   fin = open(fname,"r")
 
