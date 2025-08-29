@@ -62,8 +62,8 @@ for i in range(0,len(z)):
     print(i,z[i],tsi[i])
 #debug: exit(0)
 
-length = 10
-ratio = 1
+length = 9
+ratio = 3
 lead  = 3
 
 pred   = np.zeros((nmax, length))
@@ -79,15 +79,19 @@ x_valid, y_valid = x_train_full[-365:], y_train_full[-365:]
 ypersist = copy.deepcopy(y_train_full[-365-lead:-lead])
 print("persist max min sum",ypersist.max(), ypersist.min(), ypersist.sum(), len(ypersist) )
 print(x_train.shape, x_train.dtype)
-#debug: exit(0)
+print(x_train_full[0])
+print(x_train_full[0].shape)
+print(x_train_full[0].dtype)
+#debug: 
+exit(0)
 
 tf.random.set_seed(43)
 model = tf.keras.Sequential()
 model.add(tf.keras.layers.Input(shape=[length,]))
 model.add(tf.keras.layers.Flatten() )
 model.add(tf.keras.layers.Dense(length*ratio, activation="relu"))
-#model.add(tf.keras.layers.Dense(length*ratio, activation="relu"))
-#model.add(tf.keras.layers.Dense(length*ratio, activation="relu"))
+model.add(tf.keras.layers.Dense(length*ratio, activation="relu"))
+model.add(tf.keras.layers.Dense(length*ratio, activation="relu"))
 model.add(tf.keras.layers.Dense(1, activation="relu"))
 
 print(model.summary() )
@@ -171,3 +175,6 @@ ax.plot(t,ypersist, color='red', label = 'persist')
 ax.legend()
 ax.grid()
 plt.savefig("delta.png")
+#----------------------------------------------
+
+model.save("first_model.keras")
