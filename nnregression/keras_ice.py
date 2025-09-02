@@ -58,11 +58,11 @@ print(tsi.max(), tsi.min(), count )
 z = tsi[1:]-tsi[:-1]
 print(z.max(), z.min() )
 for i in range(0,len(z)):
-  if (abs(z[i]) > 0.4 ):
+  if (abs(z[i]) > 0.5 ):
     print(i,z[i],tsi[i])
 #debug: exit(0)
 
-length = 9
+length = 8
 ratio = 3
 lead  = 3
 
@@ -79,11 +79,10 @@ x_valid, y_valid = x_train_full[-365:], y_train_full[-365:]
 ypersist = copy.deepcopy(y_train_full[-365-lead:-lead])
 print("persist max min sum",ypersist.max(), ypersist.min(), ypersist.sum(), len(ypersist) )
 print(x_train.shape, x_train.dtype)
-print(x_train_full[0])
-print(x_train_full[0].shape)
-print(x_train_full[0].dtype)
-#debug: 
-exit(0)
+#print(x_train_full[0])
+#print(x_train_full[0].shape)
+#print(x_train_full[0].dtype)
+#debug: exit(0)
 
 tf.random.set_seed(43)
 model = tf.keras.Sequential()
@@ -177,4 +176,4 @@ ax.grid()
 plt.savefig("delta.png")
 #----------------------------------------------
 
-model.save("first_model.keras")
+model.save("arctic_model.keras")
