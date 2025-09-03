@@ -2,8 +2,6 @@ import sys
 import numpy as np
 import copy
 
-import tensorflow as tf
-
 #---------------------------------------------------------------
 #  Functions
 def gapfill1(tsi):
@@ -30,12 +28,6 @@ def extract(length, lead, tsi, pred, target):
         if target[npred] > 0:
             #debug: print(pred[npred], target[npred])
             npred += 1
-  #pred   -= 1360.
-  #target -= 1360.
-  #pred   -= 6.
-  #target -= 6.
-  #pred   /= 10.
-  #target /= 10.
   rescale(pred)
   rescale(target)
   print("found ",npred,"predictor-target pairs")
@@ -44,7 +36,7 @@ def extract(length, lead, tsi, pred, target):
 #---------------------------------------------------------------
 # Begin main program
 fin = open(sys.argv[1],"r")
-nmax = int(365*8*4)
+nmax = int(1461*8)
 tsi = np.zeros((nmax))
 
 count = 0
@@ -59,12 +51,12 @@ z = tsi[1:]-tsi[:-1]
 print(z.max(), z.min() )
 for i in range(0,len(z)):
   if (abs(z[i]) > 0.5 ):
-    print(i,z[i],tsi[i])
+    print(i,"daily delta",z[i],tsi[i])
 #debug: exit(0)
 
 length = 8
-ratio = 3
-lead  = 3
+ratio = 2
+lead  = 1
 
 pred   = np.zeros((nmax, length))
 target = np.zeros((nmax))
@@ -79,12 +71,11 @@ x_valid, y_valid = x_train_full[-365:], y_train_full[-365:]
 ypersist = copy.deepcopy(y_train_full[-365-lead:-lead])
 print("persist max min sum",ypersist.max(), ypersist.min(), ypersist.sum(), len(ypersist) )
 print(x_train.shape, x_train.dtype)
-#print(x_train_full[0])
-#print(x_train_full[0].shape)
-#print(x_train_full[0].dtype)
 #debug: exit(0)
 
-tf.random.set_seed(43)
+import tensorflow as tf
+
+tf.random.set_seed(1)
 model = tf.keras.Sequential()
 model.add(tf.keras.layers.Input(shape=[length,]))
 model.add(tf.keras.layers.Flatten() )
@@ -112,12 +103,6 @@ print(y_valid.max(), y_valid.min(), y_valid[33], len(y_valid) )
 
 #-------------------------------------------------------------
 # Return to original scaling
-#ypred   *= 10
-#y_valid *= 10
-#ypred   += 6
-#y_valid += 6
-#ypersist *= 10
-#ypersist += 6
 unscale(ypred)
 unscale(y_valid)
 unscale(ypersist)
