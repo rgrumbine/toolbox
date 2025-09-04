@@ -8,6 +8,7 @@ x=`expr $j % 30 `
 cd $HOME/noscrub/verification
 base=ftp://sidads.colorado.edu/pub/DATASETS/
 
+wget -nv --mirror $base/NOAA/G02202_V5/
 wget -nv --mirror $base/NOAA/G02202_V4/
 
 for dname in nsidc0051_gsfc_nasateam_seaice 

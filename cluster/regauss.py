@@ -25,19 +25,15 @@ from reader import *
 #---------------------------------------------------------
 
 # ndarray to save for use in finding clusters
-countmax = 9123456
-fmax = int(countmax/4)
+countmax = 14123456
+fmax = countmax
 #fmax = 10000
-ary = np.zeros((countmax,23))
+ary = np.zeros((countmax,17))
 dr  = np.zeros((countmax,66+12))
 ice = 14 
 
 count = 0
-#for mm in (1,2,3,4,5):
-#  tag = datetime.datetime(2025,mm,28)
-#  print(tag, flush=True)
-#  count = read(tag, ary, dr, count, fmax = fmax, countmax = countmax)
-fname = "first_pass"
+fname = sys.argv[1]
 count = reread(fname, ary, dr, count, fmax = countmax)
 
 count = min(count, countmax)
@@ -46,7 +42,7 @@ print(count, " points to consider", flush=True)
 #---------------------------------------------------------
 from sklearn.mixture import GaussianMixture
 
-for nlim in range(2,5):
+for nlim in range(2,8):
   acount = np.zeros((nlim))
   ccount = np.zeros((nlim))
 
@@ -96,10 +92,10 @@ for nlim in range(2,5):
     pclass = ccount[k] / count
     pice_given_class[k] = acount[k] / ccount[k]
     pclass_given_ice[k] = pice_given_class[k] * pclass / pice
-    print(k,"{:.3f}".format(pice) , "{:.3f}".format(pclass) , "{:.3f}".format(pice_given_class[k]) , "{:.3f}".format(pclass_given_ice[k]), flush=True )
+    print('bayes',k,"{:.3f}".format(pice) , "{:.3f}".format(pclass) , "{:.3f}".format(pice_given_class[k]) , "{:.3f}".format(pclass_given_ice[k]), flush=True )
     if ( pice_given_class[k] > 0.89):
         tot += pclass
-  print("aic, bic",cluster.aic(dr[:count,:]), cluster.bic(dr[:count,:]))
+  #slow: print("aic, bic",cluster.aic(dr[:count,:]), cluster.bic(dr[:count,:]))
   fout.close()
 
   print(nlim,"total high quality ice fraction ",tot)

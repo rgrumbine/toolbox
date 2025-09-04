@@ -21,24 +21,35 @@ read:
 """
 #-----------------------------------------------------------------------
 
-def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
+def read(tag, ary, dr, count, countmax = int(30123456), fmax = int(2123456), thin = 100 ):
 
-  base='/export/emc-lw-rgrumbi/rmg3/obs/'
+  base='/export/emc-lw-rgrumbi/rmg3/amsr2.obs/'
   fcount = 0
+  tcount = 0
   #debug: print(tag, count, flush=True)
   ymd = tag.strftime("%Y%m%d") 
   fname = base+"seaice_analysis."+ymd+"/amsr2_"+ymd+".txt.1"
   fin = open(fname,"r")
+
   post = netCDF4.Dataset(base+"posteriori.nc")
   flag = post.variables['posteriori'][:,:]
+
   sst = pygrib.open(base+"nsst/"+ymd+"/rtgssthr_grb_0.083.grib2")
-  conc = pygrib.open(base+"analy/seaice_analysis."+ymd+"/seaice.t00z.5min.grb.grib2")
+  try:
+    conc = pygrib.open(base+"analy/seaice_analysis."+ymd+"/seaice.t00z.5min.grb.grib2")
+  except:
+    print("could not open analy/seaice_analysis."+ymd+"/seaice.t00z.5min.grb.grib2")
+    return count
 
   svals = sst[1].values
   avals = conc[1].values
 
   for line in fin:
     if ('lr' in line):
+      tcount += 1
+      if ((tcount % thin) != 0):
+        #debug: print("thinning",tcount)
+        continue
       words = line.split()
       tlat = float(words[1])
       tlon = float(words[2])
@@ -64,7 +75,10 @@ def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
       pcount = 0
       for l in range(0,12):
         for m in range(l+1,12):
-          dr[count,pcount] = (ary[count,l] - ary[count,m])/(ary[count,l]+ary[count,m])
+          try:
+            dr[count,pcount] = (ary[count,l] - ary[count,m])/(ary[count,l]+ary[count,m])
+          except:
+            dr[count,pcount] = 0.
           pcount += 1
       for l in range(0,12):
         dr[count,l+pcount] = ary[count,l]
@@ -74,7 +88,7 @@ def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
       count  += 1
   
     if (fcount >= fmax):
-      print('reached fmax of ',fmax, flush=True)
+      print('reached fmax of ',fmax, tcount, flush=True)
       fin.close()
       break
     if (count >= countmax):
@@ -90,12 +104,13 @@ def read(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
 #-----------------------------------------------------------------------
 
 # compute (x1^2-x2^2)/(x1^2+x1^2) rather than bilinear dr
-def read2(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
-  base='/export/emc-lw-rgrumbi/rmg3/obs/seaice_analysis.'
-  post = netCDF4.Dataset("posteriori.nc")
+def read2(tag, ary, dr, count, countmax = int(30123456), fmax = int(2123456), thin = 32 ):
+  base='/export/emc-lw-rgrumbi/rmg3/amsr2.obs/'
+  post = netCDF4.Dataset(base+"posteriori.nc")
   flag = post.variables['posteriori'][:,:]
 
   fcount = 0
+  tcount = 0
   #debug: print(tag, flush=True)
   ymd = tag.strftime("%Y%m%d") 
   fname = base+"seaice_analysis."+ymd+"/amsr2_"+ymd+".txt.1"
@@ -108,6 +123,10 @@ def read2(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
 
   for line in fin:
     if ('lr' in line):
+      tcount += 1
+      if ((tcount % thin) != 0):
+        continue
+
       words = line.split()
       tlat = float(words[1])
       tlon = float(words[2])
@@ -157,7 +176,7 @@ def read2(tag, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
 reread works from a prior run which already spliced in the flags, sst, icec
 it needs the file name input, not date
 '''
-def reread(fname, ary, dr, count, countmax = int(14123456), fmax = int(2123456) ):
+def reread(fname, ary, dr, count, countmax = int(30123456), fmax = int(2123456) ):
   fcount = 0
   fin = open(fname,"r")
 
