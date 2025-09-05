@@ -21,6 +21,12 @@ int main(int argc, char *argv[]) {
       printf("%d %d %f %f %f %f %f %f %d\n",(int) (0.5+floc.i), (int) (0.5+floc.j), 
               ll.lat, ll.lon, mean, sigma, tmean, tsigma, count);
     }
+    else {
+      floc.i = -1;
+      floc.j = -1;
+      printf("%d %d %f %f %f %f %f %f %d\n",(int) (floc.i), (int) (floc.j), 
+              ll.lat, ll.lon, mean, sigma, tmean, tsigma, count);
+    }
   }
 
   return 0;
