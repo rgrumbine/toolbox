@@ -10,7 +10,7 @@ cd $models/cafs
 
 
 base=`pwd`
-tag=20250701
+tag=20250801
 while [ $tag -lt `date +"%Y%m%d"` ]
 do
 

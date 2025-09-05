@@ -6,21 +6,18 @@ DCOMDEV=$DCOMROOT/../../dev/dcom
 ls -l $DCOMDEV
 #echo zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 
-tag=20250715
+tag=20250815
 cd $HOME/noscrub/satellites/viirs
 
 echo $DCOMDEV/$tag
-#ls -l ${DCOMDEV}/${tag}
-#echo zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
-#ls -l ${DCOMDEV}/${tag}/seaice/
-#echo zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
-#ls -l ${DCOMDEV}/${tag}/seaice/pda/JRR*
-#exit
+end=`date +"%Y%m%d"`
+end=`expr $end - 1`
+end=`$HOME/bin/dtgfix3 $end`
+end=`expr $end - 1`
 
-#while [ $tag -le `date +"%Y%m%d"` ]
 set -x
 
-while [ $tag -le 20250804 ]
+while [ $tag -le $end ]
 do
   echo working on $tag
   if [ ! -d $tag ] ; then

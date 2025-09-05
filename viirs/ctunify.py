@@ -49,7 +49,7 @@ for line in fin:
     else:
         continue
     lat = float(words[2])
-    if (lat < 20):
+    if (abs(lat) < 20):
         continue
     lon = float(words[3])
     loc[count,0] = lat
