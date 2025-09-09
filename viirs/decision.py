@@ -13,7 +13,7 @@ rerun -- using pre-spliced and analyzed data
 
 #-------------------------------------------------------------
 nmax = 11234567
-nmax = 112345
+#nmax = 112345
 ary = np.zeros((nmax,6))
 loc = np.zeros((nmax,2))
 obs = np.zeros((nmax,2))
@@ -46,7 +46,11 @@ for line in fin:
     obs[count,0] = float(words[8])
     obs[count,1] = float(words[9])
 
-    y[count] = float(words[9])
+    if (float(words[9]) > 0 ):
+        y[count] = 1
+    else:
+        y[count] = 0
+    #regressor: y[count] = float(words[9])
     
     count += 1
     if (count >= nmax):
@@ -103,11 +107,9 @@ def bayes(tree, ary, y, preds, pices, count):
 #-------------------------------------------------------------
 import sklearn
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.tree import DecisionTreeRegressor
 
 for depth in range(1,4):
-  #tree = DecisionTreeClassifier(max_depth = depth)
-  tree = DecisionTreeRegressor(max_depth = depth)
+  tree = DecisionTreeClassifier(max_depth = depth)
   tree.fit(ary[:count], y[:count])
   preds = tree.predict(ary[:count])
   # want to do this only once; it's in bayes right now

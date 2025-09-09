@@ -2,6 +2,7 @@
 
 source ~/env3.12/bin/activate
 export PYTHONPATH=$PYTHONPATH:$HOME/rgops/mmablib/py
+export EXDIR=$HOME/rgdev/toolbox/viirs
 
 export IMS=$HOME/noscrub/verification/nsidc_ims/
 export NSST=$HOME/noscrub/nsst/
@@ -16,7 +17,9 @@ export NCEP=$HOME/noscrub/com/seaice_analysis/
 #export j=182
 export tag=20250101
 export   j=001
+export end=20250831
 
+cd $HOME/noscrub/viirsout/
 
 while [ $tag -le $end ]
 do
@@ -27,19 +30,24 @@ do
   fi
   
   for inst in npp n21 j01
-  #for inst in npp 
   do
-    if [ -f fout.${tag}.${inst}.ims ] ; then
-      time python3 ctunify.py  \
-    	$HOME/noscrub/verification/nsidc_ims/${yy}/ims${yy}${j}_4km_v1.3.nc \
-    	fout.${tag}.${inst}.ims \
-    	$NCEP/seaice_analysis.$tag/seaice.t00z.5min.grb.grib2 \
-    	$NSST/$tag/rtgssthr_grb_0.083.grib2 > ${inst}.$tag.out
-      if [ ! -d $d3/$inst ] ; then
-        mkdir -p $d3/$inst
+    if [ -f fout.${tag}.${inst} ] ; then
+      echo working on $tag $inst
+      if [ ! -f fout.${tag}.${inst}.ims ] ; then
+	$EXDIR/ims fout.${tag}.${inst} > fout.${tag}.${inst}.ims
       fi
-      mv fout.${tag}.${inst}.ims $d3/$inst
-      mv ${inst}.$tag.out fout.0? $d3/$inst
+      if [ ! -f $d3/$inst/${inst}.$tag.out ] ; then
+        time python3 $EXDIR/ctunify.py  \
+      	$HOME/noscrub/verification/nsidc_ims/${yy}/ims${yy}${j}_4km_v1.3.nc \
+      	fout.${tag}.${inst}.ims \
+      	$NCEP/seaice_analysis.$tag/seaice.t00z.5min.grb.grib2 \
+      	$NSST/$tag/rtgssthr_grb_0.083.grib2 > ${inst}.$tag.out
+        if [ ! -d $d3/$inst ] ; then
+          mkdir -p $d3/$inst
+        fi
+      #mv fout.${tag}.${inst}.ims $d3/$inst
+        mv ${inst}.$tag.out fout.0? $d3/$inst
+      fi
     fi
   done 
 

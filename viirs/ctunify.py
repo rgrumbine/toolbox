@@ -47,6 +47,8 @@ for line in fin:
           ice = 0
       elif (ice == 3):
           ice = 1
+      else: 
+          continue
     else:
         ice = 2
     # need to split assignments between nh and sh RG
