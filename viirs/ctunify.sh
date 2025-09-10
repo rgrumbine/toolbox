@@ -1,4 +1,13 @@
-#!/bin/sh
+#!/bin/bash
+#####
+#PBS -l select=1:ncpus=1
+#PBS -l walltime=5:59:00
+#PBS -N ctunify1
+#PBS -q "dev"
+#PBS -j oe
+#PBS -A ICE-DEV
+#  #PBS -R "rusage[mem=1024]"
+#####
 
 source ~/env3.12/bin/activate
 export PYTHONPATH=$PYTHONPATH:$HOME/rgops/mmablib/py
@@ -17,16 +26,16 @@ export NCEP=$HOME/noscrub/com/seaice_analysis/
 #export j=182
 export tag=20250101
 export   j=001
-export end=20250831
+export end=20250905
 
 cd $HOME/noscrub/viirsout/
 
 while [ $tag -le $end ]
 do
   export yy=`echo $tag | cut -c1-4`
-  export d3=`echo $tag | cut -c6-8`
-  if [ ! -d $d3 ] ; then
-    mkdir $d3
+  export d4=`echo $tag | cut -c5-8`
+  if [ ! -d $d4 ] ; then
+    mkdir $d4
   fi
   
   for inst in npp n21 j01
@@ -36,17 +45,17 @@ do
       if [ ! -f fout.${tag}.${inst}.ims ] ; then
 	$EXDIR/ims fout.${tag}.${inst} > fout.${tag}.${inst}.ims
       fi
-      if [ ! -f $d3/$inst/${inst}.$tag.out ] ; then
+      if [ ! -f $d4/$inst/${inst}.$tag.out ] ; then
         time python3 $EXDIR/ctunify.py  \
       	$HOME/noscrub/verification/nsidc_ims/${yy}/ims${yy}${j}_4km_v1.3.nc \
       	fout.${tag}.${inst}.ims \
       	$NCEP/seaice_analysis.$tag/seaice.t00z.5min.grb.grib2 \
       	$NSST/$tag/rtgssthr_grb_0.083.grib2 > ${inst}.$tag.out
-        if [ ! -d $d3/$inst ] ; then
-          mkdir -p $d3/$inst
+        if [ ! -d $d4/$inst ] ; then
+          mkdir -p $d4/$inst
         fi
-      #mv fout.${tag}.${inst}.ims $d3/$inst
-        mv ${inst}.$tag.out fout.0? $d3/$inst
+
+        mv ${inst}.$tag.out fout.0? $d4/$inst
       fi
     fi
   done 
@@ -58,6 +67,7 @@ do
   if [ $j -lt 10 ] ; then
     j=0$j
   fi
+
   tag=`expr $tag + 1`
   tag=`$HOME/bin/dtgfix3 $tag`
 done

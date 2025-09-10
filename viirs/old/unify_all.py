@@ -9,86 +9,64 @@ import pygrib
 from grid import *
 
 '''
-bring together the viirs l3 merge with the ims for that date and place
-  and the sst analysis, sea ice concentration analysis. Not used here, but for later examination.
+bring together the viirs l3 merge with the sst analysis, sea ice concentration analysis. 
+SST not used here, but for later examination.
 
+This is for the Antarctic, so IMS is not usable
 
 '''
 
 #-------------------------------------------------------------
-npts = 11234567
-ary = np.zeros((npts,6))
+npts = 1123456
+ary = np.zeros((npts,4))
 loc = np.zeros((npts,2))
 obs = np.zeros((npts,2))
 y   = np.zeros((npts))
 
-analy = nc.Dataset(sys.argv[1])
-ims = analy.variables['IMS_Surface_Values'][0,:,:]
-#1 = open water
-#3 = sea or lake ice
 
 target_grid = global_5min()
-ncep = pygrib.open(sys.argv[3])
-nsst = pygrib.open(sys.argv[4])
+ncep = pygrib.open(sys.argv[2])
+nsst = pygrib.open(sys.argv[3])
 svals = nsst[1].values
 avals = ncep[1].values
 
 
-fin = open(sys.argv[2],"r")
+fin = open(sys.argv[1],"r")
 count = 0
 for line in fin:
     words = line.split()
     #i,j,lat,lon,mean,sigma,count
     i = int(words[0])
     j = int(words[1])
-    if (i > -1 and j > -1):
-      ice = ims[j,i]
-      if (ice == 1):
-          ice = 0
-      elif (ice == 3):
-          ice = 1
-      else: 
-          continue
-    else:
-        ice = 2
-    # need to split assignments between nh and sh RG
+
     lat = float(words[2])
-    if (abs(lat) < 20):
+    if (abs(lat) < 30):
         continue
     lon = float(words[3])
     loc[count,0] = lat
     loc[count,1] = lon
+    mean = float(words[4])
+    sigma = float(words[5])
+    ocount = float(words[6])
+
+    ary[count,0] = mean
+    ary[count,1] = sigma
+    ary[count,2] = ocount
+    ary[count,3] = ocount / cos(pi*lat/180.)
 
     iloc = target_grid.inv_locate(lat,lon)
     ti = int(iloc[0]+0.5)
     if (ti == target_grid.nx):
       ti = 0
     tj = int(iloc[1]+0.5)
-    if (svals[tj, ti] > 275.15):
-        continue
     obs[count,0 ] = svals[tj, ti] 
     obs[count,1 ] = avals[tj, ti] 
 
-    mean = float(words[4])
-    sigma = float(words[5])
-    tmean = float(words[6])
-    tsigma = float(words[7])
-    ocount = float(words[8])
-
-    ary[count,0] = mean
-    ary[count,1] = sigma
-    ary[count,2] = ocount
-    ary[count,3] = ocount / cos(pi*lat/180.)
-    ary[count,4] = tmean
-    ary[count,5] = tsigma
-
-    if (ice == 2):
-      if (obs[count,1] > 0):
+    #y[count] = obs[count,1]
+    if (obs[count,1] > 0):
         y[count] = 1
-      else:
-        y[count] = 0
     else:
-      y[count] = ice
+        y[count] = 0
     
     count += 1
 
@@ -168,13 +146,13 @@ for depth in range(1,5):
   count10 = 0
   count11 = 0
   for i in range (0, count):
-    if (preds[i] == 0 and ary[i,ice] == 0):
+    if (preds[i] == 0 and y[i] == 0):
         count00 += 1
-    if (preds[i] > 0 and ary[i,ice] > 0):
+    if (preds[i] > 0 and y[i] > 0):
         count11 += 1
-    if (preds[i] == 0 and ary[i,ice] > 0):
+    if (preds[i] == 0 and y[i] > 0):
         count01 += 1
-    if (preds[i] > 0 and ary[i,ice] == 0):
+    if (preds[i] > 0 and y[i] == 0):
         count10 += 1
 
   print("depth",depth, "tot%correct ",count00, count01, count10, count11, (count00+count11)/(count00 + count01 + count10 + count11))
@@ -194,12 +172,19 @@ for depth in range(1,5):
   # add write out of sst and analyzed concentration
   fout = open("fout."+"{:02d}".format(int(depth)), "w" )
   for i in range(0, count):
-    for k in range(0,6):
+    for k in range(0,4):
       print("{:6.2f}".format(ary[i, k]), end=" ", file=fout)
     print("{:7.3f}".format(loc[i,0]), "{:7.3f}".format(loc[i,1]),end=" ", file=fout)
     print("{:6.2f}".format(obs[i,0]), "{:6.2f}".format(obs[i,1]), end=" ",file=fout)
     print("{:2.0f}".format(y[i]), "{:5.3f}".format(pices[int(leaf[i])]), file=fout)
   fout.close()
 
-  #x = sklearn.feature_selection.r_regression(ary[:count,:], obs[:count,1])
-  #print("correlations ",x)
+  x = sklearn.feature_selection.r_regression(ary[:count,:], obs[:count,1])
+  print("correlations ",x)
+
+  average = (obs[:,1]*100 - ary[:,0]).sum() / count
+  ms = ((obs[:,1]*100 - ary[:,0])*(obs[:,1]*100 - ary[:,0])).sum()/count
+  print("raw bias = ",average )
+  print("raw rms  = ",sqrt(ms) )
+  print("raw var  = ",sqrt(ms - average*average ) )
+

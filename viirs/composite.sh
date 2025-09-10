@@ -21,9 +21,9 @@ pid=$$
 mkdir -p /lfs/h2/emc/ptmp/wx21rg/viirs.$pid
 cd       /lfs/h2/emc/ptmp/wx21rg/viirs.$pid
 
-tag=20250701
+tag=20250101
 
-while [ $tag -le 20250805 ]
+while [ $tag -le 20250905 ]
 do
   if [ -d $HOME/noscrub/satellites/viirs/$tag ] ; then
     echo checking $tag
