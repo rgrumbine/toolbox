@@ -1,25 +1,18 @@
 import sys
 from math import *
+import datetime
 import numpy as np
 import netCDF4 as nc
-import datetime
-
 
 '''
 rerun -- using pre-spliced and analyzed data
       -- an an algorithm already in hand
-
-
 '''
-
 #-------------------------------------------------------------
 nmax = 41234567
 #nmax = 112345
 ary = np.zeros((nmax,6))
-loc = np.zeros((nmax,2))
-obs = np.zeros((nmax,2))
 y   = np.zeros((nmax))
-pred = np.zeros((nmax))
 
 fin = open(sys.argv[1],"r")
 count = 0
@@ -43,11 +36,6 @@ for line in fin:
     ary[count,4] = tmean
     ary[count,5] = tsigma
 
-    loc[count,0] = float(words[6])
-    loc[count,1] = float(words[7])
-    obs[count,0] = float(words[8])
-    obs[count,1] = float(words[9])
-
     if (float(words[9]) > 0 ):
         y[count] = 1
     else:
@@ -58,49 +46,59 @@ for line in fin:
     if (count >= nmax):
         break
 
-#del loc obs
 print("count = ",count)
 #-------------------------------------------------------------
 
-icount = 0
+allice = 0
 pcount = 0
 picount = 0
-for i in range(0,count):
-  if (ary[i,4] <= 265.761 and ary[i,4] > 225.656 and ary[i,3] > 42.849): 
-    pred[i] = 1
-    pcount += 1
-    if (y[i] > 0):
-        picount += 1
-  else:
-    pred[i] = 0
-  if (y[i] > 0):
-    icount += 1
 
-#del ary
-
-pclass = float(pcount)/float(count) 
-pice_given_class = picount/pcount
-print(pcount, icount, count, pclass, pice_given_class)
-
-# evaluate:
 count00 = 0
 count01 = 0
 count10 = 0
 count11 = 0
-for i in range (0, count):
-  if (pred[i] == 0 and y[i] == 0):
-      count00 += 1
-  if (pred[i] > 0 and y[i] > 0):
-      count11 += 1
-  if (pred[i] == 0 and y[i] > 0):
-      count01 += 1
-  if (pred[i] > 0 and y[i] == 0):
-      count10 += 1
+# Note that we're only concerned with points that satisfy this leaf's conditions
+for i in range(0,count):
+  if (y[i] > 0):
+      allice += 1
+  #if (ary[i,4] <= 265.761 and ary[i,4] > 225.656 and ary[i,3] > 42.849): 
+  #if (ary[i,4] <= 265.761 and ary[i,4] > 218.670 and ary[i,5] < 22.832): 
+  #  pcount += 1
+  #  if (y[i] > 0):
+  #    picount += 1
+  #    count11 += 1
+  #  else:
+  #    count10 += 1
+  #else:
+  #  if (y[i] > 0):
+  #    count01 += 1
+  
 
-print("tot%correct ",count00, count01, count10, count11, (count00+count11)/(count00 + count01 + count10 + count11))
+  if (ary[i,4] <= 273.865):
+    if (ary[i,0] > 86.985):
+      if (ary[i,3] > 105.570):
+        pcount += 1
+        if (y[i] > 0):
+          picount += 1
+          count11 += 1
+        else:
+          count10 += 1
+    else:
+      if (ary[i,4] <= 268.525):
+        pcount += 1
+        if (y[i] > 0):
+          picount += 1
+          count11 += 1
+        else:
+          count10 += 1
 
-pice             = (count01 + count11)/count
-print('pice, pice given class',pice, pice_given_class)
+
+pclass = float(pcount)/float(count) 
+pice_given_class = count11/pcount
+#print(pcount, allice, pclass, count11/allice, allice/count)
+
+
+pice             = (count01 + count11)/pcount
 
 if pice == 0:
   pclass_given_ice = 0
@@ -108,5 +106,5 @@ else:
   pclass_given_ice = pice_given_class * pclass / pice
 csi = count11/(count11 + count01 + count10)
 
-print("totbayes", "{:.3f}".format(pice) , "{:.3f}".format(pclass) , "{:.3f}".format(pice_given_class) , "{:.3f}".format(pclass_given_ice), "{:.3f}".format(csi), flush=True )
+print("totbayes", "{:.3f}".format(pice) , "{:.3f}".format(pclass) , "{:.3f}".format(pice_given_class) , "{:.3f}".format(pclass_given_ice), "  {:.3f}".format(allice/count), flush=True )
 

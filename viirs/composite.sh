@@ -2,7 +2,7 @@
 #####
 #PBS -l select=1:ncpus=1
 #PBS -l walltime=15:59:00
-#PBS -N viirs7.comp
+#PBS -N viirs9.comp
 #PBS -q "dev"
 #PBS -j oe
 #PBS -A ICE-DEV
@@ -21,7 +21,7 @@ pid=$$
 mkdir -p /lfs/h2/emc/ptmp/wx21rg/viirs.$pid
 cd       /lfs/h2/emc/ptmp/wx21rg/viirs.$pid
 
-tag=20250101
+tag=20250901
 
 while [ $tag -le 20250905 ]
 do
