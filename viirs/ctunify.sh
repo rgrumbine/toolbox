@@ -24,7 +24,7 @@ export NCEP=$HOME/noscrub/com/seaice_analysis/
 
 #export tag=20250701
 #export j=182
-export tag=20250801
+export tag=20250101
 export   j=001
 export end=20250905
 

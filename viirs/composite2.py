@@ -60,7 +60,7 @@ sumcount = np.zeros((nx, ny))
 
 for fnum in range(1,len(sys.argv)):
   fin = open(sys.argv[fnum],"r")
-  print(sys.argv[fnum], flush=True)
+  #debug: print(sys.argv[fnum], flush=True)
   temp = np.zeros((nx, ny))
   conc = np.zeros((nx, ny))
   count = np.zeros((nx, ny))
@@ -89,7 +89,7 @@ for k in range(0, len(indices[0])):
   sumsuma2[i,j] /= sumcount[i,j]
   sumsumt2[i,j] /= sumcount[i,j]
 
-print("temp",sumtemp.max(), "conc", sumconc.max(), "count",sumcount.max() )
+#debug: print("temp",sumtemp.max(), "conc", sumconc.max(), "count",sumcount.max() )
 #print('sum2',sumsuma2.max(), sumsumt2.max() )
 
 sigmatemp = np.zeros((nx, ny))
@@ -105,20 +105,43 @@ sigmatemp = np.fmax(dummy, sigmatemp)
 sigmaconc = np.sqrt(sigmaconc)
 sigmatemp = np.sqrt(sigmatemp)
 #print('sigmas',sigmaconc.max(), sigmatemp.max() )
-exit(0)
+#debug: exit(0)
 
 #-------------------------------------------------------------
 #filter
-
-#write out (to netcdf ultimately)
+mask = np.zeros((nx, ny))
 indices = sumcount.nonzero()
+z = latpt()
 for k in range(0, len(indices[0])):
   i = indices[0][k]
   j = indices[1][k]
-  # the 0s are for compatability and possibility of compositing composited2 files 
-  print(i,j,0,0,conc[i,j], sigmaconc[i,j], temp[i,j], sigmatemp[i,j], count[i,j]) 
+  target_grid.locate(i,j,z)
+
+  if (sumtemp[i,j] <= 273.865):
+    if (sumconc[i,j] > 86.985):
+      if (sumcount[i,j]/cos(pi/180*z.lat)   > 105.570):
+        mask[i,j] = 1
+    else:
+      if (sumtemp[i,j] <= 268.525):
+        mask[i,j] = 1
 
 
+#write out (to netcdf ultimately)
+#sumcount *= mask
+#sumconc  *= mask
+#sumtemp  *= mask
+#sigmaconc *= mask
+#sigmatemp *= mask
+
+indices = mask.nonzero()
+for k in range(0, len(indices[0])):
+  i = indices[0][k]
+  j = indices[1][k]
+  target_grid.locate(i,j,z)
+  print(i,j,z.lat,z.lon,sumconc[i,j], sigmaconc[i,j], sumtemp[i,j], sigmatemp[i,j], sumcount[i,j]) 
+
+#debug: 
+exit(0)
 
 
 #-------------------------------------------------------------
