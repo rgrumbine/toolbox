@@ -2,7 +2,7 @@
 #####
 #PBS -l select=1:ncpus=1
 #PBS -l walltime=15:59:00
-#PBS -N viirs9.comp
+#PBS -N viirs1.comp
 #PBS -q "dev"
 #PBS -j oe
 #PBS -A ICE-DEV
@@ -23,7 +23,7 @@ cd       /lfs/h2/emc/ptmp/wx21rg/viirs.$pid
 
 tag=20250101
 
-while [ $tag -le 20250905 ]
+while [ $tag -le 20250915 ]
 do
   if [ -d $HOME/noscrub/satellites/viirs/$tag ] ; then
     echo checking $tag

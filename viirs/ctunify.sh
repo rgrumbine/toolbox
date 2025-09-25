@@ -2,7 +2,7 @@
 #####
 #PBS -l select=1:ncpus=1
 #PBS -l walltime=5:59:00
-#PBS -N ctunify8
+#PBS -N ctunify1
 #PBS -q "dev"
 #PBS -j oe
 #PBS -A ICE-DEV
@@ -26,7 +26,7 @@ export NCEP=$HOME/noscrub/com/seaice_analysis/
 #export j=182
 export tag=20250101
 export   j=001
-export end=20250905
+export end=20250915
 
 pid=$$
 export RUN=/lfs/h2/emc/ptmp/wx21rg/ctunify.$pid
@@ -34,6 +34,8 @@ mkdir -p $RUN
 cd $RUN
 
 export COMOUT=$HOME/noscrub/viirsout/
+
+set -x
 
 while [ $tag -le $end ]
 do
@@ -50,7 +52,7 @@ do
       if [ ! -f $COMOUT/fout.${tag}.${inst}.ims ] ; then
 	$EXDIR/ims $COMOUT/fout.${tag}.${inst} > $COMOUT/fout.${tag}.${inst}.ims
       fi
-      if [ ! -f $d4/$inst/${inst}.$tag.out ] ; then
+      if [ ! -f $COMOUT/$d4/$inst/${inst}.$tag.out ] ; then
         time python3 $EXDIR/ctunify.py  \
       	$HOME/noscrub/verification/nsidc_ims/${yy}/ims${yy}${j}_4km_v1.3.nc \
       	$COMOUT/fout.${tag}.${inst}.ims \
