@@ -12,7 +12,7 @@ rerun -- using pre-spliced and analyzed data
 '''
 
 #-------------------------------------------------------------
-nmax = 81234567
+nmax = int(81234567)
 #nmax = 112345
 ary = np.zeros((nmax,6))
 loc = np.zeros((nmax,2))
@@ -20,9 +20,14 @@ obs = np.zeros((nmax,2))
 y   = np.zeros((nmax))
 
 fin = open(sys.argv[1],"r")
+thin = int(sys.argv[2])
 count = 0
+tcount = 0
 for line in fin:
 #100.00   0.00   1.00 458.37  89.88 129.54  1 0.000
+    tcount += 1
+    if (tcount%thin != 0):
+        continue
     words = line.split()
     # skip points sst filter would get
     if float(words[8]) > 275.3:
@@ -56,7 +61,7 @@ for line in fin:
     if (count >= nmax):
         break
 
-print("count = ",count)
+print("count = ",count, flush=True)
 #-------------------------------------------------------------
 def noop():
   return
