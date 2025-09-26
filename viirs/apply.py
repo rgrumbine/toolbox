@@ -6,7 +6,7 @@ rerun -- using pre-spliced and analyzed data
       -- an an algorithm already in hand
 '''
 #-------------------------------------------------------------
-nmax = 81234567
+nmax = 99123456
 #nmax = 112345
 
 fin = open(sys.argv[1],"r")
@@ -40,7 +40,8 @@ for line in fin:
         conc = 0
 
 
-    if (tmean <= 269.985 and tmean > 238.155):
+    #if (tmean <= 269.985 and tmean > 238.155):
+    if (tmean <= 268.855 and tmean > 238.135):
       pcount += 1
       if (conc > 0):
         count11 += 1
@@ -62,7 +63,6 @@ pice_given_class = count11/pcount
 print(pcount, allice, pclass, count11/allice, allice/count)
 
 pice             = (count01 + count11)/count
-print("pice = ",pice)
 
 if pice == 0:
   pclass_given_ice = 0

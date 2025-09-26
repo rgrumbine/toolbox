@@ -12,7 +12,7 @@ rerun -- using pre-spliced and analyzed data
 '''
 
 #-------------------------------------------------------------
-nmax = int(81234567)
+nmax = int(99234567)
 #nmax = 112345
 ary = np.zeros((nmax,6))
 loc = np.zeros((nmax,2))
