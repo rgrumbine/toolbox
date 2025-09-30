@@ -24,9 +24,9 @@ export NCEP=$HOME/noscrub/com/seaice_analysis/
 
 #export tag=20250701
 #export j=182
-export tag=20250101
-export   j=001
-export end=20250915
+export tag=20250131
+export   j=031
+export end=20250928
 
 pid=$$
 export RUN=/lfs/h2/emc/ptmp/wx21rg/ctunify.$pid
