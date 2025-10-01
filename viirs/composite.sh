@@ -23,7 +23,7 @@ cd       /lfs/h2/emc/ptmp/wx21rg/viirs.$pid
 
 tag=20250101
 
-while [ $tag -le 20250928 ]
+while [ $tag -le 20250929 ]
 do
   if [ -d $HOME/noscrub/satellites/viirs/$tag ] ; then
     echo checking $tag
