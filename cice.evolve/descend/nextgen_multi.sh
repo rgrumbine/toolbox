@@ -1,13 +1,11 @@
 #!/bin/sh
 
-export old=gen5
 export next=gen6
 
 # link parents points to directory with all the previous parameter sets
 if [ -d parents ] ; then
   rm parents
 fi
-ln -s $old parents
 
 # make a directory to save + point to for next gen
 if [ ! -d $next ] ; then
@@ -16,8 +14,8 @@ fi
 
 # parm.gen2 is the full parameter set
 # fatal is the collection of fatal mutations
-# final argument is the list of parent numbers from the old generation
-python3 descend.py parm.gen2 fatal ${next}in
+# final argument is the list of parent numbers from the old generations
+python3 descend_multi.py parm.gen2 fatal ${next}in
 
 # Copy files to the running directories
 export OPT=$HOME/rgdev/CICE/configuration/scripts/options

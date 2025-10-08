@@ -16,7 +16,7 @@ set -x
 #name change 26 Feb 2020
 #  what is now dcom_prod was dcom_us007003
 
-end_date=20250629
+end_date=20240601
 
 start_date=`date +"%Y%m%d"`
 start_date=`expr $start_date - 1`

@@ -19,7 +19,8 @@ for ranges, min/max order on input
 """
 Class to implement variations on parameters
 """
-rngf = numpy.random.default_rng()
+
+rngf = numpy.random.default_rng(seed = 0)
 
 class evo_parameters:
 
