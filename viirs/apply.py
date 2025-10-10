@@ -6,10 +6,9 @@ rerun -- using pre-spliced and analyzed data
       -- an an algorithm already in hand
 '''
 #-------------------------------------------------------------
-nmax = 99123456
-#nmax = 112345
 
-fin = open(sys.argv[1],"r")
+thin = int(sys.argv[1])
+
 count = 0
 
 allice  = 0
@@ -19,8 +18,13 @@ count00 = 0
 count01 = 0
 count10 = 0
 count11 = 0
-for line in fin:
-#100.00   0.00   1.00 458.37  89.88 129.54  1 0.000
+#debug: print("len = ",len(sys.argv))
+
+for fnum in range (2,len(sys.argv)):
+  #debug: print("fnum ",fnum, flush=True)
+  #debug: print("fname ",sys.argv[fnum], flush=True)
+  fin = open(sys.argv[fnum], 'r')
+  for line in fin:
     words = line.split()
     # skip points sst filter would get
     if float(words[8]) > 275.15:
@@ -39,7 +43,6 @@ for line in fin:
     else:
         conc = 0
 
-
     #if (tmean <= 269.985 and tmean > 238.155):
     if (tmean <= 268.855 and tmean > 238.135):
       pcount += 1
@@ -52,10 +55,10 @@ for line in fin:
         count01 += 1
     
     count += 1
-    if (count >= nmax):
-        break
 
-print("count = ",count)
+  fin.close()
+
+print("count = ",count, count/1.e6)
 #-------------------------------------------------------------
 
 pclass = float(pcount)/float(count) 
