@@ -141,3 +141,42 @@ def descent(fname, parmset, pvary, nnml, exptlist, fatalities):
     fout.close()
     print("smoke  gx3  1x1  med3,yr_out,evo"+"{:d}".format(nnml),file = exptlist)
 
+def descent1(fname, parmset, pvary, nnml, exptlist, fatalities):
+    # Update reference parameter set with this experiment's values
+    # Read in parent's mods:
+    tparmset = copy.deepcopy(parmset)
+    nparm = len(tparmset)
+    fin = open(fname, "r")
+    tmp = []
+    for line in fin:
+      words = line.split('=')
+      name = words[0].strip()
+      val  = words[1].strip()
+      tmp.append([name, val])
+      for i in range(0, nparm):
+          if (name == tparmset[i].name):
+              tparmset[i].reference = val
+              break
+    fin.close()
+
+    # Now ensure at least one change
+    fout = open("set_nml.evo"+"{:d}".format(nnml),"w")
+    nvaried = 0
+    while (nvaried == 0):
+      for k in range(0, nparm):
+        tries = 0
+        if (rngf.random() < pvary):
+          nvaried += 1
+          while ((parmset[k].reference == tparmset[k].reference) and (tries < 10) 
+                    and not isfatal(tparmset[k].name, tparmset[k].reference, fatalities) ):
+            tparmset[k].vary()
+            tries += 1
+          if ( tries > 9) :
+            print("tries = ",tries,tparmset[k].type, flush = True)
+
+    for k in range(0, nparm):
+        if (not (parmset[k].reference == tparmset[k].reference) ):
+          tparmset[k].namelist(fname = fout)
+    fout.close()
+    print("smoke  gx1  1x1  long,yr_out,evo"+"{:d}".format(nnml),file = exptlist)
+

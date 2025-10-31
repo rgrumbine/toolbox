@@ -10,18 +10,18 @@
 set -x
 
 #Go back to this date, ensuring all are present:
-end_date=20241201
+end_date=20250920
 
 #Start from this date -- back up 2 days for archive process/delay
 start_date=`date +"%Y%m%d"`
 ##start_date=`sh finddate.sh $start_date d-1`
 ##start_date=`sh finddate.sh $start_date d-1`
-#start_date=`expr $start_date - 1`
-#start_date=`$HOME/bin/dtgfix3 $start_date`
-#start_date=`expr $start_date - 1`
-#start_date=`$HOME/bin/dtgfix3 $start_date`
+start_date=`expr $start_date - 1`
+start_date=`$HOME/bin/dtgfix3 $start_date`
+start_date=`expr $start_date - 1`
+start_date=`$HOME/bin/dtgfix3 $start_date`
 
-start_date=20241231
+#start_date=20241231
 
 base=$HOME/noscrub/sice/
 if [ ! -d $base ] ; then
