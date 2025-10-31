@@ -12,10 +12,9 @@ rerun -- using pre-spliced and analyzed data
 '''
 
 #-------------------------------------------------------------
-nmax = int(88123456)
+nmax = int(599123456)
 #nmax = 112345
 ary = np.zeros((nmax,6))
-loc = np.zeros((nmax,2))
 obs = np.zeros((nmax,2))
 y   = np.zeros((nmax))
 
@@ -46,8 +45,6 @@ for line in fin:
     ary[count,4] = tmean
     ary[count,5] = tsigma
 
-    loc[count,0] = float(words[6])
-    loc[count,1] = float(words[7])
     obs[count,0] = float(words[8])
     obs[count,1] = float(words[9])
 
@@ -61,7 +58,7 @@ for line in fin:
     if (count >= nmax):
         break
 
-print("count = ",count, flush=True)
+print("count = ",count, tcount, flush=True)
 #-------------------------------------------------------------
 def noop():
   return
@@ -161,14 +158,4 @@ for depth in range(1,4):
 
   x = sklearn.feature_selection.r_regression(ary[:count,:], obs[:count,1])
   print("correlations ",x)
-
-  # write out the used part of the ary, y, pice(leaf#)
-#  fout = open("fout."+"{:02d}".format(int(depth)), "w" )
-#  for i in range(0, count):
-#    for k in range(0,4):
-#      print("{:6.2f}".format(ary[i, k]), end=" ", file=fout)
-#    print("{:7.3f}".format(loc[i,0]), "{:7.3f}".format(loc[i,1]),end=" ", file=fout)
-#    print("{:6.2f}".format(obs[i,0]), "{:6.2f}".format(obs[i,1]), end=" ",file=fout)
-#    print("{:2.0f}".format(y[i]), "{:5.3f}".format(pices[int(leaf[i])]), file=fout)
-#  fout.close()
 
