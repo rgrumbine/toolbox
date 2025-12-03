@@ -12,22 +12,16 @@ except:
 
 markersize = float(sys.argv[3])
 
-parm = []
-i = []
-j = []
 lon = []
 lat = []
 
 for line in fin:
-  if ("grid" in line):
     words = line.split()
-    i.append(int(words[1]))
-    j.append(int(words[2]))
-    lat.append(float(words[3]))
-    lon.append(float(words[4]))
+    lat.append(float(words[2]))
+    lon.append(float(words[3]))
 
-print("found ",len(i)," points")
-if (len(i) == 0):
+print("found ",len(lat)," points")
+if (len(lat) == 0):
     exit(0)
 
 #debug print(max(lat), min(lat), max(lon), min(lon) )
@@ -48,43 +42,40 @@ matplotlib.use('Agg') #batch mode
 #  separate color/symbol per parameter
 #  different sizes per parameter
 
-fig,ax = plt.subplots()
-plt.scatter(i,j, s = markersize)
-ax.grid() 
-plt.title(title_tag)
-plt.savefig("ij_"+title_tag+".png")
-plt.close()
-
-
-# lat-lon plot of error points ---------------------------------
+# lat-lon plot of points ---------------------------------
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
 #proj = ccrs.LambertConformal(central_longitude=-170., central_latitude = 60., cutoff=25.)
 proj = ccrs.PlateCarree()
-proj = ccrs.SouthPolarStereo(central_longitude=-60)
-proj = ccrs.NorthPolarStereo(central_longitude=-80)
-proj = ccrs.NorthPolarStereo(central_longitude=-170)
+#proj = ccrs.SouthPolarStereo(central_longitude=-60)
+#proj = ccrs.NorthPolarStereo(central_longitude=-80)
+#proj = ccrs.NorthPolarStereo(central_longitude=-170)
 
 ax = plt.axes(projection = proj)
 fig = plt.figure(figsize = (8,6))
 ax = fig.add_subplot(1,1,1,projection = proj)
 plt.title(title_tag)
 
+#Globe
+xlocs = list(range(-180,181,30))
+ylocs = list(range(-90,90,15))
+ax.set_extent([-180,180,-90,90], crs=ccrs.PlateCarree())
 # AA
 #xlocs = list(range(-180,181,30))
 #ylocs = list(range(-90, -30, 5))
 #ax.set_extent([-180,180,-90,-30], crs=ccrs.PlateCarree())
 # Arctic
-xlocs = list(range(-180,181,30))
-ylocs = list(range(30,90,5))
-ax.set_extent([-180,180,35,90], crs=ccrs.PlateCarree())
+#xlocs = list(range(-180,181,30))
+#ylocs = list(range(30,90,5))
+#ax.set_extent([-180,180,35,90], crs=ccrs.PlateCarree())
 #Bering sea-ish
 #ax.set_extent([-180,-90,35,90], crs=ccrs.PlateCarree())
 
 ax.gridlines(crs=ccrs.PlateCarree(), xlocs=xlocs, ylocs=ylocs )
-# not on hera: ax.coastlines()
-ax.add_feature(cfeature.GSHHSFeature(levels=[1,2], scale="c") )
+# 
+ax.coastlines()
+#ax.add_feature(cfeature.GSHHSFeature(levels=[1,2], scale="c") )
 if markersize < 12:
     alpha = 1
 else:
@@ -94,4 +85,3 @@ plt.scatter(lon, lat, transform=ccrs.PlateCarree(), s = markersize, alpha = alph
 plt.savefig("ll_"+title_tag+".png")
 plt.close()
 
-#debug: print(markersize)

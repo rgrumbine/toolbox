@@ -12,17 +12,21 @@ rerun -- using pre-spliced and analyzed data
 '''
 
 #-------------------------------------------------------------
-nmax = 11234567
-nmax = 112345
+nmax = int(599123456)
+#nmax = 112345
 ary = np.zeros((nmax,6))
-loc = np.zeros((nmax,2))
 obs = np.zeros((nmax,2))
 y   = np.zeros((nmax))
 
 fin = open(sys.argv[1],"r")
+thin = int(sys.argv[2])
 count = 0
+tcount = 0
 for line in fin:
 #100.00   0.00   1.00 458.37  89.88 129.54  1 0.000
+    tcount += 1
+    if (tcount%thin != 0):
+        continue
     words = line.split()
     # skip points sst filter would get
     if float(words[8]) > 275.3:
@@ -41,18 +45,20 @@ for line in fin:
     ary[count,4] = tmean
     ary[count,5] = tsigma
 
-    loc[count,0] = float(words[6])
-    loc[count,1] = float(words[7])
     obs[count,0] = float(words[8])
     obs[count,1] = float(words[9])
 
-    y[count] = float(words[9])
+    if (float(words[9]) > 0 ):
+        y[count] = 1
+    else:
+        y[count] = 0
+    #regressor: y[count] = float(words[9])
     
     count += 1
     if (count >= nmax):
         break
 
-print("count = ",count)
+print("count = ",count, tcount, flush=True)
 #-------------------------------------------------------------
 def noop():
   return
@@ -103,11 +109,9 @@ def bayes(tree, ary, y, preds, pices, count):
 #-------------------------------------------------------------
 import sklearn
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.tree import DecisionTreeRegressor
 
 for depth in range(1,4):
-  #tree = DecisionTreeClassifier(max_depth = depth)
-  tree = DecisionTreeRegressor(max_depth = depth)
+  tree = DecisionTreeClassifier(max_depth = depth)
   tree.fit(ary[:count], y[:count])
   preds = tree.predict(ary[:count])
   # want to do this only once; it's in bayes right now
@@ -154,14 +158,4 @@ for depth in range(1,4):
 
   x = sklearn.feature_selection.r_regression(ary[:count,:], obs[:count,1])
   print("correlations ",x)
-
-  # write out the used part of the ary, y, pice(leaf#)
-#  fout = open("fout."+"{:02d}".format(int(depth)), "w" )
-#  for i in range(0, count):
-#    for k in range(0,4):
-#      print("{:6.2f}".format(ary[i, k]), end=" ", file=fout)
-#    print("{:7.3f}".format(loc[i,0]), "{:7.3f}".format(loc[i,1]),end=" ", file=fout)
-#    print("{:6.2f}".format(obs[i,0]), "{:6.2f}".format(obs[i,1]), end=" ",file=fout)
-#    print("{:2.0f}".format(y[i]), "{:5.3f}".format(pices[int(leaf[i])]), file=fout)
-#  fout.close()
 

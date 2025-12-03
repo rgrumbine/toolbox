@@ -19,7 +19,7 @@ def gapfill1(tsi):
 
 #---------------------------------------------------------------
 fin = open(sys.argv[1],"r")
-nmax = 1461*2
+nmax = 1461*8
 tsi = np.zeros((nmax))
 
 count = 0
@@ -90,7 +90,7 @@ target = np.zeros((nmax))
 best = np.zeros((3))
 best[0] = 99.
 
-for ratio in range (1,8):
+for ratio in range (1,6):
   for length in range (2,35):
     pred   = np.zeros((nmax, length))
 

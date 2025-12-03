@@ -1,5 +1,6 @@
 import sys
 
+from math import *
 import numpy as np
 import numpy.ma as ma
 import netCDF4 
@@ -38,7 +39,7 @@ for fname in sys.argv[1:]:
   #This is a masked array, determined by fill value
   conc = viirs.variables['IceConc'][:,:]
   temp = viirs.variables['IceSrfTemp'][:,:] 
-  print(n,"conc ",conc.max(), conc.min(),flush=True, file=sys.stderr )
+  print(n,"conc ",conc.max(), conc.min(), file=sys.stderr )
   print(n,"temp ",temp.max(), temp.min(),flush=True, file=sys.stderr )
   indices = conc.nonzero()
 
@@ -59,6 +60,8 @@ for fname in sys.argv[1:]:
       j = indices[0][k]
       #verbose: print(lons[j,i], lats[j,i], conc[j,i], " pt")
       # for gridding
+      if (abs(lats[j,i]) < 30):
+          continue
       iloc = target_grid.inv_locate(lats[j,i],lons[j,i])
       ti = int(iloc[0]+0.5)
       if (ti == target_grid.nx):
@@ -80,6 +83,7 @@ z = latpt()
 cellcount = 0
 mask = ma.masked_array(gcount > 0)
 indices = mask.nonzero()
+fout = open("fout","w")
 for k in range(0,len(indices[0])):
     i = indices[1][k]
     j = indices[0][k]
@@ -88,7 +92,7 @@ for k in range(0,len(indices[0])):
     tsumx[j,i] /= gcount[j,i]
     tsumx2[j,i] = sqrt(max(0., tsumx2[j,i]/gcount[j,i] - tsumx[j,i]*tsumx[j,i]) )
     target_grid.locate(i,j,z)
-    print(i,j,z.lat, z.lon, csumx[j,i], csumx2[j,i], tsumx[j,i], tsumx2[j,i], gcount[j,i], flush=True, file=sys.stdout)
+    print(i,j,z.lat, z.lon, csumx[j,i], csumx2[j,i], tsumx[j,i], tsumx2[j,i], gcount[j,i], flush=True, file=fout)
     cellcount += 1
 
 print("gcount, avg: ",gcount.max(), gcount.min(), tsumx.max(), tsumx.min(), tsumx2.max(), tsumx2.min(),file=sys.stderr  )

@@ -1,0 +1,40 @@
+evolve_gen1.py : 
+  evolve the first generation of parameter sets
+  has class parmvary
+  argument: parameters and their variability -- parm.gen1
+  output: set_nml.evoNNN, exptlist.ts -- for use by CICE
+  then evolutionary evaluation and scoring
+
+parm.gen1 : 
+  parameters, their reference value, and their type and range of variation
+
+parm.gen2 :
+  as parm.gen1 but with lethal variations removed
+
+fatal :
+  lethal variations
+
+evolve_gen2.py :
+  class parmvary
+  argument: parameters and their variability -- parm.gen1
+  output: set_nml.evoNNN, exptlist.ts -- for use by CICE
+  then evolutionary evaluation and scoring
+  doesn't demand that each variable be varied once and only once
+
+genNin :
+  list of parent numbers from the set_nml of prior generation, input to descend.py
+
+descend.py :
+  generate mutations on a list of parents.
+
+torun.sh : 
+  after generating population, clean out configuration/scripts/options and copy
+    new generation in to options and exptlist.ts to tests
+
+nextgen.sh : 
+  calls torun.sh and descend.py to generate and distribute experiment sets given genNin
+
+
+
+
+

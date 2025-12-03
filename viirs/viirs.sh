@@ -6,15 +6,16 @@ DCOMDEV=$DCOMROOT/../../dev/dcom
 ls -l $DCOMDEV
 #echo zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 
-tag=20250715
+tag=20251115
 cd $HOME/noscrub/satellites/viirs
 
 echo $DCOMDEV/$tag
-
-#while [ $tag -le `date +"%Y%m%d"` ]
 end=`date +"%Y%m%d"`
 end=`expr $end - 1`
 end=`$HOME/bin/dtgfix3 $end`
+end=`expr $end - 1`
+end=`$HOME/bin/dtgfix3 $end`
+
 set -x
 
 while [ $tag -le $end ]

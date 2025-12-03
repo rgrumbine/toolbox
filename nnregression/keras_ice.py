@@ -54,9 +54,9 @@ for i in range(0,len(z)):
     print(i,"daily delta",z[i],tsi[i])
 #debug: exit(0)
 
-length = 8
-ratio = 3
-lead  = 31
+length = 32
+ratio = 2
+lead  = 1
 
 pred   = np.zeros((nmax, length))
 target = np.zeros((nmax))
@@ -75,7 +75,7 @@ print(x_train.shape, x_train.dtype)
 
 import tensorflow as tf
 
-tf.random.set_seed(5)
+tf.random.set_seed(2)
 model = tf.keras.Sequential()
 model.add(tf.keras.layers.Input(shape=[length,]))
 model.add(tf.keras.layers.Flatten() )
