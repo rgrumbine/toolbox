@@ -6,7 +6,7 @@ DCOMDEV=$DCOMROOT/../../dev/dcom
 ls -l $DCOMDEV
 #echo zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
 
-tag=20250815
+tag=20251115
 cd $HOME/noscrub/satellites/viirs
 
 echo $DCOMDEV/$tag

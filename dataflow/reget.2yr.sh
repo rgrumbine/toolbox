@@ -45,7 +45,7 @@ while [ $date -ge $end_date ]; do
 	  export dtag=$date
   fi
 
-  if [ ! -d $dcom_dir ] ; then 
+  if [ ! -d $dcom_dir/b021 ] ; then 
 
     [ -d $dcom_dir ] || mkdir -p $dcom_dir
   
