@@ -19,7 +19,7 @@ old = datetime.datetime(2024,12,31)
 print(tag.toordinal()-old.toordinal())
 
 npts = 10*1000000
-ary = np.zeros((npts,4))
+ary = np.zeros((npts,6))
 loc = np.zeros((npts,2))
 obs = np.zeros((npts,2))
 y   = np.zeros((npts))
@@ -27,25 +27,28 @@ y   = np.zeros((npts))
 fin = open(sys.argv[1],"r")
 count = 0
 for line in fin:
-#100.00   0.00   1.00 458.37  89.88 129.54  1 0.000
     words = line.split()
     # skip points sst filter would get
     if float(words[6]) > 275.3:
         continue
     #i,j,lat,lon,mean,sigma,count
-    mean = float(words[0])
-    sigma = float(words[1])
-    ocount = float(words[2])
-    scaled = float(words[3])
-    ary[count,0] = mean
-    ary[count,1] = sigma
-    ary[count,2] = ocount
-    ary[count,3] = scaled
+    concmean = float(words[0])
+    concsigma = float(words[1])
+    tmean    = float(words[2])
+    tsigma   = float(words[3])
+    ocount = float(words[4])
+    scaled = float(words[5])
+    ary[count,0] = concmean
+    ary[count,1] = concsigma
+    ary[count,2] = tmean
+    ary[count,3] = tsigma
+    ary[count,4] = ocount
+    ary[count,5] = scaled
 
-    loc[count,0] = float(words[4])
-    loc[count,1] = float(words[5])
-    obs[count,0] = float(words[6])
-    obs[count,1] = float(words[7])
+    loc[count,0] = float(words[6])
+    loc[count,1] = float(words[7])
+    obs[count,0] = float(words[8])
+    obs[count,1] = float(words[9])
 
     if (obs[count,1] > 0):
         y[count] = 1
@@ -54,7 +57,7 @@ for line in fin:
     
     count += 1
 
-print("count = ",count)
+print("count = ",count, flush=True)
 #-------------------------------------------------------------
 def noop():
   return

@@ -14,6 +14,7 @@ end=`date +"%Y%m%d"`
 end=`expr $end - 1`
 end=`$HOME/bin/dtgfix3 $end`
 end=`expr $end - 1`
+end=`$HOME/bin/dtgfix3 $end`
 
 set -x
 

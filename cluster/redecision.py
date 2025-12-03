@@ -70,7 +70,7 @@ def bayes(tree, dr, ary, preds, pices, count):
 #--------------------------------------------------------------------------
 countmax = 14123456
 fmax = countmax
-fmax = 60000
+#fmax = 60000
 ice = 14
 # ndarray to save for use in finding clusters
 ary   = np.zeros((countmax,17))
@@ -89,9 +89,9 @@ print(count, " points to consider v countmax",countmax, flush=True)
 x = ary[:count,ice]*100
 y = x.astype(dtype=np.int32)
 # can actually run with just the percents as targets, but start with ice binary
-#for i in range(0,count):
-#   if (y[i] > 0):
-#       y[i] = 1
+for i in range(0,count):
+   if (y[i] > 0):
+       y[i] = 1
 # slightly more complex -- WWIII critical points
 #for i in range(0,count):
 #  if (y[i] > 70):

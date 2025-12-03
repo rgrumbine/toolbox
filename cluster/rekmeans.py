@@ -22,7 +22,7 @@ from reader import *
 
 #----------------------------------------------------------
 # ndarray to save for use in finding clusters
-countmax = 14123456
+countmax = 30123456
 #countmax = 225488
 fmax     = countmax
 ary = np.zeros((countmax,17))
@@ -31,7 +31,7 @@ ice = 14
 
 count = 0
 fname = sys.argv[1]
-count = reread(fname, ary, dr, count, fmax = countmax)
+count = reread(fname, ary, dr, count, countmax = countmax, fmax = fmax)
 
 count = min(count, countmax)
 print(count, " points to consider", flush=True)
@@ -62,7 +62,7 @@ print(count, " points to consider", flush=True)
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
-for nlim in range(2,8):
+for nlim in range(2,6):
   acount = np.zeros((nlim))
   ccount = np.zeros((nlim))
 

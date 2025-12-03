@@ -18,7 +18,7 @@ tag = datetime.datetime(2025,6,19)
 old = datetime.datetime(2024,12,31)
 print(tag.toordinal()-old.toordinal())
 
-npts = 10*1000000
+npts = 18*1000000
 ary = np.zeros((npts,4))
 loc = np.zeros((npts,2))
 obs = np.zeros((npts,2))

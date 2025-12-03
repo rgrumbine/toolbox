@@ -17,25 +17,28 @@ This is for the Antarctic, so IMS is not usable
 '''
 
 #-------------------------------------------------------------
-npts = 1000000
-ary = np.zeros((npts,4))
+npts = 1123456
+ary = np.zeros((npts,6))
 loc = np.zeros((npts,2))
 obs = np.zeros((npts,2))
 y   = np.zeros((npts))
 
+print("hello1", flush=True)
 
 target_grid = global_5min()
 ncep = pygrib.open(sys.argv[2])
 nsst = pygrib.open(sys.argv[3])
 svals = nsst[1].values
 avals = ncep[1].values
+print("hello2", flush=True)
 
 
 fin = open(sys.argv[1],"r")
+
 count = 0
 for line in fin:
     words = line.split()
-    #i,j,lat,lon,mean,sigma,count
+    #i,j,lat,lon,concmean,concsigma,tmean, tsigma, count
     i = int(words[0])
     j = int(words[1])
 
@@ -45,14 +48,18 @@ for line in fin:
     lon = float(words[3])
     loc[count,0] = lat
     loc[count,1] = lon
-    mean = float(words[4])
-    sigma = float(words[5])
-    ocount = float(words[6])
+    concmean = float(words[4])
+    concsigma = float(words[5])
+    tmean = float(words[6])
+    tsigma = float(words[7])
+    ocount = float(words[8])
 
-    ary[count,0] = mean
-    ary[count,1] = sigma
-    ary[count,2] = ocount
-    ary[count,3] = ocount / cos(pi*lat/180.)
+    ary[count,0] = concmean
+    ary[count,1] = concsigma
+    ary[count,2] = tmean
+    ary[count,3] = tsigma
+    ary[count,4] = ocount
+    ary[count,5] = ocount / cos(pi*lat/180.)
 
     iloc = target_grid.inv_locate(lat,lon)
     ti = int(iloc[0]+0.5)
@@ -70,7 +77,9 @@ for line in fin:
     
     count += 1
 
-print("count = ",count)
+print("count = ",count, flush=True)
+#debug: exit(0)
+
 #-------------------------------------------------------------
 def noop():
   return
@@ -172,7 +181,7 @@ for depth in range(1,5):
   # add write out of sst and analyzed concentration
   fout = open("fout."+"{:02d}".format(int(depth)), "w" )
   for i in range(0, count):
-    for k in range(0,4):
+    for k in range(0,6):
       print("{:6.2f}".format(ary[i, k]), end=" ", file=fout)
     print("{:7.3f}".format(loc[i,0]), "{:7.3f}".format(loc[i,1]),end=" ", file=fout)
     print("{:6.2f}".format(obs[i,0]), "{:6.2f}".format(obs[i,1]), end=" ",file=fout)

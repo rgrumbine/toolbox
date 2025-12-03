@@ -72,9 +72,9 @@ def bayes(tree, dr, ary, preds, pices, count):
 
 
 #--------------------------------------------------------------------------
-countmax = 14123456
+countmax = 30123456
 fmax = int(countmax / 5)
-thin = 32
+thin = 16
 print("thin = ",thin)
 ice = 14 
 # ndarray to save for use in finding clusters
@@ -85,8 +85,8 @@ from reader import *
 
 count = 0
 dt = datetime.timedelta(1)
-end = datetime.datetime(2025,6,14)
-tag = datetime.datetime(2025,1,2)
+tag = datetime.datetime(2024,8,1)
+end = datetime.datetime(2025,7,31)
 #for mm in (1,2,3,4,5,6):
 #  tag = datetime.datetime(2025,mm,2)
 while (tag <= end):
@@ -119,7 +119,7 @@ for i in range(0,count):
 import sklearn
 from sklearn.tree import DecisionTreeClassifier
 
-for depth in range(1,3):
+for depth in range(1,5):
   fout = open("fout."+"{:02d}".format(int(depth)), "w" )
   
   tree = DecisionTreeClassifier(max_depth = depth)

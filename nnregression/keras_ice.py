@@ -134,19 +134,23 @@ predsum      = 0.
 predsumsq    = 0.
 persistsum   = 0.
 persistsumsq = 0.
+
 for i in range(0,len(y_valid)):
   ypred[i]     -= y_valid[i]
-  predsum      += ypred[i]
-  predsumsq    += ypred[i]**2
+  predsum      += ypred[i,0]
+  predsumsq    += ypred[i,0]**2
   ypersist[i]  -= y_valid[i]
   persistsum   += ypersist[i]
   persistsumsq += ypersist[i]**2
+
+#print('shapes',ypred.shape, zzz.shape, predsum.shape, predsumsq.shape)
 
 from math import *
 print("persist max min sum",ypersist.max(), ypersist.min(), ypersist.sum() )
 print("persist mean, rms ",persistsum/365, sqrt(persistsumsq/365))
 
 print("predict max min sum",ypred.max(), ypred.min(), ypred.sum() )
+
 print("predict mean, rms ",ypred.sum()/365, predsum/365, sqrt(predsumsq/365))
 
 print("rmse persist pred",sqrt(persistsumsq/365), sqrt(predsumsq/365) )
