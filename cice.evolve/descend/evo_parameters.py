@@ -1,9 +1,3 @@
-import sys
-import csv
-from math import *
-import numpy
-import copy
-
 """
 Types of parameters and their variation:
 * T/F
@@ -16,13 +10,18 @@ name, reference value, variations allowed
 for ranges, min/max order on input
 
 """
-"""
-Class to implement variations on parameters
-"""
+
+import sys
+import copy
+from math import *
+import numpy
 
 rngf = numpy.random.default_rng(seed = 0)
 
 class evo_parameters:
+  """
+  Class to implement variations on parameters
+  """
 
   def __init__(self, name = "", reference = "", ranges = ""):
     self.name = name
@@ -81,10 +80,11 @@ class evo_parameters:
       self.reference = w2[k].strip()
 
     else:
-      print("unknown variation type ",self.type, flush = True)
+      print("unknown variation type ",self.type, file = fname, flush = True)
 
 # Fatal mutations
 class fatal:
+    ''' class fatal -- for fatal mutations '''
 
     def __init__(self, name = "", fatal_val = ""):
       self.name = name
@@ -92,6 +92,8 @@ class fatal:
 
 #friend outside class
 def isfatal(name, val, fatalities):
+  ''' isfatal(name, val, fatalities) -- return true if the name, val 
+        pair matches something in the fatalities list '''
   retcode = False
   for i in range(0,len(fatalities)):
     if (name == fatalities[i].name):
@@ -128,7 +130,7 @@ def descent(fname, parmset, pvary, nnml, exptlist, fatalities):
         tries = 0
         if (rngf.random() < pvary):
           nvaried += 1
-          while ((parmset[k].reference == tparmset[k].reference) and (tries < 10) 
+          while ((parmset[k].reference == tparmset[k].reference) and (tries < 10)
                     and not isfatal(tparmset[k].name, tparmset[k].reference, fatalities) ):
             tparmset[k].vary()
             tries += 1
@@ -160,14 +162,14 @@ def descent1(fname, parmset, pvary, nnml, exptlist, fatalities):
     fin.close()
 
     # Now ensure at least one change
-    fout = open("set_nml.evo"+"{:d}".format(nnml),"w")
+    fout = open("set_nml.evo"+f"{nnml:d}","w")
     nvaried = 0
     while (nvaried == 0):
       for k in range(0, nparm):
         tries = 0
         if (rngf.random() < pvary):
           nvaried += 1
-          while ((parmset[k].reference == tparmset[k].reference) and (tries < 10) 
+          while ((parmset[k].reference == tparmset[k].reference) and (tries < 10)
                     and not isfatal(tparmset[k].name, tparmset[k].reference, fatalities) ):
             tparmset[k].vary()
             tries += 1
@@ -178,5 +180,4 @@ def descent1(fname, parmset, pvary, nnml, exptlist, fatalities):
         if (not (parmset[k].reference == tparmset[k].reference) ):
           tparmset[k].namelist(fname = fout)
     fout.close()
-    print("smoke  gx1  1x1  long,yr_out,evo"+"{:d}".format(nnml),file = exptlist)
-
+    print("smoke  gx1  1x1  long,yr_out,evo"+f"{nnml:d}", file = exptlist)
