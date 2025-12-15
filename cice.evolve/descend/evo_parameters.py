@@ -13,11 +13,13 @@ for ranges, min/max order on input
 
 import sys
 import copy
-from math import *
+from math import log,exp
+
 import numpy
 
 rngf = numpy.random.default_rng(seed = 0)
 
+#----------------------------------------------------------------
 class evo_parameters:
   """
   Class to implement variations on parameters
@@ -52,13 +54,15 @@ class evo_parameters:
       self.ranges = ranges
 
   def show(self, fname = sys.stdout ):
+    ''' show(fname) -- show a parameter and its allowed variations '''
     print(self.name, ";", self.reference,";",  self.type,";",  self.ranges,file = fname)
 
   def namelist(self, fname = sys.stdout ):
-    # suitable for use as namelist input
+      ''' namelist(fname) -- write out suitable for use as namelist input '''
       print(self.name, "=", self.reference, file = fname)
 
   def vary(self, fname = sys.stdout):
+    ''' vary(fname) -- conduct variation on a given parameter '''
     if (self.type == 'log'):
       tmp = rngf.random()
       tmp *= (self.ranges[1]-self.ranges[0])
@@ -105,25 +109,28 @@ def isfatal(name, val, fatalities):
 # take the given strain (fname) and the general parameter set with its allowed variations
 #    and mutate
 def descent(fname, parmset, pvary, nnml, exptlist, fatalities):
-    # Update reference parameter set with this experiment's values
-    # Read in parent's mods:
+    ''' descent(fname, parmset, pvary, nnml, exptlist, fatalaties) --
+          Update reference parameter set with this experiment's values
+          Read in parent's mods:
+    '''
     tparmset = copy.deepcopy(parmset)
     nparm = len(tparmset)
-    fin = open(fname, "r")
     tmp = []
-    for line in fin:
-      words = line.split('=')
-      name = words[0].strip()
-      val  = words[1].strip()
-      tmp.append([name, val])
-      for i in range(0, nparm):
-          if (name == tparmset[i].name):
-              tparmset[i].reference = val
-              break
-    fin.close()
+    #fin = open(fname, "r", encoding='utf-8')
+    with open(fname, "r", encoding='utf-8') as fin:
+      for line in fin:
+        words = line.split('=')
+        name = words[0].strip()
+        val  = words[1].strip()
+        tmp.append([name, val])
+        for i in range(0, nparm):
+            if (name == tparmset[i].name):
+                tparmset[i].reference = val
+                break
+      fin.close()
 
     # Now ensure at least one change
-    fout = open("set_nml.evo"+"{:d}".format(nnml),"w")
+    fout = open("set_nml.evo"+"{:d}".format(nnml),"w", encoding='utf-8')
     nvaried = 0
     while (nvaried == 0):
       for k in range(0, nparm):
@@ -144,11 +151,12 @@ def descent(fname, parmset, pvary, nnml, exptlist, fatalities):
     print("smoke  gx3  1x1  med3,yr_out,evo"+"{:d}".format(nnml),file = exptlist)
 
 def descent1(fname, parmset, pvary, nnml, exptlist, fatalities):
-    # Update reference parameter set with this experiment's values
-    # Read in parent's mods:
+    ''' descent1 -- Update reference parameter set with this experiment's values
+        Read in parent's mods:
+    '''
     tparmset = copy.deepcopy(parmset)
     nparm = len(tparmset)
-    fin = open(fname, "r")
+    fin = open(fname, "r", encoding='utf-8')
     tmp = []
     for line in fin:
       words = line.split('=')
@@ -162,7 +170,7 @@ def descent1(fname, parmset, pvary, nnml, exptlist, fatalities):
     fin.close()
 
     # Now ensure at least one change
-    fout = open("set_nml.evo"+f"{nnml:d}","w")
+    fout = open("set_nml.evo"+f"{nnml:d}","w", encoding='utf-8')
     nvaried = 0
     while (nvaried == 0):
       for k in range(0, nparm):
