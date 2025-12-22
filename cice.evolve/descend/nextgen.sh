@@ -1,7 +1,7 @@
 #!/bin/sh
 
-export old=gen1
-export next=gen2
+export old=gen4
+export next=gen5
 
 # link parents points to directory with all the previous parameter sets
 if [ -d parents ] ; then
