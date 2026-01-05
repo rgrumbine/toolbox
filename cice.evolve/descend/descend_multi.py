@@ -1,11 +1,3 @@
-import sys
-import csv
-from math import *
-import numpy
-import copy
-
-from evo_parameters import *
-
 """
 descend_multi: take the generation directory as input, allow for multiple sources
 
@@ -21,13 +13,17 @@ name, reference value, variations allowed
 for ranges, min/max order on input
 
 """
+import sys
+import copy
+
+from evo_parameters import *
 
 #-------- Begin Execution ------------------------------------------------
 #
 # Read in full evolutionary control file:
 parmset = []
 count = 0
-fin = open(sys.argv[1], "r")
+fin = open(sys.argv[1], "r", encoding='utf-8')
 for line in fin:
   if (';' in line):
     words = line.split(';')
@@ -42,7 +38,7 @@ fin.close()
 
 # Read in fatal mutations
 fatalities = []
-fin = open(sys.argv[2],"r")
+fin = open(sys.argv[2],"r", encoding='utf-8')
 for line in fin:
   words = line.split('=')
   name  = words[0].strip()
@@ -54,7 +50,7 @@ fin.close()
 # Read in parents:
 nos = []
 parent = []
-expts = open(sys.argv[3], "r")
+expts = open(sys.argv[3], "r", encoding='utf-8')
 for line  in expts:
   words = line.split()
   parent.append( words[0])
@@ -68,7 +64,7 @@ nexpt_ref = 120
 ndescend  = int(nexpt_ref / jmax)
 
 
-exptlist = open("exptlist.ts","w")
+exptlist = open("exptlist.ts","w", encoding='utf-8')
 print("# Test         Grid    PEs        Sets   ",file=exptlist)
 
 # Run over each parent:

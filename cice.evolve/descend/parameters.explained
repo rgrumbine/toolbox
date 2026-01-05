@@ -30,7 +30,7 @@
     use_smliq_pnd   , .false.      , [T/F] use liquid in snow for ponds
     revised_evp     , .false.      , [T/F], if true used revised EVP parameters and approach
     seabed_stress_method , 'LKD'   , method for calculating, ['LKD' or 'probabilistic' ]
-    fe_data_type    , 'default'    , forcing value for iron [ 'default, 'climatology' ]
+    fe_data_type    , 'default'    , forcing value for iron [ 'default', 'climatology' ]
     saltflux_option , 'constant'   , form of coupled salt flux -- [ 'constant', 'prognostic' ]
     default_season  , 'winter'     , season from which initial values of forcing are set -- [ 'winter', 'summer' ]
 

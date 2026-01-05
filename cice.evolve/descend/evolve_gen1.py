@@ -1,8 +1,9 @@
 import sys
 import csv
+import copy
+
 from math import *
 import numpy
-import copy
 
 from evo_parameters import *
 
@@ -25,7 +26,7 @@ parmset = []
 
 # Begin execution
 count = 0
-for line in open(sys.argv[1], "r"):
+for line in open(sys.argv[1], "r", encoding='utf-8'):
   if (';' in line):
     words = line.split(';')
     #debug: print(words, flush=True)
@@ -42,13 +43,13 @@ for line in open(sys.argv[1], "r"):
 
 
 # Change 1 and only 1 parameter, but ensure that it does get changed
-exptlist = open("exptlist.ts","w")
+exptlist = open("exptlist.ts","w", encoding='utf-8')
 print("# Test         Grid    PEs        Sets   ",file=exptlist)
 
 for k in range(0, count):
 
   tmp = copy.deepcopy(parmset)
-  fout = open("set_nml.evo"+"{:d}".format(k),"w")
+  fout = open("set_nml.evo"+"{:d}".format(k),"w", encoding='utf-8')
   tries = 0
   while ((tmp[k].reference == parmset[k].reference) and (tries < 10) ):
     tmp[k].vary()
