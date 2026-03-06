@@ -79,8 +79,7 @@ def show( tlats, tlons, tag, hours = 6, cost = 3482, reference = 3482, close = F
   plt.savefig("nwp_"+tag.strftime("%Y%m%d")+"_"+"{:03d}".format(hours)+".png")
 #PSL:  plt.savefig("nwp_"+"{:03d}".format(hours)+".png")
   
-  if (close):
-    plt.close('all')
+  plt.close('all')
 
 # To overlay lines, cannot close plt
 def overlay(proj, ax, fig, tlats, tlons, color = "blue"):
