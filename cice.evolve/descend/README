@@ -11,6 +11,9 @@ parm.gen1 :
 parm.gen2 :
   as parm.gen1 but with lethal variations removed
 
+parm.trim :
+  as parm.gen2 but with no-op parameters removed
+
 fatal :
   lethal variations
 
