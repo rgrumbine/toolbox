@@ -1,7 +1,7 @@
 #!/bin/sh
-#SBATCH -J cur2_rtofs
-#SBATCH -e cur2_rtofs.err
-#SBATCH -o cur2_rtofs.out
+#SBATCH -J cur_rtofs
+#SBATCH -e cur_rtofs.err
+#SBATCH -o cur_rtofs.out
 #SBATCH -t 7:55:00
 #  #SBATCH -t 0:25:00
 #SBATCH -q batch
@@ -20,7 +20,7 @@ export exdir=/home/Robert.Grumbine/rgdev/toolbox/nwp
 cd $exdir
 
 # This must be more or less exactly this:
-source /home/Robert.Grumbine/rg/env3.12c/bin/activate
+source /home/Robert.Grumbine/rg/env3.13/bin/activate
 export PYTHONPATH=$PYTHONPATH:/home/Robert.Grumbine/rgdev/toolbox/nwp/
 
 #These can be anything of convenience
@@ -36,10 +36,10 @@ tag=`expr $tag - 1`
 tag=`$HOME/bin/dtgfix3 $tag`
 tag=`expr $tag - 1`
 tag=`$HOME/bin/dtgfix3 $tag`
-#tag=20250531
 
 #reverse -- now to past
-export end=20250601
+#export end=20250601
+export end=20260101
 
 cd rtofs
 while [ $tag -ge $end ]
