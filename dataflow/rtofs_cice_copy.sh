@@ -32,7 +32,7 @@ echo zzz ops = $ops
 cd $ops
 base=$HOME/noscrub/model_intercompare/rtofs_cice/
 #tag=20250601
-tag=20250730
+tag=20260101
 end=`date +"%Y%m%d"`
 #end=`expr $end - 1`
 #end=`$HOME/bin/dtgfix3 $end`

@@ -16,7 +16,7 @@ bring together the viirs l3 merge with the ims for that date and place
 '''
 
 #-------------------------------------------------------------
-npts = 1000000
+npts = 11234567
 ary = np.zeros((npts,6))
 loc = np.zeros((npts,2))
 obs = np.zeros((npts,2))
@@ -41,19 +41,34 @@ for line in fin:
     #i,j,lat,lon,mean,sigma,count
     i = int(words[0])
     j = int(words[1])
-    ice = ims[j,i]
-    if (ice == 1):
-        ice = 0
-    elif (ice == 3):
-        ice = 1
+    if (i > -1 and j > -1):
+      ice = ims[j,i]
+      if (ice == 1):
+          ice = 0
+      elif (ice == 3):
+          ice = 1
+      else: 
+          continue
     else:
-        continue
+        ice = 2
+    # need to split assignments between nh and sh RG
     lat = float(words[2])
-    if (lat < 20):
+    if (abs(lat) < 20):
         continue
     lon = float(words[3])
     loc[count,0] = lat
     loc[count,1] = lon
+
+    iloc = target_grid.inv_locate(lat,lon)
+    ti = int(iloc[0]+0.5)
+    if (ti == target_grid.nx):
+      ti = 0
+    tj = int(iloc[1]+0.5)
+    if (svals[tj, ti] > 275.15):
+        continue
+    obs[count,0 ] = svals[tj, ti] 
+    obs[count,1 ] = avals[tj, ti] 
+
     mean = float(words[4])
     sigma = float(words[5])
     tmean = float(words[6])
@@ -67,15 +82,13 @@ for line in fin:
     ary[count,4] = tmean
     ary[count,5] = tsigma
 
-    iloc = target_grid.inv_locate(lat,lon)
-    ti = int(iloc[0]+0.5)
-    if (ti == target_grid.nx):
-      ti = 0
-    tj = int(iloc[1]+0.5)
-    obs[count,0 ] = svals[tj, ti] 
-    obs[count,1 ] = avals[tj, ti] 
-
-    y[count] = ice
+    if (ice == 2):
+      if (obs[count,1] > 0):
+        y[count] = 1
+      else:
+        y[count] = 0
+    else:
+      y[count] = ice
     
     count += 1
 

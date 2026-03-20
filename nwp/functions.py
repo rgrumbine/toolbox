@@ -1,12 +1,3 @@
-import sys
-import os
-import datetime
-
-from math import *
-import numpy as np
-import numpy.ma as ma
-
-#--------------------------------------------------------
 """
 Functions present:
 
@@ -18,31 +9,38 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, 
                i2 = 0, j2 = 0, aice = 0, hi = 0):
 def calculateCost(PolarClass, iceCon, iceThick):
-
 """
 #--------------------------------------------------------
+
+from math import radians, sin, cos, atan2, sqrt
+from numpy import ma
+import pandas as pd
+import geopandas
+
+#--------------------------------------------------------
 def find(lons, lats, lonin, latin):
+  ''' find(lons, lats, lonin, latin) '''
   tmpx = lons - lonin
   tmpy = lats - latin
 
   xmask = ma.masked_outside(tmpx, -0.5, 0.5)
-  xin = xmask.nonzero() 
+  #xin = xmask.nonzero()
   wmask = ma.logical_and(xmask, ma.masked_outside(tmpy, +0.5, -0.5) )
   win = wmask.nonzero()
 
-  imin = -1 
+  imin = -1
   jmin = -1
-  dxmin = 999.
-  dymin = 999.
+  #dxmin = 999.
+  #dymin = 999.
   dmin  = 999.
   for k in range(0, len(win[0]) ):
     i = win[1][k]
-    j = win[0][k] 
+    j = win[0][k]
     if (sqrt(tmpx[j,i]**2 + tmpy[j,i]**2) < dmin):
       imin = i
       jmin = j
-      dxmin = abs(tmpx[j,i])
-      dymin = abs(tmpy[j,i])
+      #dxmin = abs(tmpx[j,i])
+      #dymin = abs(tmpy[j,i])
       dmin  = sqrt(tmpx[j,i]**2 + tmpy[j,i]**2)
   return (imin,jmin)
 #--------------------------------------------------------
@@ -51,51 +49,50 @@ def find(lons, lats, lonin, latin):
 PC = 1
 PossAnswers = [1, 2, 3, 4, 5, 6, 7]
 if(PC not in PossAnswers):
-  raise Exception("Please select an answer between 1 and 7.")
+  raise Exception("Please select a polar class between 1 and 7")
 
 def calculateCost(PolarClass, iceCon, iceThick):
+    ''' calculateCost -- cost based on polar class, ice concentration, ice thickness '''
     #RIO = (aice*10)RV
     #If aice <= .1, return 0
     #If RIO < 0, return 99999
-    cost = 1
-    return 1.
+    fcost = 1
+    return fcost
 
     #Considered Ice-Free
     if(iceCon <= .1):
         return 0
 
+    fcost = 999
     if(PolarClass == 1 or PolarClass == 2 or PolarClass == 3 or PolarClass == 4):
         if(iceThick <= 70):
-            cost = 3*(iceCon * 10)
+            fcost = 3*(iceCon * 10)
         elif(iceThick <= 120):
-            cost = 2*(iceCon * 10)
+            fcost = 2*(iceCon * 10)
         else:
-            cost = (iceCon * 10)
+            fcost = (iceCon * 10)
     elif(PolarClass == 5 or PolarClass == 6):
         if(iceThick <= 70):
-            cost = 3*(iceCon * 10)
+            fcost = 3*(iceCon * 10)
         elif(iceThick <= 95):
-            cost = 2*(iceCon * 10)
+            fcost = 2*(iceCon * 10)
         elif(iceThick <= 120):
-            cost = iceCon*10
-        else:
-            return 999
+            fcost = iceCon*10
     else:
         if(iceThick <= 30):
-            cost = 3*(iceCon * 10)
+            fcost = 3*(iceCon * 10)
         elif(iceThick <= 50):
-            cost = 2*(iceCon * 10)
+            fcost = 2*(iceCon * 10)
         elif(iceThick <= 70):
-            cost = iceCon*10
-        else:
-            return 999
-    return cost
+            fcost = iceCon*10
+    return fcost
 
 #-----------------------------------------------------------------
 #Calculates the distance of two points based on the longitude and latitude points of each point
 def calculate_distance(lat1, lon1, lat2, lon2):
+    ''' calculate_distance(lat1, lon1, lat2, lon2) -- distance in km on spherical earth '''
     # Radius of the Earth in kilometers
-    earth_radius = 6371
+    earth_radius = 6371.2
 
     # Convert latitude and longitude from degrees to radians
     lat1 = radians(lat1)
@@ -116,6 +113,7 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 
 #-----------------------------------------------------------------
 def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, i2 = 0, j2 = 0, aice = 0, hi = 0):
+  ''' cost: compute costs for difference case types '''
   if (case == 1):
     return 1.
   elif (case == 2):
@@ -129,7 +127,7 @@ def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, i2 = 0, j
       print("Must give i,j of points when weighting by polar class")
       return 1
     else:
-      return 1 
+      return 1
   elif (case == 4):
     if (lon1 == 0 and lat1 == 0 and lon2 == 0 and lat2 == 0):
       print("Must give lat,lon of points to compute concentration-distance weighting")
@@ -138,12 +136,13 @@ def cost(case, lat1 = 0, lon1 = 0, lat2 = 0, lon2 = 0, i1 = 0, j1 = 0, i2 = 0, j
       return 1.1*calculate_distance(lat1, lon1, lat2, lon2) / (1.1 - aice)
 
   else:
-    print("unknown case, =",case)
+    print("unknown cost case, =",case)
     return 1
 
 #--------------------------------------------------------
 def kmlout_path(fname, G, path):
-  kmlout = open(fname,"w")
+  ''' kmlout_path(fname, G, path) -- print out the kml locations of the path '''
+  kmlout = open(fname,"w", encoding="utf-8")
   #Print header:
   print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", file=kmlout)
   print("<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\">", file=kmlout)
@@ -162,17 +161,16 @@ def kmlout_path(fname, G, path):
       tlon = G.nodes[path[k]]['lon']
     print("<Placemark> <Point> <coordinates>",tlon,G.nodes[path[k]]['lat'],0.0,
           "</coordinates></Point></Placemark>", file=kmlout)
-  
+
   #Print footer:
   print("    </Document>",file=kmlout)
   print("</Folder>",file=kmlout)
   print("</kml>",file=kmlout)
   kmlout.close()
 #--------------------------------------------------------
-import pandas as pd
-import geopandas
 
 def shape_out(lats, lons, fname):
+  ''' shape_out(lats, lons, fname) -- shapefile output '''
   # Make a Pandas data frame:
   df = pd.DataFrame(
     {
@@ -182,8 +180,8 @@ def shape_out(lats, lons, fname):
   )
 
   # Make a geopandas geodataframe from the pandas dataframe
-  gdf = geopandas.GeoDataFrame( df, 
-          geometry=geopandas.points_from_xy(df.Longitude, df.Latitude), 
+  gdf = geopandas.GeoDataFrame( df,
+          geometry=geopandas.points_from_xy(df.Longitude, df.Latitude),
           crs="EPSG:4326")
 
   # Write out:
@@ -192,7 +190,7 @@ def shape_out(lats, lons, fname):
 
 #--------------------------------------------------------
 def wrap_lons(lons):
-
+  ''' wrap_lons(lons) -- wrap longitudes in to -180 to 180 '''
   if (lons.max() > 360. or lons.min() < -360. ):
     lmask = ma.masked_array(lons > 2.*360.+180.)
     lin = lmask.nonzero()
@@ -200,14 +198,14 @@ def wrap_lons(lons):
       i = lin[1][k]
       j = lin[0][k]
       lons[j,i] -= 3.*360.
-  
+
     lmask = ma.masked_array(lons > 1.*360.+180.)
     lin = lmask.nonzero()
     for k in range(0, len(lin[0])):
       i = lin[1][k]
       j = lin[0][k]
       lons[j,i] -= 2.*360.
-  
+
     #most (10.6 million of 14.7 million) rtofs points have lons > 180, so subtract 360 and
     # then correct the smaller number that are < -180 as a result
     lons -= 360.
@@ -218,12 +216,13 @@ def wrap_lons(lons):
       i = lin[1][k]
       j = lin[0][k]
       lons[j,i] += 1.*360.
-  
+
   if ( lons.max() > 180. ):
       lons -= 360.
 
 #--------------------------------------------------------
 class llbox:
+    ''' class llbox -- class of a lat-lon box 'inbox' returns whether a latlon is inside the box '''
     def __init__(self, lonmin = -180., lonmax = 180., latmin = -90., latmax = 90.):
         self.lonmin = lonmin
         self.lonmax = lonmax
@@ -231,9 +230,12 @@ class llbox:
         self.latmax = latmax
 
     def inbox(self, lon, lat):
-        return (lon > self.lonmin and lon < self.lonmax and 
-                lat > self.latmin and lat < self.latmax)
+        #return (lon > self.lonmin and lon < self.lonmax and
+        #        lat > self.latmin and lat < self.latmax)
+        return ( (self.lonmin < lon < self.lonmax) and
+                 (self.latmin < lat < self.latmax)     )
 
+#--------------------------------------------------------
 #Bounding boxes:
 nwp = llbox(lonmin = 185-360., lonmax = 290-360., latmin = 64., latmax = 84.)
 nep = llbox(lonmin = -180., lonmax = 180., latmin = 64., latmax = 82.)
@@ -255,4 +257,3 @@ S_Anzhu_Islands = [ 153.7, 73.1 ]
 N_Anzhu_Islands = [ 154.3, 77.0 ]
 S_Novaya_Zemlya = [  58.0, 70.4 ]
 N_Novaya_Zemlya = [  68.9, 77.2 ]
-

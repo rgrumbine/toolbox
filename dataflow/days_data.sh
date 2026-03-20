@@ -24,6 +24,9 @@ time $EXDIR/nsidc       # updates only about quarterly
 
 time $EXDIR/get_cafs.sh # -- 500 Mb/day
 
+/opt/pbs/bin/qsub $EXDIR/imsreget.sh 
+/opt/pbs/bin/qsub $EXDIR/nsstget.sh 
+
 #submit jobs that reference hpss to q so that data transfer nodes+queues can be used
 echo zzz set up modules
 source /usr/share/lmod/lmod/init/bash

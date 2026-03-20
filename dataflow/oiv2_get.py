@@ -12,7 +12,7 @@ from datetime import timedelta
 dt = datetime.timedelta(1)
 today = date.today()
 startdate = today
-startdate -= 15*dt
+startdate -= 17*dt
 #startdate = datetime.date(2024,3,6)
 
 
