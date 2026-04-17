@@ -1,0 +1,55 @@
+    advection       ; 'remap'      ; 'remap', 'upwind'
+    a_rapid_mode      ;  0.5e-3      ; A 0.1,5
+    aspect_rapid_mode ; 1.0          ; A 0.1,10
+    atmbndy           ; 'similarity' ; 'similarity', 'constant', 'mixed'
+    atmiter_conv      ; 0.0e0        ; A 0,1
+    calc_dragio     ; .false.      ; .true., .false.
+    calc_strair     ; .true.       ; .true., .false.
+    Cf                ; 17.          ; A 2,100
+    deltaminEVP     ; 1e-11        ; L 0.1,10
+    dSdt_slow_mode  ; -5.0e-8      ; L 0.1,10
+    dT_mlt            ;  1.5         ; A 0.1,10
+    elasticDamp       ; 0.36e0       ; A 0,1
+    emissivity        ; 0.985        ; A 0.95,0.999
+    e_plasticpot      ; 2.           ; A 1,20
+    evp_algorithm   ; 'standard_2d'; 'standard_2d', 'shared_mem_1d'
+    e_yieldcurve      ; 2.           ; A 1,20
+    floediam          ; 300.0e0      ; A 30,10000
+    formdrag        ; .false.      ; .true., .false.
+    frzpnd          ; 'hlid'       ; 'hlid', 'cesm'
+    hfrazilmin        ; 0.05e0       ; A 0.001,0.5
+    highfreq        ; .false.      ; .true., .false.
+    hi_min            ; 0.01e0       ; A 0.001,0.5
+    hp1             ; 0.01         ; L 0.1,10
+    hs1             ; 0.03         ; L 0.1,10
+    ice_ref_salinity  ; 4.0          ; A 1,15
+    iceruf          ; 0.0005       ; L 0.1,10
+    iceruf_ocn      ; 0.03         ; L 0.1,10
+    kalg            ; 0.6          ; L 0.1,10
+    kdyn            ; 1            ; 1, 2, 3, -1
+    kitd            ; 1            ; 0, 1
+    krdg_partic     ; 1            ; 0,1
+    krdg_redist     ; 1            ; 0,1
+    ksno              ; 0.3e0        ; A 0.1,1
+    kstrength         ; 1            ; A 0,1
+    ktherm            ; 2            ; -1, 1, 2
+    ktransport      ; 1            ; -1, 1
+    maxits_nonlin     ; 10           ; A 5,40
+    mu_rdg          ; 3            ; L 0.1,10
+    natmiter          ; 5            ; A 1,10
+    ndte              ; 240          ; A 20,480
+    oceanmixed_ice  ; .true.       ; .true., .false.
+    phi_c_slow_mode   ; 0.05         ; A 0,1
+    phi_i_mushy       ; 0.85         ; A 0,1
+    pndaspect       ; 0.8          ; L 0.1,10
+    Rac_rapid_mode    ; 10.0         ; A 1,100
+    revised_evp     ; .false.      ; .true., .false.
+    rfracmax          ; 1.           ; A 0,1
+    rfracmin          ; 0.15         ; A 0,1
+    rotate_wind     ; .true.       ; .true., .false.
+    rsnw_fall       ;  100.0       ; L 0.1,10
+    rsnw_mlt        ; 1500.        ; L 0.1,10
+    shortwave         ; 'dEdd'       ; 'ccsm3', 'dEdd', 'dEdd_snicar_ad'
+    snwredist       ; 'none'       ; 'bulk', 'ITD', 'ITDrdg', 'none'
+    sw_redist       ; .false.      ; .true., .false.
+    ustar_min       ; 0.0005       ; L 0.1,10
