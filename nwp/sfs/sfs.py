@@ -1,0 +1,205 @@
+import sys
+import os
+import datetime
+
+import numpy as np
+from numpy import ma
+import networkx as netx
+
+#import netCDF4
+from netCDF4 import Dataset
+
+# User-written
+from functions import *
+from graphics import *
+
+# semi-universal constants -------------------------------------
+# limit domain to keep run time manageable -- NWP domain
+latmin = 64.0
+latmax = 82.0
+lonmin = -175.0
+lonmax =  -70.0
+
+base = os.environ['base']
+tag = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
+
+#---------- particular to model -------------------------------------
+def sfs_fname(fbase, ftag, fhhh):
+  fname = fbase+"/sfs."+ftag.strftime("%Y%m%d")+ "/00/mem000/products/ice/netcdf/native/sfs.t00z.native.f"+"{:03d}".format(fhhh)+".nc"
+  return fname
+
+# RG: define dictionary for nx, ny, lats, lons, aice -- moddef as for gross checks
+
+#---------- loop over model's time span -------------------------------------
+hhh=24
+for hhh in range (24, 8784+1, 24):
+#for hhh in range (24, 744+1, 24):
+  fname = sfs_fname(base, tag, hhh)
+
+  try:
+    fin = Dataset(fname,"r")
+  except:
+    print("Could not open ",fname, flush=True)
+    sys.exit(1)
+
+  if hhh == 24:
+    nx = len(fin.dimensions['ni'])
+    ny = len(fin.dimensions['nj'])
+    lats = fin.variables["TLAT"][:,:]
+    lons = fin.variables["TLON"][:,:]
+    # Ensure lons are  <= 360.
+    wrap_lons(lons)
+
+  aice  = fin.variables["aice_h"][0,:,:]
+#--------------------------  End of changes rtofs to sfs -------------------
+
+  #----------------------------------------------------------------
+  #start in Bering strait
+  (i_bering, j_bering) = find(lons, lats, -168.59, 65.68) #Bering Strait
+  print("bering:",i_bering,j_bering, flush=True)
+
+  #finish in ... Baffin Bay
+  (i_finish, j_finish) = find(lons, lats, -74.0, 74.0)
+  print("finish",i_finish, j_finish, flush=True)
+
+  #debug: sys.exit(0)
+  #--------------------------------------------------------------
+  # Mask out areas outside NWP domain
+  xmask = ma.masked_outside(lons, lonmin, lonmax)
+  xin = xmask.nonzero()
+  xmask = ma.logical_and(xmask, ma.masked_outside(lats, latmin, latmax))
+  # Also mask out nonvalues in aice
+  xmask = ma.logical_and(xmask, aice < 1000.)
+  xin = xmask.nonzero()
+
+  #----------------------------- Begin Graph --------------------
+  #Not a directed graph
+  G = netx.Graph()
+
+  offmap = -1
+  nodemap = np.full((ny, nx),int(offmap),dtype="int")
+  for k in range(0, len(xin[0])):
+    i = xin[1][k]
+    j = xin[0][k]
+    #debug: if (k%50000 == 0):
+    #debug:   print("adding nodes, k = ",k, flush=True)
+    nodemap[j,i] = int(k)
+    G.add_node(k, i = int(i), j = int(j), lat = float(lats[j,i]), lon = float(lons[j,i]),
+            aice = float(aice[j,i]) )
+  #debug:
+  print("Done adding nodes, k=",k, flush=True)
+
+  #---------- Universal --------------------------------------
+  # Construct edges between nodes:
+
+  #cost_type =
+    #1 -> steps in i,j space
+    #2 -> meters
+    #3 -> weighted by polar class (not functional yet RG)
+    #4 -> weight by 1.1/(1.1-aice)
+  cost_type = 4
+
+  for k in range(0, len(xin[0])):
+    i = xin[1][k]
+    j = xin[0][k]
+    jp = j + 1
+    jm = j - 1
+    ip = i + 1
+    im = i - 1
+    n = nodemap[j,i]
+    if (n == -1):
+      continue
+
+    if (im >= 0):
+      if (nodemap[j,im] != offmap):
+        weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i],
+                                 lat2 = lats[j,im], lon2 = lons[j,im], aice = aice[j,i])
+        G.add_edge(n, nodemap[j,im], weight = weight)
+    if (ip < nx):
+      if (nodemap[j,ip] != offmap):
+        weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i],
+                                 lat2 = lats[j,ip], lon2 = lons[j,ip], aice = aice[j,i])
+        G.add_edge(n, nodemap[j,ip], weight = weight)
+
+    if (jp < ny ):
+      if (nodemap[jp,i] != offmap):
+        weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jp,i],
+                                 lon2 = lons[jp,i], aice = aice[j,i])
+        G.add_edge(n, nodemap[jp,i], weight = weight)
+      if (im >= 0):
+        if (nodemap[jp,im] != offmap):
+          weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jp,im],
+                                   lon2 = lons[jp,im], aice = aice[j,i])
+          G.add_edge(n, nodemap[jp,im], weight = weight)
+      if (ip < nx):
+        if (nodemap[jp,ip] != offmap):
+          weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jp,ip],
+                                   lon2 = lons[jp,ip], aice = aice[j,i])
+          G.add_edge(n, nodemap[jp,ip], weight = weight)
+    #RG: a guess about the archipelago seam
+    else:
+      tmpi = i
+      if (i < nx/2-1):
+        tmpi = nx - 1 - i
+      if (nodemap[j,tmpi] != offmap):
+        G.add_edge(n, nodemap[j,tmpi], weight = 1.)
+
+    if (jm >= 0 ):
+      if (nodemap[jm,i] != offmap):
+        weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jm,i],
+                                 lon2 = lons[jm,i], aice = aice[j,i])
+        G.add_edge(n, nodemap[jm,i], weight = weight)
+      if (im >= 0):
+        if (nodemap[jm,im] != offmap):
+          weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jm,im],
+                                   lon2 = lons[jm,im], aice = aice[j,i])
+          G.add_edge(n, nodemap[jm,im], weight = weight)
+      if (ip < nx):
+        if (nodemap[jm,ip] != offmap):
+          weight = cost(cost_type, lat1 = lats[j,i], lon1 = lons[j,i], lat2 = lats[jm,ip],
+                                   lon2 = lons[jm,ip], aice = aice[j,i])
+          G.add_edge(n, nodemap[jm,ip], weight = weight)
+
+#--------------------------------------------------------------
+# Now search for a path
+  start  = nodemap[j_bering, i_bering]
+  finish = nodemap[j_finish, i_finish]
+
+  #debug: print(i_bering, j_bering, i_finish, j_finish, start, finish, nodemap[j_bering, i_bering], nodemap[j_finish, i_finish], flush=True)
+
+  #debug: print(G.nodes[start])
+  #debug: print(G.nodes[finish])
+
+  print("Is there a path from start to finish? ",netx.has_path(G,start,finish ), flush=True )
+  if (not netx.has_path(G,start,finish )):
+    (i_finish, j_finish) = find(lons, lats, -126, 71.0)
+    print("trying Bering strait to Banks island with ",i_finish, j_finish)
+    finish = nodemap[j_finish, i_finish]
+
+  if (not netx.has_path(G, start, finish )):
+    print("still no path, Bering to Banks Island, exiting", flush=True)
+    sys.exit(1)
+
+  path = netx.dijkstra_path(G, start, finish)
+  pseudo_length = netx.dijkstra_path_length(G, start, finish)
+  print("dijkstra length ", len(path), pseudo_length, flush=True)
+
+  tlons = np.zeros((len(path)))
+  tlats = np.zeros((len(path)))
+  for k in range(0,len(path)):
+    print(k,G.nodes[path[k]])
+    tlons[k] = G.nodes[path[k]]['lon']
+    tlats[k] = G.nodes[path[k]]['lat']
+
+  print("",flush=True)
+
+#---------- Output  ---------------------------------
+
+  #---------- -- kml     ---------------------------------
+  outname = "path_"+tag.strftime("%Y%m%d")+"_"+"{:03d}".format(hhh)+".kml"
+  kmlout_path(outname, G, path)
+
+  #---------- -- Graphics -----------------------------
+  show(tlats, tlons, tag, hours=hhh, cost = pseudo_length, reference = 3686.)
+
+  #------------- Shapefile ----------------------------
