@@ -1,7 +1,7 @@
 #!/bin/sh
 
-export old=gen4
-export next=gen5
+export old=gen2
+export next=gen3
 
 # link parents points to directory with all the previous parameter sets
 if [ -d parents ] ; then
@@ -14,10 +14,12 @@ if [ ! -d $next ] ; then
   mkdir $next
 fi
 
-# parm.gen2 is the full parameter set
+# parm.gen1 is the full parameter set
+# parm.gen2 is the full parameter set minus some fatal variants
+# parm.trim is only those parms which on their own change results.
 # fatal is the collection of fatal mutations
 # final argument is the list of parent numbers from the old generation
-python3 descend.py parm.gen1 fatal ${next}in
+python3 descend.py parm.trim fatal ${next}in
 
 # Copy files to the running directories
 export OPT=$HOME/rgdev/CICE/configuration/scripts/options
@@ -31,6 +33,6 @@ if [ $OPT != "" ] ; then
 else
   echo must export OPT, pointing to the configuration/scripts/options directory
 fi
-
+exit
 # Move control files to a generation directory
 mv set_nml.evo* exptlist.ts ${next}

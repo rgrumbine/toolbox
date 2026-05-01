@@ -51,10 +51,10 @@ for k in range(0, count):
   tmp = copy.deepcopy(parmset)
   fout = open("set_nml.evo"+"{:d}".format(k),"w", encoding='utf-8')
   tries = 0
-  while ((tmp[k].reference == parmset[k].reference) and (tries < 10) ):
+  while ((tmp[k].reference == parmset[k].reference) and (tries < 20) ):
     tmp[k].vary()
     tries += 1
-  if ( tries > 9) :
+  if ( tries > 19) :
     print("tries = ",tries,tmp[k].type, flush=True)
   else:
     tmp[k].namelist(fname = fout)
