@@ -23,7 +23,7 @@ start_date=`$HOME/bin/dtgfix3 $start_date`
 start_date=`expr $start_date - 1`
 start_date=`$HOME/bin/dtgfix3 $start_date`
 
-export end_date=20250701
+export end_date=20260101
 
 export tag=$start_date
 while [ $tag -ge $end_date ]; do
