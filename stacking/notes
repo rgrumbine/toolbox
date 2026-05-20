@@ -1,0 +1,43 @@
+l2 ssmis files contain:
+#       double longitude(nobs) ;
+#       double latitude(nobs) ;
+#       int quality(nobs) ;
+#       float land_flag(nobs) ;
+#       int dtg_yyyymmdd(nobs) ;
+#       int dtg_hhmm(nobs) ;
+As well as 
+tb_19V
+tb_19H
+tb_22V
+tb_37V
+tb_37H
+tb_92V
+tb_92H
+tb_150H
+ice_concentration
+
+Note that stacker may train input classifiers/regressors or they may be 
+  trained separately and passed to stacker
+
+classifier -- limited set of integers
+regressor  -- regress on continuum values
+
+
+sklearn Classifiers:
+from sklearn.ensemble import StackingClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree      import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm      import SVC
+
+sklearn Regressors:
+from sklearn.ensemble import StackingRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.tree     import DecisionTreeRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Lasso
+
+
+
