@@ -1,6 +1,7 @@
 import sys
 import joblib
 import copy
+import time
 
 import numpy as np
 import netCDF4 as nc
@@ -37,7 +38,7 @@ xtrain /= 300.
 
 
 iytrain = ytrain.astype(np.int_)
-nfit = min(30*1000, int(nobs/2-1) )
+nfit = min(64*1000, int(nobs/2-1) )
 #for i in range(0,2*nfit):
 for i in range(0,nobs):
     #iytrain[i] = int(5*qflags[i])
@@ -73,7 +74,10 @@ stacking_clf = StackingClassifier(
 class_score = np.zeros((6))
 
 xin = [0,1,2,3,4,5,6,7]
+start = time.time()
 stacking_clf.fit(xtrain[:nfit, xin ], iytrain[:nfit])
+print("time to train all classifiers ",time.time() - start)
+
 ystack = stacking_clf.predict(xnew[:, xin ])
 
 # scores for individual classifier, then stacker
@@ -104,13 +108,16 @@ for i, score in enumerate(base_rf.feature_importances_):
     print(f"Original Feature {i}: {score:.4f}")
 
 if (stack_score >= class_score.max() ):
-  joblib.dump(stacking_clf, 'stacking_clf.joblib')
+  best = stacking_clf
 else:
-  print("joblib.dump(stacking_clf[idx]", base_model_names[idx])
+  print("best is ", base_model_names[idx])
   print(stacking_clf.estimators_[idx] )
-  joblib.dump(stacking_clf.estimators_[idx], 'best_individual.joblib')
+  best = stacking_clf.estimators_[idx]
+  # save down all the individual predictors
   for i in range(0, len(base_model_names)):
     joblib.dump(stacking_clf.estimators_[i], base_model_names[i]+'.joblib')
+
+joblib.dump(best, 'best.joblib')
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
@@ -149,7 +156,7 @@ def contingency(obs, pred):
     n1 = len(obs)
     n2 = len(pred)
     if (n1 != n2):
-        print("rgrms unequal vector sizes, exiting",n1, n2)
+        print("contingency unequal vector sizes, exiting",n1, n2)
         sys.exit(0)
     a00 = 0
     a10 = 0
@@ -183,13 +190,16 @@ def rgrms(obs, pred):
     return sqrt(sumx2)
 
 rf = RandomForestRegressor(random_state=42)
+start = time.time()
 rf.fit(xnew2[:nfit,:], ynew2[:nfit] )
+rftime = time.time() - start
 rf_predict = rf.predict(xnew2[nfit:int(2*nfit), :] )
 joblib.dump(rf, 'random_forest.joblib')
 for i, score in enumerate(rf.feature_importances_):
     print(f"RF {i}: {score:.4f}", flush=True)
 print("rf score ",rgrms(rf_predict, ynew2[nfit:int(2*nfit)]), 
         rf.score(xnew2[nfit:int(2*nfit), :], ynew2[nfit:int(2*nfit)]) , flush=True)
+print("rf time ",rftime)
 
 lr = LinearRegression()
 lr.fit(xnew2[:nfit,:], ynew2[:nfit] )
@@ -213,12 +223,11 @@ print("dt score ",rgrms(dtpred, ynew2[nfit:int(2*nfit)]),
         dt.score(xnew2[nfit:int(2*nfit), :], ynew2[nfit:int(2*nfit)]) , flush=True)
 
 print('zzzzz',flush=True)
-ytmp = copy.deepcopy(ynew2[nfit:int(2*nfit)])
-avg = ytmp.sum() / len(ytmp)
-for i in range(0,len(ytmp)):
-    ytmp[i] = avg
-
-print(len(ytmp), rgrms(ytmp, ynew2[nfit:int(2*nfit)]))
+#ytmp = copy.deepcopy(ynew2[nfit:int(2*nfit)])
+#avg = ytmp.sum() / len(ytmp)
+#for i in range(0,len(ytmp)):
+#    ytmp[i] = avg
+#debug: print(len(ytmp), rgrms(ytmp, ynew2[nfit:int(2*nfit)]))
 #----------------------------------------------------
 
 rf_predict = rf.predict(xnew2[nfit:, :] )
@@ -227,4 +236,6 @@ rf_predict = rf.predict(xnew2[nfit:, :] )
 
 print(rgrms(rf_predict, ynew2[nfit:]) )
 
-print(contingency(iytrain, ypredall))
+a = contingency(iytrain, ypredall)
+csi = a[3]/(a[1]+a[2]+a[3])
+print(a, csi)

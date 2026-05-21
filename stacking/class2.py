@@ -71,7 +71,6 @@ class_score = np.zeros((6))
 
 xin = [0,1,2,3,4,5,6,7]
 stacking_clf.fit(xtrain[:nfit, xin ], iytrain[:nfit])
-ystack = stacking_clf.predict(xnew[:, xin ])
 
 # scores for individual classifier, then stacker
 i = 0
