@@ -18,6 +18,7 @@ time $EXDIR/nic_edge.sh #-- kb/day
 time $EXDIR/iabp_dcomdev #-- 500 Mb/day
 time $EXDIR/iabp.wget    #-- can be up to a few Gb, but updates only monthly
 
+time $EXDIR/smos.sh     # --   9 Mb/day, smos-smap blended thicknesses
 time $EXDIR/osisaf      # --  76 Mb/day
 time $EXDIR/ims.wget    # -- 0.5 Mb/day, but may get several months at a time
 time $EXDIR/nsidc       # updates only about quarterly
