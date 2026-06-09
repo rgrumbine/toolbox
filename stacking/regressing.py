@@ -6,6 +6,7 @@ import netCDF4 as nc
 from sklearn.ensemble import StackingRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree     import DecisionTreeRegressor
+from sklearn.neighbors    import KNeighborsRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import Lasso
 
@@ -25,12 +26,12 @@ xtrain[:,4] = data.variables['tb_37H'][:]
 xtrain[:,5] = data.variables['tb_92V'][:]
 xtrain[:,6] = data.variables['tb_92H'][:]
 xtrain[:,7] = data.variables['tb_150H'][:]
-#xtrain /= 300.
+xtrain /= 300.
 
 ytrain[:] = data.variables['ice_concentration'][:]
-ytrain *= 100
+#ytrain *= 100
 
-nfit = min(30*1000, int(nobs/2-1) )
+nfit = min(1000*1000, int(nobs/2-1) )
 xnew = xtrain[nfit:int(2*nfit), : ]
 ynew = ytrain[nfit:int(2*nfit) ]
 
@@ -58,9 +59,15 @@ dt.fit(xtrain[:nfit,:], ytrain[:nfit] )
 dtpred = dt.predict(xnew)
 joblib.dump(dt, 'decision_tree.joblib')
 
-print('zzzzz',flush=True)
-print(rf.score(xnew,ynew), lr.score(xnew, ynew), lasso.score(xnew,ynew), dt.score(xnew,ynew)  )
+knr = KNeighborsRegressor(n_neighbors = 6)
+knr.fit(xtrain[:nfit,:], ytrain[:nfit] )
+knrpred = knr.predict(xnew)
+joblib.dump(knr, 'knr.joblib')
 
+
+print('zzzzz',flush=True)
+print('scores',rf.score(xnew,ynew), lr.score(xnew, ynew), lasso.score(xnew,ynew), dt.score(xnew,ynew), knr.score(xnew, ynew)  )
+#debug: sys.exit(0)
 #--------------------------------------------------------------------------
 # Using pre-trained estimators
 stacker = StackingRegressor(
@@ -68,6 +75,7 @@ stacker = StackingRegressor(
       ('rf', rf),
       ('lr', lr),
       ('lasso', lasso),
+      ('knr', knr),
       ('dectree', dt)
       ],
   final_estimator=RandomForestRegressor(random_state=43),
@@ -76,7 +84,8 @@ stacker = StackingRegressor(
 
 stacker.fit(xtrain[:nfit,:], ytrain[:nfit])
 ystack = stacker.predict(xnew)
-for i in range(0,nfit):
+if (nfit < 1000):
+  for i in range(0,nfit):
     print(i, ystack[i], ynew[i])
 
 # scores for individual classifier, then stacker
