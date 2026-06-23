@@ -1,21 +1,31 @@
+''' unet_usage --
+  Build a unet to predict sea ice concentration grids given:
+    previous 2 months
+    time, cos(time), sin(time), cos(2*time), sin(2*time),
+    AAO, AO, NAO, PNA indices
+  Then do permutation on each to estimate importance
+  Robert Grumbine
+  23 June 2026 '''
+
 import os
 from math import sin, cos, pi
 import datetime
 
 import numpy as np
+import netCDF4 as nc
+
 import tensorflow as tf
 from tensorflow.keras import layers, models, Input
 import matplotlib.pyplot as plt
-
-import netCDF4 as nc
-
+import joblib
 
 starting = 1989
-nmonths  = 360
+nmonths  = 360 # training span
 ndata = 12*(2025-1989)
 # ---------------------------------------------------------
 # 1. acquire data from monthly NSIDC sea ice grids
 def nhname(fyy, fmm):
+  ''' nhname(fyy, fmm) -- return nsidc nh monthly file name for year and month '''
   ym = 100*fyy+fmm
   for inst in 'n07', 'F08', 'F11', 'F13', 'F17', 'am2':
     ftmp = 'nhmon/sic_psn25_'+f"{ym:6d}"+'_'+inst+'_v06r00.nc'
@@ -24,6 +34,7 @@ def nhname(fyy, fmm):
   return ""
 
 def shname(fyy, fmm):
+  ''' shname(fyy, fmm) -- return nsidc sh monthly file name for year and month '''
   ym = 100*fyy+fmm
   for inst in 'n07', 'F08', 'F11', 'F13', 'F17', 'am2':
     ftmp = 'shmon/sic_pss25_'+f"{ym:6d}"+'_'+inst+'_v06r00.nc'
@@ -32,6 +43,7 @@ def shname(fyy, fmm):
   return ""
 
 def deflag(tmp):
+    ''' deflag(tmp) -- remove NSIDC flags from grid '''
     tmp[tmp > 100] = 0
 
 # Read in full index file
@@ -85,24 +97,24 @@ for yy in range(starting, starting+int(ndata/12)):
     analy.close()
     deflag(tmp2)
     X_data[count,:,:,0] = tmp2
-    X_data[count,:,:,1] = cos(2.*pi*mm/12.)
-    X_data[count,:,:,2] = sin(2.*pi*mm/12.)
-    X_data[count,:,:,3] = cos(2*2.*pi*mm/12.)
-    X_data[count,:,:,4] = sin(2*2.*pi*mm/12.)
-
-    X_data[count,:,:,6] = indices[count,0]
-    X_data[count,:,:,7] = indices[count,1]
-    X_data[count,:,:,8] = indices[count,2]
-    X_data[count,:,:,9] = indices[count,3]
-
-    X_data[count,:,:,10] = ttt
+    # X_data[1] = lag 2
+    X_data[count,:,:,2] = cos(2.*pi*mm/12.)
+    X_data[count,:,:,3] = sin(2.*pi*mm/12.)
+    X_data[count,:,:,4] = cos(2*2.*pi*mm/12.)
+    X_data[count,:,:,5] = sin(2*2.*pi*mm/12.)
+    X_data[count,:,:,6] = ttt
+    X_data[count,:,:,7] = indices[count,0]
+    X_data[count,:,:,8] = indices[count,1]
+    X_data[count,:,:,9] = indices[count,2]
+    X_data[count,:,:,10] = indices[count,3]
 
     count += 1
-# Scale ice concentrations, sin, cos, time, and indices are already scaled
+
+# Scale ice concentrations. sin, cos, time, and indices are already scaled
 m = X_data[:,:,:,0].max()
 X_data[:,:,:,0] /= m
 for i in range(0, count-nlag):
-    X_data[i,:,:,5] = X_data[i+1,:,:,0]
+    X_data[i,:,:,1] = X_data[i+1,:,:,0]
 
 # now assign next month (of X_data) to y_data
 for i in range(0, count-nlag):
@@ -131,6 +143,7 @@ print("ndata split ",ndata, split)
 # 2. Build the U-Net Architecture
 # ---------------------------------------------------------
 def double_conv_block(x, n_filters):
+    ''' double_conv_block(x, n_filters) '''
     # Two consecutive Convolutional layers with ReLU activation and Batch Normalization
     x = layers.Conv2D(n_filters, (3, 3), padding="same", activation="relu")(x)
     x = layers.BatchNormalization()(x)
@@ -139,6 +152,7 @@ def double_conv_block(x, n_filters):
     return x
 
 def build_unet(input_shape=(64, 64, 1)):
+    ''' build_unet(input_shape=) -- build the unet architecture '''
     inputs = Input(shape=input_shape)
 
     # --- ENCODER (Contracting Path) ---
@@ -154,7 +168,7 @@ def build_unet(input_shape=(64, 64, 1)):
     c3 = double_conv_block(p2, 128)
     p3 = layers.MaxPooling2D((2, 2))(c3)
 
-    # RG Block 4: 
+    # RG Block 4:
     d4 = double_conv_block(p3, 256)
     p4 = layers.MaxPooling2D((2, 2))(d4)
 
@@ -196,8 +210,12 @@ def build_unet(input_shape=(64, 64, 1)):
 
 # ---------------------------------------------------------
 # Instantiate and compile the model
-unet_model = build_unet(input_shape=(ny, nx, nlayer))
-unet_model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
+if os.path.exists("index_model.joblib"):
+  unet_model = joblib.load("index_model.joblib")
+else:
+  unet_model = build_unet(input_shape=(ny, nx, nlayer))
+  unet_model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
+
 # Print out the model description:
 unet_model.summary()
 
@@ -207,19 +225,20 @@ print('done creating and compiling the unet model')
 # ---------------------------------------------------------
 # 3. Train the Model
 # ---------------------------------------------------------
-early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=7, restore_best_weights=True)
+
+early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=7,
+        restore_best_weights=True)
 
 history = unet_model.fit(
     X_train, y_train,
     validation_data=(X_val, y_val),
-    epochs=30,
+    epochs=10,
     batch_size=16,
     callbacks=[early_stopping]
 )
 
 # Save the model:
-import joblib
-joblib.dump(unet_model, "index_model.joblib")
+joblib.dump(unet_model, "index_model10.joblib")
 
 # ---------------------------------------------------------
 # 4. Predict and Visualize
@@ -231,7 +250,8 @@ sample_idx = 0
 fig, ax = plt.subplots(1, 3, figsize=(15, 5))
 
 # Input Grid (t-1)
-im0 = ax[0].imshow(X_val[sample_idx,:,:,0].squeeze(), cmap='Blues_r', origin='upper', vmin=0, vmax=1)
+im0 = ax[0].imshow(X_val[sample_idx,:,:,0].squeeze(), cmap='Blues_r',
+        origin='upper', vmin=0, vmax=1)
 ax[0].set_title("Input Sea Ice Grid (t-1)")
 fig.colorbar(im0, ax=ax[0])
 
@@ -241,10 +261,36 @@ ax[1].set_title("True Sea Ice Grid (t)")
 fig.colorbar(im1, ax=ax[1])
 
 # U-Net Prediction (t)
-im2 = ax[2].imshow(predictions[sample_idx].squeeze(), cmap='Blues_r', origin='upper', vmin=0, vmax=1)
+im2 = ax[2].imshow(predictions[sample_idx].squeeze(), cmap='Blues_r',
+        origin='upper', vmin=0, vmax=1)
 ax[2].set_title("U-Net Predicted Grid (t)")
 fig.colorbar(im2, ax=ax[2])
 
 plt.tight_layout()
 #plt.show()
 plt.savefig('index_sample.png')
+
+#---------------------------------------------------------------------
+# 5: evaluate importance of each field by scrambling it and seeing how
+#      much worse the predictions get
+#---------------------------------------------------------------------
+baseline_mse = unet_model.evaluate(X_val, y_val, verbose=0)[0]
+
+importance = np.zeros((nlayer))
+for i in range(0, nlayer):
+    # Clone the validation data so we don't permanently ruin it
+    X_corrupted = np.copy(X_val)
+
+    # Shuffle the samples for just this specific channel axis
+    # This keeps the grid shape intact but scrambles the data randomly
+    shuffled_indices = np.random.permutation(len(X_val))
+    X_corrupted[:, :, :, i] = X_val[shuffled_indices, :, :, i]
+
+    # Evaluate the model with the scrambled channel
+    corrupted_mse = unet_model.evaluate(X_corrupted, y_val, verbose=0)[0]
+
+    # Importance is how much worse the error got
+    importance[i] = corrupted_mse - baseline_mse
+
+for i in range(0, nlayer):
+    print(i, 'importance', importance[i])
