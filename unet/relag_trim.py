@@ -1,9 +1,12 @@
-''' unet_usage --
+''' relag --
   Build a unet to predict sea ice concentration grids given:
     previous 2 months
     time, cos(time), sin(time), cos(2*time), sin(2*time),
     AAO, AO, NAO, PNA indices
   Then do permutation on each to estimate importance
+
+  Clean up lag references
+
   Robert Grumbine
   23 June 2026 '''
 
@@ -22,6 +25,7 @@ import joblib
 starting = 1989
 nmonths  = 360 # training span
 ndata = 12*(2025-1989)
+nlag  = 2
 # ---------------------------------------------------------
 # 1. acquire data from monthly NSIDC sea ice grids
 def nhname(fyy, fmm):
@@ -58,18 +62,21 @@ for line in fin:
     words=line.split()
     full.append( (words[0], words[1], words[2], words[3], words[4], words[5]) )
 fin.close()
+print("length of full",len(full))
 
-indices = np.zeros((ndata, 4))
+indices = np.zeros((ndata+nlag, 4))
 for i in enumerate(full):
     if int(i[1][0]) == starting:
         istart = int(i[0])
         #debug: print("istart = ",istart, flush=True)
         #debug: print("full(istart) = ",full[istart])
-        for j in range(0, ndata):
+        for j in range(0, ndata+nlag):
+            #debug: print(istart, j+istart, ndata+nlag, len(full) ,flush=True)
             indices[j,0] = float(full[j+istart][2] )
             indices[j,1] = float(full[j+istart][3] )
             indices[j,2] = float(full[j+istart][4] )
             indices[j,3] = float(full[j+istart][5] )
+        break
 
 # ---------------------------------------------------------
 # Input (X): Sea ice concentration at time (t-1, t-2), cos(month), sin(month), cos(2*x), sin(2x)
@@ -78,8 +85,7 @@ for i in enumerate(full):
 
 nx = 304
 ny = 448
-nlayer = 11
-nlag = 2
+nlayer = 6
 X_data = np.zeros((ndata, ny, nx, nlayer))
 y_data = np.zeros((ndata, ny, nx, 1))
 
@@ -96,17 +102,12 @@ for yy in range(starting, starting+int(ndata/12)):
     tmp2 = analy.variables['cdr_seaice_conc_monthly'][0,:,:]
     analy.close()
     deflag(tmp2)
-    X_data[count,:,:,0] = tmp2
-    # X_data[1] = lag 2
-    X_data[count,:,:,2] = cos(2.*pi*mm/12.)
-    X_data[count,:,:,3] = sin(2.*pi*mm/12.)
-    X_data[count,:,:,4] = cos(2*2.*pi*mm/12.)
-    X_data[count,:,:,5] = sin(2*2.*pi*mm/12.)
-    X_data[count,:,:,6] = ttt
-    X_data[count,:,:,7] = indices[count,0]
-    X_data[count,:,:,8] = indices[count,1]
-    X_data[count,:,:,9] = indices[count,2]
-    X_data[count,:,:,10] = indices[count,3]
+    X_data[count,:,:,0] = tmp2 # lag 2
+    # X_data[1] = lag 1
+    X_data[count,:,:,2] = cos(2.*pi*(mm+nlag-1)/12.)
+    X_data[count,:,:,3] = sin(2.*pi*(mm+nlag-1)/12.)
+    X_data[count,:,:,4] = cos(2*2.*pi*(mm+nlag-1)/12.)
+    X_data[count,:,:,5] = sin(2*2.*pi*(mm+nlag-1)/12.)
 
     count += 1
 
@@ -232,13 +233,13 @@ early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=7
 history = unet_model.fit(
     X_train, y_train,
     validation_data=(X_val, y_val),
-    epochs=10,
+    epochs=20,
     batch_size=16,
     callbacks=[early_stopping]
 )
 
 # Save the model:
-joblib.dump(unet_model, "index_model20.joblib")
+joblib.dump(unet_model, "index_model60.joblib")
 
 # ---------------------------------------------------------
 # 4. Predict and Visualize
