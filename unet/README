@@ -1,3 +1,38 @@
 Unet architecture after Icenet
+https://www.nature.com/articles/s41467-021-25257-4
+
+In this development:
+Use NSIDC CDRv6 monthly grids, without 2d meteorological fields but with CPC teleconnection indices (telecon.indices) or CPC SOI indices (sstoi.indices)
+
+
+Initial gemini framing of unet: gemini-code-1781279914576.py
+
+unet4.py -- last month's sea ice grid only predictor
+
+unet_multilayer.py -- last month's grid, sin, cos(month), sin,cos(2*month)
+ n.b. Icenet used only sin and cos. Decomposing geophysical time series often shows significant contribution from the 2nd harmonic as well, so is tried. It turns out (unet_usage.py) that it does help the forecast here, too.
+
+uneta.py -- add 2 months ago ice grid to predictors
+
+unet_indices.py -- add AAO, AO, NAO, PNA (telecon.indices) to predictors
+
+unet_usage.py -- evaluate the contribution each predictor (ice-1, ice-2, sin,cos(month), sin,cos(2*month), AAO, AO, NAO, PNA makes by permutation of each field in turn (randomizing the order of the grids for one variable at a time and seeing how much worse the MSE becomes).  Showed that the telecon.indices were not helpful, but 2nd harmonic is.  Temporarily tried a time variable (days since start of data / 3652.5). Not helpful here.
+
+relag_trim.py -- fix reference to which field is lag1 and which is lag2. Trimmed out unhelpful variables.
+
+looping -- main is to run a loop for a number of periods (20), each of with a number (5) of epochs, and then: save model at that point, produce sample forecast, and evaluate permutation relevance.
+  -- also drop lag2 sea ice. Just using lag1 sea ice and the first and second harmonics of the seasonal cycle.
+  n.b.: permutation relevance change substantially in early periods.
+
+fcst.py -- make 12 forecasts of 1 month length from a given starting field
+  n.b.: about 50 seconds per month
+        survives whole year to at least casual eyeball level
+        does not respect the land mask (that it isn't told about), putting sea ice over some land points, some of the time.
+
+
+
+
+
+ 
 
 
