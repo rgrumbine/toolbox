@@ -58,7 +58,7 @@ def deflag(tmp):
 
 nx = 304
 ny = 448
-nlayer = 6
+nlayer = 5
 X_data = np.zeros((ndata, ny, nx, nlayer))
 
 first = datetime.datetime(starting,1,1)
@@ -73,22 +73,12 @@ analy = nc.Dataset(fname)
 tmp2 = analy.variables['cdr_seaice_conc_monthly'][0,:,:]
 analy.close()
 deflag(tmp2)
-X_data[0,:,:,1] = tmp2 # lag 1
 
-mmold = mm - 1
-if (mmold == 0):
-    yy -= 1
-    mmold = 12
-fname = nhname(yy, mmold)
-analy = nc.Dataset(fname)
-tmp2 = analy.variables['cdr_seaice_conc_monthly'][0,:,:]
-analy.close()
-deflag(tmp2)
-X_data[0,:,:,0] = tmp2 # lag 2
-X_data[0,:,:,2] = cos(2.*pi*(mm+nlag-1)/12.)
-X_data[0,:,:,3] = sin(2.*pi*(mm+nlag-1)/12.)
-X_data[0,:,:,4] = cos(2*2.*pi*(mm+nlag-1)/12.)
-X_data[0,:,:,5] = sin(2*2.*pi*(mm+nlag-1)/12.)
+X_data[0,:,:,0] = tmp2 
+X_data[0,:,:,1] = cos(2.*pi*(mm+nlag-1)/12.)
+X_data[0,:,:,2] = sin(2.*pi*(mm+nlag-1)/12.)
+X_data[0,:,:,3] = cos(2*2.*pi*(mm+nlag-1)/12.)
+X_data[0,:,:,4] = sin(2*2.*pi*(mm+nlag-1)/12.)
 
 
 # ---------------------------------------------------------
@@ -114,24 +104,32 @@ print("yy, mm ",yy,mm)
 
 
 for i in range(0, 12):
+  # verification field?
+  fname = nhname(yy, mm)
+  analy = nc.Dataset(fname)
+  tmp2 = analy.variables['cdr_seaice_conc_monthly'][0,:,:]
+  analy.close()
+  deflag(tmp2)
+  X_data[0,:,:,0] = tmp2
+
   mm += 1
   if (mm == 13):
       mm = 1
       yy += 1
-  starter[0,:,:,2] = cos(2.*pi*(mm+nlag-1)/12.)
-  starter[0,:,:,3] = sin(2.*pi*(mm+nlag-1)/12.)
-  starter[0,:,:,4] = cos(2*2.*pi*(mm+nlag-1)/12.)
-  starter[0,:,:,5] = sin(2*2.*pi*(mm+nlag-1)/12.)
+  starter[0,:,:,1] = cos(2.*pi*(mm+nlag-1)/12.)
+  starter[0,:,:,2] = sin(2.*pi*(mm+nlag-1)/12.)
+  starter[0,:,:,3] = cos(2*2.*pi*(mm+nlag-1)/12.)
+  starter[0,:,:,4] = sin(2*2.*pi*(mm+nlag-1)/12.)
 
   predictions = model.predict(starter)
   #debug: print('predictions shape',predictions.shape, flush=True)
 
   # Plot the input and predicted month
   sample_idx = 0
-  fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+  fig, ax = plt.subplots(1, 3, figsize=(15, 8))
   
   # Input Grid (t-1)
-  im0 = ax[0].imshow(starter[sample_idx,:,:,1].squeeze(), cmap='Blues_r',
+  im0 = ax[0].imshow(starter[sample_idx,:,:,0].squeeze(), cmap='Blues_r',
           origin='upper', vmin=0, vmax=1)
   ax[0].set_title("Input Sea Ice Grid (t-1)")
   fig.colorbar(im0, ax=ax[0])
@@ -143,12 +141,6 @@ for i in range(0, 12):
   fig.colorbar(im1, ax=ax[1])
 
   # Verification:
-  fname = nhname(yy, mm)
-  analy = nc.Dataset(fname)
-  tmp2 = analy.variables['cdr_seaice_conc_monthly'][0,:,:]
-  analy.close()
-  deflag(tmp2)
-  X_data[0,:,:,0] = tmp2
   im2 = ax[2].imshow(X_data[0,:,:,0].squeeze(), cmap='Blues_r',
           origin='upper', vmin=0, vmax=1)
   ax[2].set_title("verification")
@@ -157,6 +149,5 @@ for i in range(0, 12):
   plt.tight_layout()
   plt.savefig(f'prediction{yy:4d}{mm:02d}.png')
 
-  # RG: update trig terms, swap sic-1 in to sic-2, prediction in to sic-1
-  starter[0,:,:,0] = starter[0,:,:,1]
-  starter[0,:,:,1] = predictions[0,:,:,0]
+  # RG: swap prediction in to sic-1
+  starter[0,:,:,0] = predictions[0,:,:,0]
