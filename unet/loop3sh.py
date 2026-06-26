@@ -220,7 +220,7 @@ early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=7
 # ---------------------------------------------------------
 
 period = 0
-for period in range(0,20):
+for period in range(0,1):
   history = unet_model.fit(
       X_train, y_train,
       validation_data=(X_val, y_val),
@@ -246,18 +246,18 @@ for period in range(0,20):
   fig, ax = plt.subplots(1, 3, figsize=(15, 5))
 
   # Input Grid (t-1)
-  im0 = ax[0].imshow(X_val[sample_idx,:,:,0].squeeze(), cmap='Blues_r',
+  im0 = ax[0].imshow(X_val[sample_idx,:,:,0].squeeze(), cmap='Blues',
           origin='upper', vmin=0, vmax=1)
   ax[0].set_title("Input Sea Ice Grid (t-1)")
   fig.colorbar(im0, ax=ax[0])
 
   # True Output Grid (t)
-  im1 = ax[1].imshow(y_val[sample_idx].squeeze(), cmap='Blues_r', origin='upper', vmin=0, vmax=1)
+  im1 = ax[1].imshow(y_val[sample_idx].squeeze(), cmap='Blues', origin='upper', vmin=0, vmax=1)
   ax[1].set_title("True Sea Ice Grid (t)")
   fig.colorbar(im1, ax=ax[1])
 
   # U-Net Prediction (t)
-  im2 = ax[2].imshow(predictions[sample_idx].squeeze(), cmap='Blues_r',
+  im2 = ax[2].imshow(predictions[sample_idx].squeeze(), cmap='Blues',
           origin='upper', vmin=0, vmax=1)
   ax[2].set_title("U-Net Predicted Grid (t)")
   fig.colorbar(im2, ax=ax[2])
