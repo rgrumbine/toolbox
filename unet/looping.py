@@ -14,6 +14,7 @@
 import os
 from math import sin, cos, pi
 import datetime
+import tracemalloc
 
 import numpy as np
 import netCDF4 as nc
@@ -27,6 +28,8 @@ starting = 1989
 nmonths  = 360 # training span
 ndata = 12*(2025-1989)
 nlag  = 1
+
+tracemalloc.start()
 # ---------------------------------------------------------
 # 1. acquire data from monthly NSIDC sea ice grids
 def nhname(fyy, fmm):
@@ -105,6 +108,10 @@ y_train, y_val = y_data[:split], y_data[split:-nlag]
 del X_data, y_data
 
 print("ndata split ",ndata, split)
+# Get memory metrics: (current, peak)
+current, peak = tracemalloc.get_traced_memory()
+print(f"Current memory usage: {current / 10**6} Mb")
+print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
 # ---------------------------------------------------------
 # 2. Build the U-Net Architecture
@@ -186,6 +193,13 @@ else:
 # Print out the model description:
 unet_model.summary()
 
+# Get memory metrics: (current, peak)
+current, peak = tracemalloc.get_traced_memory()
+print(f"after building model memory usage: {current / 10**6} Mb")
+print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
+
+
+
 print('done creating and compiling the unet model')
 #debug: exit(0)
 
@@ -206,6 +220,11 @@ for period in range(0,20):
       batch_size=16,
       callbacks=[early_stopping]
   )
+  # Get memory metrics: (current, peak)
+  current, peak = tracemalloc.get_traced_memory()
+  print(f"after period {period:02d} memory usage: {current / 10**6} Mb")
+  print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
+
 
   # Save the model:
   joblib.dump(unet_model, f"index_model{period:d}.joblib")
