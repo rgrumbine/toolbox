@@ -34,15 +34,15 @@ final   = sys.argv[3]       # 'sigmoid' for ice, 'linear' for sst and the like
 print(nvar, nametag, final, flush=True)
 #debug: sys.exit(0)
 
-# Acquire data -- in time range of interest
+# Acquire data -- in time range of interest -- RG: argument to be
 start = datetime.datetime(1980,1,1)
-end   = datetime.datetime(1988,3,6)
+end   = datetime.datetime(1981,3,31)
 
 # ---- From here down should not need to be changed between different runs -----
 dt      = datetime.timedelta(1)
 nx      = 1536
 ny      =  768
-nlayer  = 15
+nlayer  = 17
 ntarget = 1
 nlag    = 1
 nweeks  = int((end-start)/dt/7 + 1)
@@ -66,7 +66,7 @@ count = 0
 while(tag <= end ):
   print(count, "tag = ",tag, flush = True)
 
-  flx = nc.Dataset('../thinned/week.'+tag.strftime("%Y%m%d")+'.nc')
+  flx = nc.Dataset('thinned/week.'+tag.strftime("%Y%m%d")+'.nc')
   Xdata[count,:,:,0] = flx.variables['ICETK'][:,:]
   Xdata[count,:,:,1] = flx.variables['ICEC'][:,:]
   Xdata[count,:,:,2] = flx.variables['SST'][:,:]
@@ -84,6 +84,8 @@ while(tag <= end ):
   Xdata[count,:,:,12] = sin( (tag-start)/dt * 2.*pi/365.25)
   Xdata[count,:,:,13] = cos(2*(tag-start)/dt * 2.*pi/365.25)
   Xdata[count,:,:,14] = sin(2*(tag-start)/dt * 2.*pi/365.25)
+  Xdata[count,:,:,15] = cos(3*(tag-start)/dt * 2.*pi/365.25)
+  Xdata[count,:,:,16] = sin(3*(tag-start)/dt * 2.*pi/365.25)
 
   # Remove means so as to have anomalies and something more nearly scaled
   Xdata[count] -= Xavg
@@ -136,12 +138,12 @@ print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
     
 #--------------------------------------------------------------------------------
 # compile, show, and train the unet -- read in an old one if available
-if (os.path.exists(nametag+'week.joblib')):
+if (os.path.exists(nametag+'week1.joblib')):
   print("about to load joblib",flush=True)
-  unet = joblib.load(nametag+'week.joblib')
+  unet = joblib.load(nametag+'week1.joblib')
 else:
   print("building the unet model", flush=True)
-  unet = build_unet(input_shape=(ny,nx,nlayer), final = final)
+  unet = build_unet(input_shape=(ny,nx,nlayer), final = final, nchannel=1)
   unet.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
 
 unet.summary() # print the model description
@@ -172,7 +174,7 @@ for period in range(0, 10):
   print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
   # save the unet
-  joblib.dump(unet, nametag+f"{period:02d}week.joblib")
+  joblib.dump(unet, nametag+f"{period:02d}week1.joblib")
   # Get memory metrics: (current, peak)
   current, peak = tracemalloc.get_traced_memory()
   print(f"past joblib memory usage: {current / 10**6} Mb")

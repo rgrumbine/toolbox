@@ -1,8 +1,8 @@
 #!/bin/sh
 ##ursa
-#SBATCH -J sstweek6
-#SBATCH -e sstweek6.err
-#SBATCH -o sstweek6.out
+#SBATCH -J sstweek
+#SBATCH -e sstweek.err
+#SBATCH -o sstweek.out
 #SBATCH -t 5:55:00
 #SBATCH -q batch
 #SBATCH -A marine-cpu
@@ -13,9 +13,9 @@
 
 
 source $HOME/rg/env3.13/bin/activate
-export PYTHONPATH=/home/Robert.Grumbine/clim_data/replay/tmp
+export PYTHONPATH=/home/Robert.Grumbine/rgdev/toolbox/gefs
 
-cd /home/Robert.Grumbine/clim_data/replay/thinned
+cd $PYTHONPATH
 
 #time python3 /home/Robert.Grumbine/clim_data/replay/tmp/sstweek.py
-time python3 /home/Robert.Grumbine/clim_data/replay/tmp/universal.py 2 'sst' 'linear'
+time python3 universal1.py 2 'sst' 'linear'

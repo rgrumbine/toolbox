@@ -20,7 +20,7 @@ def double_conv_block(x, n_filters):
     x = layers.BatchNormalization()(x)
     return x
 
-def build_unet(input_shape=(768, 1536, 1), final='relu'):
+def build_unet(input_shape=(768, 1536, 1), final='relu', nchannel = 1):
     inputs = Input(shape=input_shape)
 
     # Encoding:
@@ -80,7 +80,7 @@ def build_unet(input_shape=(768, 1536, 1), final='relu'):
 
     
     # Output layer:
-    outputs = layers.Conv2D(1, (1,1), padding="same", activation=final)(c12)
+    outputs = layers.Conv2D(nchannel, (1,1), padding="same", activation=final)(c12)
 
     model = models.Model(inputs, outputs, name="GEFS")
     return model
@@ -113,7 +113,7 @@ def permute(unet, Xval, yval, nlayer):
       importance[i] = corrupted_mse - baseline_mse
 
   for i in range(0, nlayer):
-      print(f"{i:02d"}, 'importance', f"{importance[i]:.4e}", f"{importance[i]/baseline_mse:.4e}")
+      print(f"{i:02d}", 'importance', f"{importance[i]:11.4e}", f"{importance[i]/baseline_mse:11.4e}")
 
 
 #--------------------------------------------------------------------------------

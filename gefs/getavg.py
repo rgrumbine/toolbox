@@ -23,5 +23,7 @@ def getavg(Xavg, fname = 'thinned/average_1980.nc'):
   Xavg[:,:,12] = 0.0
   Xavg[:,:,13] = 0.0
   Xavg[:,:,14] = 0.0
+  Xavg[:,:,15] = 0.0
+  Xavg[:,:,16] = 0.0
 
 

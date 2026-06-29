@@ -1,8 +1,8 @@
 #!/bin/sh
 ##ursa
-#SBATCH -J iceweek6
-#SBATCH -e iceweek6.err
-#SBATCH -o iceweek6.out
+#SBATCH -J iceweek
+#SBATCH -e iceweek.err
+#SBATCH -o iceweek.out
 #SBATCH -t 5:55:00
 #SBATCH -q batch
 #SBATCH -A marine-cpu
@@ -13,9 +13,9 @@
 
 
 source $HOME/rg/env3.13/bin/activate
-export PYTHONPATH=/home/Robert.Grumbine/clim_data/replay/tmp
+export PYTHONPATH=/home/Robert.Grumbine/rgdev/toolbox/gefs/
 
-cd /home/Robert.Grumbine/clim_data/replay/thinned
+cd $PYTHONPATH
 
 #time python3 /home/Robert.Grumbine/clim_data/replay/tmp/iceweek.py
-time python3 /home/Robert.Grumbine/clim_data/replay/tmp/universal.py 1 'ice' 'sigmoid'
+time python3 universal1.py 1 'ice' 'sigmoid'
