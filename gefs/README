@@ -1,0 +1,17 @@
+averager.py        -- compute the average of all thinned files in date range
+multi_permute.py   -- compute the permutation importance of a given model
+runpermute.sh      -- run multi_permute.py
+scan.py            -- scan for the existence of the thinned prs and flx files
+weekavg.py         -- compute weekly averages starting from 1/1/1980
+weekavg.sh         -- script to batch weekavg.py
+
+ursa.sh            -- run universal.py for ice, then sst. Only difference is arguments
+
+common.py          -- code shared between ice and sst
+getavg.py          -- utility to extract the average from averager.py output
+universal.py       -- header code for both ice and sst, predicts only week+1
+iceweek.sh         -- run universal.py on sea ice concentration 
+sstweek.sh         -- run universal.py on sea surface temperature
+
+Robert Grumbine
+29 June 2026
