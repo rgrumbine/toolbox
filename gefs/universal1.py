@@ -208,13 +208,13 @@ for period in range(0, 50):
   # Visualize: show geophysical map of prediction
   predictions = unet.predict(Xval)
   predictions *= r[nvar]
-  predictions += Xavg[nvar] 
+  predictions[0] += Xavg[nvar] 
 
   sample_idx = 0
   fig, ax = plt.subplots(1, 1, figsize=(15, 8))
 
   # U-Net Prediction (t)
-  im2 = ax.imshow(predictions[sample_idx].squeeze(), cmap='Seismic', origin='lower')
+  im2 = ax.imshow(predictions[sample_idx].squeeze(), cmap='seismic', origin='lower')
   ax.set_title("U-Net Predicted Geophysical Value Grid (t)")
   fig.colorbar(im2, ax=ax)
 
