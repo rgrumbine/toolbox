@@ -59,12 +59,15 @@ print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
 # Get, rather than compute, an average field
 getavg.getavg(Xavg, 'thinned/average_1980.nc')
+# for climo, move inside loop
 
 tag   = start 
 tag += 7*dt
 count = 0
 while(tag <= end ):
   print(count, "tag = ",tag, flush = True)
+  # for climo:
+  # getavg.climo(Xavg, tag, 'thinned/climo_1980.nc')
 
   flx = nc.Dataset('thinned/week.'+tag.strftime("%Y%m%d")+'.nc')
   Xdata[count,:,:,0] = flx.variables['ICETK'][:,:]
@@ -96,9 +99,14 @@ while(tag <= end ):
   #debug: exit(0)
 
 # Scale by max-min:
-r = np.zeros((nlayer))
+#r = np.zeros((nlayer))
+#for l in range(0,nlayer):
+#    r[l] = 0.5*(Xdata[:,:,:,l].max() - Xdata[:,:,:,l].min() ) 
+
+# hard-wire scaling:
+r = [15, 1, 5, 400, 4000, 4500, 2500, 800, 500, 350, 300, 1, 1, 1, 1, 1, 1]
+
 for l in range(0,nlayer):
-    r[l] = 0.5*(Xdata[:,:,:,l].max() - Xdata[:,:,:,l].min() ) 
     Xdata[:,:,:,l] /= r[l]
     print('scaling ',l,Xdata[:,:,:,l].max(), Xdata[:,:,:,l].min(), '  ', r[l], flush=True )
 
@@ -160,7 +168,7 @@ early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=1
 #---------------------------------------------------------------------
 # Now ready to iteratively fit the model, plot the next week's prediction, permute evaluate it
 
-for period in range(0, 10):
+for period in range(0, 50):
   history = unet.fit(
     Xtrain, ytrain,
     validation_data=(Xval, yval),

@@ -146,3 +146,4 @@ def show(unet, Xval, yval, figname = 'summary.png'):
 
   plt.tight_layout()
   plt.savefig(figname)
+  plt.close()
