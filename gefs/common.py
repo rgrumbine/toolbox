@@ -130,17 +130,18 @@ def show(unet, Xval, yval, figname = 'summary.png'):
   fig, ax = plt.subplots(1, 3, figsize=(15, 5))
 
   # Input Grid (t-1)
-  im0 = ax[0].imshow(Xval[sample_idx,:,:,0].squeeze(), cmap='Blues', origin='lower', vmin=0, vmax=1)
+  # RG: note 0-1 favors a 'Blues' color bar. 'Seismic' for +-1
+  im0 = ax[0].imshow(Xval[sample_idx,:,:,0].squeeze(), cmap='Seismic', origin='lower', vmin=-1, vmax=1)
   ax[0].set_title("Input Grid (t-1)")
   fig.colorbar(im0, ax=ax[0])
 
   # True Output Grid (t)
-  im1 = ax[1].imshow(yval[sample_idx].squeeze(), cmap='Blues', origin='lower', vmin=0, vmax=1)
+  im1 = ax[1].imshow(yval[sample_idx].squeeze(), cmap='Seismic', origin='lower', vmin=-1, vmax=1)
   ax[1].set_title("True Grid (t)")
   fig.colorbar(im1, ax=ax[1])
 
   # U-Net Prediction (t)
-  im2 = ax[2].imshow(predictions[sample_idx].squeeze(), cmap='Blues', origin='lower', vmin=0, vmax=1)
+  im2 = ax[2].imshow(predictions[sample_idx].squeeze(), cmap='Seismic', origin='lower', vmin=-1, vmax=1)
   ax[2].set_title("U-Net Predicted Grid (t)")
   fig.colorbar(im2, ax=ax[2])
 

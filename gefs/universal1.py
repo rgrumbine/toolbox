@@ -191,7 +191,7 @@ for period in range(0, 50):
   #debug: sys.exit(0)
 
 #--------------------------------------------------------------------------------
-  # Visualize:
+  # Visualize -- scaled fields
   show(unet, Xval, yval, figname=nametag+f"{period:02d}.sample.png")
 
 #--------------------------------------------------------------------------------
@@ -203,3 +203,22 @@ for period in range(0, 50):
   current, peak = tracemalloc.get_traced_memory()
   print(f"past permutation memory usage: {current / 10**6} Mb")
   print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
+
+#---------------------------------------------------------------------
+  # Visualize: show geophysical map of prediction
+  predictions = unet.predict(Xval)
+  predictions *= r[nvar]
+  predictions += Xavg[nvar] 
+
+  sample_idx = 0
+  fig, ax = plt.subplots(1, 1, figsize=(15, 8))
+
+  # U-Net Prediction (t)
+  im2 = ax.imshow(predictions[sample_idx].squeeze(), cmap='Seismic', origin='lower')
+  ax.set_title("U-Net Predicted Geophysical Value Grid (t)")
+  fig.colorbar(im2, ax=ax)
+
+  plt.tight_layout()
+  plt.savefig(figname)
+  plt.close()
+
