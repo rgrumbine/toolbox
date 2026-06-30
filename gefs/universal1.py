@@ -36,7 +36,7 @@ print(nvar, nametag, final, flush=True)
 
 # Acquire data -- in time range of interest -- RG: argument to be
 start = datetime.datetime(1980,1,1)
-end   = datetime.datetime(1981,3,31)
+end   = datetime.datetime(1980,5,31)
 
 # ---- From here down should not need to be changed between different runs -----
 dt      = datetime.timedelta(1)
@@ -208,7 +208,7 @@ for period in range(0, 50):
   # Visualize: show geophysical map of prediction
   predictions = unet.predict(Xval)
   predictions *= r[nvar]
-  predictions[0] += Xavg[nvar] 
+  predictions[0] += Xavg[nvar][0]
 
   sample_idx = 0
   fig, ax = plt.subplots(1, 1, figsize=(15, 8))
