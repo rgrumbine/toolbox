@@ -39,7 +39,7 @@ tag=`$HOME/bin/dtgfix3 $tag`
 
 #reverse -- now to past
 #export end=20250601
-export end=20260101
+export end=20260401
 
 cd rtofs
 while [ $tag -ge $end ]

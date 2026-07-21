@@ -13,4 +13,5 @@ source $HOME/rg/env3.13/bin/activate
 
 cd /home/Robert.Grumbine/clim_data/replay/thinned
 
-time python3 /home/Robert.Grumbine/clim_data/replay/tmp/weekavg.py > weekavg.out
+#time python3 /home/Robert.Grumbine/rgdev/toolbox/gefs/weekavg.py > /home/Robert.Grumbine/rgdev/toolbox/gefs/weekavg.out
+time python3 /home/Robert.Grumbine/rgdev/toolbox/gefs/weekavg.py

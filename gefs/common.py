@@ -10,7 +10,7 @@ from tensorflow.keras import layers, models, Input
 
 # design the Unet -- 6 layers deep, giving 24x12 as the bottleneck grid (15 degree blocks)
 # RG: 1x3 layer for fact that fields tend to vary in longitude more than latitude?
-# A: No, just a 1x2 as that gives a square array which gemini says is more 
+# A: No, just a 1x2 as that gives a square array which gemini says is more
 #    computationally efficient
 def double_conv_block(x, n_filters):
     # Two consecutive Convolutional layers with ReLU activation and Batch Normalization
@@ -78,7 +78,7 @@ def build_unet(input_shape=(768, 1536, 1), final='relu', nchannel = 1):
     concat6 = layers.concatenate([u6,c1])
     c12 = double_conv_block(concat6, 32)
 
-    
+
     # Output layer:
     outputs = layers.Conv2D(nchannel, (1,1), padding="same", activation=final)(c12)
 
@@ -113,7 +113,8 @@ def permute(unet, Xval, yval, nlayer):
       importance[i] = corrupted_mse - baseline_mse
 
   for i in range(0, nlayer):
-      print(f"{i:02d}", 'importance', f"{importance[i]:11.4e}", f"{importance[i]/baseline_mse:11.4e}")
+      print(f"{i:02d}", 'importance', f"{importance[i]:11.4e}",
+              f"{importance[i]/baseline_mse:11.4e}")
 
 
 #--------------------------------------------------------------------------------
@@ -131,20 +132,24 @@ def show(unet, Xval, yval, figname = 'summary.png'):
 
   # Input Grid (t-1)
   # RG: note 0-1 favors a 'Blues' color bar. 'seismic' for +-1
-  im0 = ax[0].imshow(Xval[sample_idx,:,:,0].squeeze(), cmap='seismic', origin='lower', vmin=-1, vmax=1)
+  im0 = ax[0].imshow(Xval[sample_idx,:,:,0].squeeze(), cmap='seismic',
+          origin='lower', vmin=-1, vmax=1)
   ax[0].set_title("Input Grid (t-1)")
   fig.colorbar(im0, ax=ax[0])
 
   # True Output Grid (t)
-  im1 = ax[1].imshow(yval[sample_idx].squeeze(), cmap='seismic', origin='lower', vmin=-1, vmax=1)
+  im1 = ax[1].imshow(yval[sample_idx].squeeze(), cmap='seismic',
+          origin='lower', vmin=-1, vmax=1)
   ax[1].set_title("True Grid (t)")
   fig.colorbar(im1, ax=ax[1])
 
   # U-Net Prediction (t)
-  im2 = ax[2].imshow(predictions[sample_idx].squeeze(), cmap='seismic', origin='lower', vmin=-1, vmax=1)
+  im2 = ax[2].imshow(predictions[sample_idx].squeeze(), cmap='seismic',
+          origin='lower', vmin=-1, vmax=1)
   ax[2].set_title("U-Net Predicted Grid (t)")
   fig.colorbar(im2, ax=ax[2])
 
   plt.tight_layout()
   plt.savefig(figname)
   plt.close()
+

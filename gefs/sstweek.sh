@@ -1,8 +1,8 @@
 #!/bin/sh
 ##ursa
-#SBATCH -J sstweek
-#SBATCH -e sstweek.err
-#SBATCH -o sstweek.out
+#SBATCH -J sstweek3
+#SBATCH -e sstweek3.err
+#SBATCH -o sstweek3.out
 #SBATCH -t 5:55:00
 #SBATCH -q batch
 #SBATCH -A marine-cpu
