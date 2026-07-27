@@ -2,7 +2,7 @@
 #SBATCH -J cur_rtofs
 #SBATCH -e cur_rtofs.err
 #SBATCH -o cur_rtofs.out
-#SBATCH -t 7:55:00
+#SBATCH -t 1:55:00
 #  #SBATCH -t 0:25:00
 #SBATCH -q batch
 #SBATCH -A marine-cpu

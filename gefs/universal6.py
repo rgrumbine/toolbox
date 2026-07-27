@@ -36,18 +36,15 @@ print(nvar, nametag, final, flush=True)
 
 # Acquire data -- in time range of interest -- RG: argument to be
 start = datetime.datetime(1980,1,1)
-end   = datetime.datetime(1982,7,1)
-#start = datetime.datetime(1994,1,1)
-#end   = datetime.datetime(1995,4,1)
+end   = datetime.datetime(1981,4,1)
 
 # ---- From here down should not need to be changed between different runs -----
-dt      = datetime.timedelta(1)
-nx      = 1536
-ny      =  768
-nlayer  = 17
-ntarget = 1
-nlag    = 1
-nweeks  = int((end-start)/dt/7 + 1)
+dt       = datetime.timedelta(1)
+nx       = 1536
+ny       =  768
+nlayer   = 17
+nlag     =  7
+nweeks   = int((end-start)/dt/7 + 1)
 print('nweeks = ',nweeks, flush=True)
 
 tracemalloc.start()
@@ -61,9 +58,9 @@ print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
 # Get, rather than compute, an average field
 getavg.getavg(Xavg, 'thinned/average_1980.nc')
-# for climo, move inside loop
+# for epoch climo, move inside loop
 
-tag  = start 
+tag   = start 
 tag += 7*dt
 count = 0
 while(tag <= end ):
@@ -126,15 +123,20 @@ print('split, count ',split, count, flush=True)
 
 # RG: Due to memory limits it would be better to go with not copying the data
 Xtrain = np.zeros((split, ny, nx, nlayer),dtype=np.float32)
-ytrain = np.zeros((split, ny, nx, 1),dtype=np.float32)
 Xval   = np.zeros((count-split-nlag, ny, nx, nlayer),dtype=np.float32)
-yval   = np.zeros((count-split-nlag, ny, nx, 1),dtype=np.float32)
+
+ytrain = np.zeros((split, ny, nx, nlag),dtype=np.float32)
+yval   = np.zeros((count-split-nlag, ny, nx, nlag),dtype=np.float32)
 
 # Now for training and validation
 Xtrain = Xdata[:split]
-ytrain = Xdata[1:split+1, :,:, nvar] # icec in next month
-Xval   = Xdata[split:count-1-nlag]
-yval   = Xdata[split+1:count-nlag, :,:, nvar]
+Xval   = Xdata[split:count-nlag]
+for i in range(1,nlag+1):
+  ytrain[:,:,:,i-1] = Xdata[i:split+i,          :,:, nvar] # icec in next week
+  yval[:,:,:,i-1]   = Xdata[split+i:count-nlag+i, :,:, nvar]
+print('y shapes',ytrain.shape, yval.shape)
+print('X shapes',Xtrain.shape, Xval.shape)
+#debug: sys.exit(0)
 
 del Xdata
 
@@ -153,7 +155,7 @@ if (os.path.exists(nametag+'week1.joblib')):
   unet = joblib.load(nametag+'week1.joblib')
 else:
   print("building the unet model", flush=True)
-  unet = build_unet(input_shape=(ny,nx,nlayer), final = final, nchannel=1)
+  unet = build_unet(input_shape=(ny,nx,nlayer), final = final, nchannel = nlag)
   unet.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
 
 unet.summary() # print the model description
@@ -194,7 +196,7 @@ for period in range(0, 50):
 
 #--------------------------------------------------------------------------------
   # Visualize -- scaled fields
-  show(unet, Xval, yval, figname=nametag+f"{period:02d}.sample.png")
+  #show(unet, Xval, yval, figname=nametag+f"{period:02d}.sample.png")
 
 #--------------------------------------------------------------------------------
   # permutation evaluation of importance
@@ -207,25 +209,3 @@ for period in range(0, 50):
   print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
 #---------------------------------------------------------------------
-sys.exit(0)
-#  # Visualize: show geophysical map of prediction
-#  predictions = unet.predict(Xval)
-#  predictions *= r[nvar]
-#
-#  print('shape of predictions, Xavg',predictions.shape(), Xavg.shape() )
-#sys.exit(0)
-##RG: predictions[0] += Xavg[:,:,nvar] has wrong shapes
-#  predictions[0] += Xavg[:,:,nvar]
-#
-#  sample_idx = 0
-#  fig, ax = plt.subplots(1, 1, figsize=(15, 8))
-#
-#  # U-Net Prediction (t)
-#  im2 = ax.imshow(predictions[sample_idx].squeeze(), cmap='seismic', origin='lower')
-#  ax.set_title("U-Net Predicted Geophysical Value Grid (t)")
-#  fig.colorbar(im2, ax=ax)
-#
-#  plt.tight_layout()
-#  plt.savefig(figname)
-#  plt.close()
-#
