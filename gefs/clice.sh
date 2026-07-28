@@ -1,9 +1,9 @@
 #!/bin/sh
 ##ursa
-#SBATCH -J iceclim
-#SBATCH -e iceclim.err
-#SBATCH -o iceclim.out
-#SBATCH -t 0:40:00
+#SBATCH -J iceclim1
+#SBATCH -e iceclim1.err
+#SBATCH -o iceclim1.out
+#SBATCH -t 5:40:00
 #SBATCH -q batch
 #SBATCH -A marine-cpu
 #SBATCH --nodes=1
@@ -17,5 +17,6 @@ export PYTHONPATH=/home/Robert.Grumbine/rgdev/toolbox/gefs
 
 cd $PYTHONPATH
 
-time python3 climate6.py 1 'ice' 'sigmoid'
+#time python3 climate6.py 1 'ice' 'sigmoid'
+time python3 universal1.py 1 'ice' 'linear'
 report-mem

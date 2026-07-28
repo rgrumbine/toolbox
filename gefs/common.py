@@ -13,7 +13,8 @@ from tensorflow.keras import layers, models, Input
 # A: No, just a 1x2 as that gives a square array which gemini says is more
 #    computationally efficient
 def double_conv_block(x, n_filters):
-    # Two consecutive Convolutional layers with ReLU activation and Batch Normalization
+    ''' double_conv_block:  Two consecutive Convolutional layers with ReLU
+            activation and Batch Normalization '''
     x = layers.Conv2D(n_filters, (3, 3), padding="same", activation="relu")(x)
     x = layers.BatchNormalization()(x)
     x = layers.Conv2D(n_filters, (3, 3), padding="same", activation="relu")(x)
@@ -21,6 +22,7 @@ def double_conv_block(x, n_filters):
     return x
 
 def build_unet(input_shape=(768, 1536, 1), final='relu', nchannel = 1):
+    ''' build_unet(input_shape, final, nchannel) '''
     inputs = Input(shape=input_shape)
 
     # Encoding:
@@ -86,14 +88,13 @@ def build_unet(input_shape=(768, 1536, 1), final='relu', nchannel = 1):
     return model
 
 #--------------------------------------------------------------------------------
-# permutation evaluation of importance
-# evaluate importance of each field by scrambling it and seeing how
-#      much worse the predictions get
 #---------------------------------------------------------------------
 def permute(unet, Xval, yval, nlayer):
-    #debug: print('entered permute',nlayer,flush=True)
+  ''' permute(unet, Xval, yval, nlayer) -- permutation evaluation of importance
+        evaluate importance of each field by scrambling it and seeing how
+        much worse the predictions get
+  '''
   baseline_mse = unet.evaluate(Xval, yval, verbose=0)[0]
-  #debug: print('past initial evaluation',flush=True)
 
   importance = np.zeros((nlayer))
   for i in range(0, nlayer):
@@ -118,10 +119,9 @@ def permute(unet, Xval, yval, nlayer):
 
 
 #--------------------------------------------------------------------------------
-def show(unet, Xval, yval, figname = 'summary.png'):
-  #debug: print("entered show",figname,flush=True)
-  #debug: unet.summary()
-  #debug: print(flush=True)
+def show(unet, Xval, yval, nvar, figname = 'summary.png'):
+  ''' show(unet, Xval, yval, nvar, figname) -- make plot of initial field, 
+            predicted field, and observed field '''
 
   # Extract a sample sequence to visualize
   predictions = unet.predict(Xval)
@@ -132,7 +132,7 @@ def show(unet, Xval, yval, figname = 'summary.png'):
 
   # Input Grid (t-1)
   # RG: note 0-1 favors a 'Blues' color bar. 'seismic' for +-1
-  im0 = ax[0].imshow(Xval[sample_idx,:,:,0].squeeze(), cmap='seismic',
+  im0 = ax[0].imshow(Xval[sample_idx,:,:,nvar].squeeze(), cmap='seismic',
           origin='lower', vmin=-1, vmax=1)
   ax[0].set_title("Input Grid (t-1)")
   fig.colorbar(im0, ax=ax[0])
@@ -152,4 +152,3 @@ def show(unet, Xval, yval, figname = 'summary.png'):
   plt.tight_layout()
   plt.savefig(figname)
   plt.close()
-

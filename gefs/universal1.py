@@ -10,15 +10,16 @@ import tracemalloc
 
 import numpy as np
 import netCDF4 as nc
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 import tensorflow as tf
-from tensorflow.keras import layers, models, Input
+#from tensorflow.keras import layers, models, Input
 import joblib
 
 #--------------------------------------------------------------
 import getavg
 from common import *
+from epoch import *
 #--------------------------------------------------------------
 
 # ---- These change between target variables and working data --------
@@ -36,9 +37,7 @@ print(nvar, nametag, final, flush=True)
 
 # Acquire data -- in time range of interest -- RG: argument to be
 start = datetime.datetime(1980,1,1)
-end   = datetime.datetime(1982,7,1)
-#start = datetime.datetime(1994,1,1)
-#end   = datetime.datetime(1995,4,1)
+end   = datetime.datetime(1981,4,1)
 
 # ---- From here down should not need to be changed between different runs -----
 dt      = datetime.timedelta(1)
@@ -60,16 +59,20 @@ print(f"Memory usage after np.zeros: {current / 10**6} Mb")
 print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
 # Get, rather than compute, an average field
-getavg.getavg(Xavg, 'thinned/average_1980.nc')
+#getavg.getavg(Xavg, 'thinned/average_1980.nc')
 # for climo, move inside loop
+atm = climate()
 
-tag  = start 
-tag += 7*dt
+tag   = start
+tag  += 7*dt
 count = 0
 while(tag <= end ):
   print(count, "tag = ",tag, flush = True)
   # for climo:
   # getavg.climo(Xavg, tag, 'thinned/climo_1980.nc')
+  for i in range(0, len(atm.x)):
+    Xavg[:,:,i] = atm.x[i].climo(tag)
+    #debug: print(i,Xavg[:,:,i].max(), Xavg[:,:,i].min(), flush=True )
 
   flx = nc.Dataset('thinned/week.'+tag.strftime("%Y%m%d")+'.nc')
   Xdata[count,:,:,0] = flx.variables['ICETK'][:,:]
@@ -97,20 +100,17 @@ while(tag <= end ):
 
   count += 1
   tag += 7*dt
-  #debug: print("reached end of read", flush=True)
-  #debug: exit(0)
-
-# Scale by max-min:
-#r = np.zeros((nlayer))
-#for l in range(0,nlayer):
-#    r[l] = 0.5*(Xdata[:,:,:,l].max() - Xdata[:,:,:,l].min() ) 
 
 # hard-wire scaling:
-r = [15, 1, 5, 400, 4000, 4500, 2500, 800, 500, 350, 300, 1, 1, 1, 1, 1, 1]
+r = [15, 1,    5, 400, 4000, 4500, 2500,  800, 500, 350, 300, 1, 1, 1, 1, 1, 1]
+r = [15, 1.5, 40, 700, 6900, 9600, 5500, 1350, 770, 515, 380, 1, 1, 1, 1, 1, 1]
+r = [15, 1.2, 36, 600, 3800, 3100, 2225,  750, 500, 350, 300, 1, 1, 1, 1, 1, 1]
 
 for l in range(0,nlayer):
     Xdata[:,:,:,l] /= r[l]
-    print('scaling ',l,Xdata[:,:,:,l].max(), Xdata[:,:,:,l].min(), '  ', r[l], flush=True )
+    xmax = Xdata[:,:,:,l].max()
+    xmin = Xdata[:,:,:,l].min()
+    print('scaling ',l,Xdata[:,:,:,l].max(), Xdata[:,:,:,l].min(), '  ', r[l], r[l]*(xmax-xmin)/2., flush=True )
 
 # Get memory metrics: (current, peak)
 current, peak = tracemalloc.get_traced_memory()
@@ -126,14 +126,14 @@ print('split, count ',split, count, flush=True)
 
 # RG: Due to memory limits it would be better to go with not copying the data
 Xtrain = np.zeros((split, ny, nx, nlayer),dtype=np.float32)
-ytrain = np.zeros((split, ny, nx, 1),dtype=np.float32)
 Xval   = np.zeros((count-split-nlag, ny, nx, nlayer),dtype=np.float32)
+ytrain = np.zeros((split, ny, nx, 1),dtype=np.float32)
 yval   = np.zeros((count-split-nlag, ny, nx, 1),dtype=np.float32)
 
 # Now for training and validation
 Xtrain = Xdata[:split]
-ytrain = Xdata[1:split+1, :,:, nvar] # icec in next month
 Xval   = Xdata[split:count-1-nlag]
+ytrain = Xdata[1:split+1, :,:, nvar] # icec in next month
 yval   = Xdata[split+1:count-nlag, :,:, nvar]
 
 del Xdata
@@ -145,7 +145,7 @@ print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
 #--------------------------------------------------------------------------------
 # Unet is in common
-    
+
 #--------------------------------------------------------------------------------
 # compile, show, and train the unet -- read in an old one if available
 if (os.path.exists(nametag+'week1.joblib')):
@@ -189,12 +189,12 @@ for period in range(0, 50):
   current, peak = tracemalloc.get_traced_memory()
   print(f"past joblib memory usage: {current / 10**6} Mb")
   print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
-  
+
   #debug: sys.exit(0)
 
 #--------------------------------------------------------------------------------
   # Visualize -- scaled fields
-  show(unet, Xval, yval, figname=nametag+f"{period:02d}.sample.png")
+  show(unet, Xval, yval, nvar, figname=nametag+f"{period:02d}.sample.png")
 
 #--------------------------------------------------------------------------------
   # permutation evaluation of importance
@@ -207,25 +207,3 @@ for period in range(0, 50):
   print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
 #---------------------------------------------------------------------
-sys.exit(0)
-#  # Visualize: show geophysical map of prediction
-#  predictions = unet.predict(Xval)
-#  predictions *= r[nvar]
-#
-#  print('shape of predictions, Xavg',predictions.shape(), Xavg.shape() )
-#sys.exit(0)
-##RG: predictions[0] += Xavg[:,:,nvar] has wrong shapes
-#  predictions[0] += Xavg[:,:,nvar]
-#
-#  sample_idx = 0
-#  fig, ax = plt.subplots(1, 1, figsize=(15, 8))
-#
-#  # U-Net Prediction (t)
-#  im2 = ax.imshow(predictions[sample_idx].squeeze(), cmap='seismic', origin='lower')
-#  ax.set_title("U-Net Predicted Geophysical Value Grid (t)")
-#  fig.colorbar(im2, ax=ax)
-#
-#  plt.tight_layout()
-#  plt.savefig(figname)
-#  plt.close()
-#

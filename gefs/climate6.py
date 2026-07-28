@@ -4,16 +4,16 @@ import sys
 import os
 from math import sin, cos, pi
 import datetime
-import time
+#import time
 
 import tracemalloc
 
 import numpy as np
 import netCDF4 as nc
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 import tensorflow as tf
-from tensorflow.keras import layers, models, Input
+#from tensorflow.keras import layers, models, Input
 import joblib
 
 #--------------------------------------------------------------
@@ -44,7 +44,7 @@ dt       = datetime.timedelta(1)
 nx       = 1536
 ny       =  768
 nlayer   = 17
-nlag     =  7
+nlag     =  2
 nweeks   = int((end-start)/dt/7 + 1)
 print('nweeks = ',nweeks, flush=True)
 
@@ -63,7 +63,7 @@ print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 # for epoch climo, move inside loop
 atm = climate()
 
-tag   = start 
+tag   = start
 tag  += 7*dt
 count = 0
 while(tag <= end ):
@@ -103,7 +103,8 @@ while(tag <= end ):
 
 # hard-wire scaling:
 r = [15, 1,    5, 400, 4000, 4500, 2500,  800, 500, 350, 300, 1, 1, 1, 1, 1, 1]
-r = [15, 1.5, 40, 700, 6900, 9600 ,5500, 1350, 770, 515, 380, 1, 1, 1, 1, 1, 1]
+r = [15, 1.5, 40, 700, 6900, 9600, 5500, 1350, 770, 515, 380, 1, 1, 1, 1, 1, 1]
+r = [15, 1.2, 36, 600, 3800, 3100, 2225,  750, 500, 350, 300, 1, 1, 1, 1, 1, 1]
 
 for l in range(0,nlayer):
     Xdata[:,:,:,l] /= r[l]
@@ -150,12 +151,12 @@ print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
 #--------------------------------------------------------------------------------
 # Unet is in common
-    
+
 #--------------------------------------------------------------------------------
 # compile, show, and train the unet -- read in an old one if available
-if (os.path.exists(nametag+'week1.joblib')):
+if (os.path.exists(nametag+'week2.joblib')):
   print("about to load joblib",flush=True)
-  unet = joblib.load(nametag+'week1.joblib')
+  unet = joblib.load(nametag+'week2.joblib')
 else:
   print("building the unet model", flush=True)
   unet = build_unet(input_shape=(ny,nx,nlayer), final = final, nchannel = nlag)
@@ -175,11 +176,11 @@ early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=1
 #---------------------------------------------------------------------
 # Now ready to iteratively fit the model, plot the next week's prediction, permute evaluate it
 
-for period in range(0, 10):
+for period in range(0, 30):
   history = unet.fit(
     Xtrain, ytrain,
     validation_data=(Xval, yval),
-    epochs=1,
+    epochs=2,
     batch_size=16,
     callbacks=[early_stopping]
   )
@@ -189,12 +190,12 @@ for period in range(0, 10):
   print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
   # save the unet
-  joblib.dump(unet, nametag+f"{period:02d}week1.joblib")
+  joblib.dump(unet, nametag+f"{period:02d}week2.joblib")
   # Get memory metrics: (current, peak)
   current, peak = tracemalloc.get_traced_memory()
   print(f"past joblib memory usage: {current / 10**6} Mb")
   print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
-  
+
   #debug: sys.exit(0)
 
 #--------------------------------------------------------------------------------
