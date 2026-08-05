@@ -152,3 +152,11 @@ def show(unet, Xval, yval, nvar, figname = 'summary.png'):
   plt.tight_layout()
   plt.savefig(figname)
   plt.close()
+
+#--------------------------------------------------------------------------------
+def downscale(field, nx, ny, ratio):
+    tmp = np.zeros((int(ny/ratio), int(nx/ratio)))
+    for k in range(0, int(ny/ratio) ):
+      for l in range(0, int(nx/ratio) ):
+        tmp[k,l] += field[k:k+ratio,l:l+ratio].sum()
+    return tmp
