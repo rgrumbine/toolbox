@@ -37,7 +37,7 @@ print(nvar, nametag, final, flush=True)
 
 # Acquire data -- in time range of interest -- RG: argument to be
 start = datetime.datetime(1980,1,1)
-end   = datetime.datetime(1985,12,31)
+end   = datetime.datetime(1989,12,31)
 
 # ---- From here down should not need to be changed between different runs -----
 dt      = datetime.timedelta(1)
@@ -62,6 +62,7 @@ print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 #getavg.getavg(Xavg, 'thinned/average_1980.nc')
 # for climo, move inside loop
 atm = climate()
+ref_date = atm.x[0].epoch
 
 tag   = start
 tag  += 7*dt
@@ -88,12 +89,12 @@ while(tag <= end ):
   Xdata[count,:,:,9] = flx.variables['z700mb'][:,:]
   Xdata[count,:,:,10] = flx.variables['z850mb'][:,:]
 
-  Xdata[count,:,:,11] = cos( (tag-start)/dt * 2.*pi/365.25)
-  Xdata[count,:,:,12] = sin( (tag-start)/dt * 2.*pi/365.25)
-  Xdata[count,:,:,13] = cos(2*(tag-start)/dt * 2.*pi/365.25)
-  Xdata[count,:,:,14] = sin(2*(tag-start)/dt * 2.*pi/365.25)
-  Xdata[count,:,:,15] = cos(3*(tag-start)/dt * 2.*pi/365.25)
-  Xdata[count,:,:,16] = sin(3*(tag-start)/dt * 2.*pi/365.25)
+  Xdata[count,:,:,11] = cos( (tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,12] = sin( (tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,13] = cos(2*(tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,14] = sin(2*(tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,15] = cos(3*(tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,16] = sin(3*(tag-ref_date)/dt * 2.*pi/365.2422)
 
   # Remove means so as to have anomalies and something more nearly scaled
   Xdata[count] -= Xavg
@@ -106,6 +107,7 @@ r = [15, 1,    5, 400, 4000, 4500, 2500,  800, 500, 350, 300, 1, 1, 1, 1, 1, 1]
 r = [15, 1.5, 40, 700, 6900, 9600, 5500, 1350, 770, 515, 380, 1, 1, 1, 1, 1, 1]
 r = [15, 1.2, 36, 600, 3800, 3100, 2225,  750, 500, 350, 300, 1, 1, 1, 1, 1, 1]
 r = [15, 1.2, 20, 600, 3800, 3100, 2225,  750, 500, 350, 300, 1, 1, 1, 1, 1, 1]
+r = [19, 1.2, 20, 600, 5000, 3400, 2500,  780, 530, 390, 340, 1, 1, 1, 1, 1, 1]
 
 for l in range(0,nlayer):
     Xdata[:,:,:,l] /= r[l]
@@ -171,11 +173,11 @@ early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=1
 #---------------------------------------------------------------------
 # Now ready to iteratively fit the model, plot the next week's prediction, permute evaluate it
 
-for period in range(0, 20):
+for period in range(0, 6):
   history = unet.fit(
     Xtrain, ytrain,
     validation_data=(Xval, yval),
-    epochs=1,
+    epochs=2,
     batch_size=16,
     callbacks=[early_stopping]
   )
