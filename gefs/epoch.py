@@ -48,15 +48,6 @@ class epoch:
             fsst += self.ampl[i]*np.cos(self.phas[i]*pi/180. + self.freq[i]*delta)
         return fsst
 
-#x = epoch('epoch1994.nc')
-#
-#print(x.epoch, x.loy, x.freq[0], x.ampl[0].max() )
-#tag = datetime.datetime(1994,1,1)
-#sst = x.climo(tag)
-#print(sst.max(), sst.min() )
-#tag = datetime.datetime(2025,1,1)
-#sst = x.climo(tag)
-#print(sst.max(), sst.min() )
 class climate:
 
     def __init__(self):
@@ -65,6 +56,33 @@ class climate:
       self.x.append( epoch('epoch1994_icec.nc') )
       self.x.append( epoch('epoch1994_sst.nc') )
       self.x.append( epoch('epoch1994_uswrf.nc') )
+
+      self.x.append( epoch('epoch1994_prmsl.nc') )
+      self.x.append( epoch('epoch1994_z1mb.nc') )
+      self.x.append( epoch('epoch1994_z10mb.nc') )
+      self.x.append( epoch('epoch1994_z200mb.nc') )
+      self.x.append( epoch('epoch1994_z500mb.nc') )
+      self.x.append( epoch('epoch1994_z700mb.nc') )
+      self.x.append( epoch('epoch1994_z850mb.nc') )
+
+class climate2:
+
+    def __init__(self):
+      self.x = []
+      self.x.append( epoch('epoch1994_icetk.nc') )
+      self.x.append( epoch('epoch1994_icec.nc') )
+      self.x.append( epoch('epoch1994_sst.nc') )
+      self.x.append( epoch('epoch1994_uswrf.nc') )
+      self.x.append( epoch('epoch1994_tmps.nc') )
+      self.x.append( epoch('epoch1994_tmp2m.nc') )
+      self.x.append( epoch('epoch1994_spfh2m.nc') )
+      self.x.append( epoch('epoch1994_u10m.nc') )
+      self.x.append( epoch('epoch1994_v10m.nc') )
+      self.x.append( epoch('epoch1994_shtfl.nc') )
+      self.x.append( epoch('epoch1994_lhtfl.nc') )
+      self.x.append( epoch('epoch1994_pwat.nc') )
+      self.x.append( epoch('epoch1994_land.nc') )
+
       self.x.append( epoch('epoch1994_prmsl.nc') )
       self.x.append( epoch('epoch1994_z1mb.nc') )
       self.x.append( epoch('epoch1994_z10mb.nc') )

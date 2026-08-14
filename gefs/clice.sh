@@ -9,7 +9,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
-#SBATCH --mem=224g
+#SBATCH --mem=256g
 
 source $HOME/rg/env3.13/bin/activate
 export PYTHONPATH=/home/Robert.Grumbine/rgdev/toolbox/gefs

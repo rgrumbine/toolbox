@@ -36,14 +36,16 @@ print(nvar, nametag, final, flush=True)
 #debug: sys.exit(0)
 
 # Acquire data -- in time range of interest -- RG: argument to be
-start = datetime.datetime(1980,1,1)
-end   = datetime.datetime(1989,12,31)
+#start = datetime.datetime(1980,1,1)
+#end   = datetime.datetime(1989,12,31)
+start = datetime.datetime(2002,1,1)
+end   = datetime.datetime(2011,12,31)
 
 # ---- From here down should not need to be changed between different runs -----
 dt      = datetime.timedelta(1)
 nx      = 1536
 ny      =  768
-nlayer  = 17
+nlayer  =   26
 ntarget = 1
 nlag    = 1
 nweeks  = int((end-start)/dt/7 + 1)
@@ -61,7 +63,7 @@ print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 # Get, rather than compute, an average field
 #getavg.getavg(Xavg, 'thinned/average_1980.nc')
 # for climo, move inside loop
-atm = climate()
+atm = climate2()
 ref_date = atm.x[0].epoch
 
 tag   = start
@@ -75,26 +77,35 @@ while(tag <= end ):
     Xavg[:,:,i] = atm.x[i].climo(tag)
     #debug: print(i,Xavg[:,:,i].max(), Xavg[:,:,i].min(), flush=True )
 
-  flx = nc.Dataset('thinned/week.'+tag.strftime("%Y%m%d")+'.nc')
+  flx = nc.Dataset('thinned/week2.'+tag.strftime("%Y%m%d")+'.nc')
   Xdata[count,:,:,0] = flx.variables['ICETK'][:,:]
   Xdata[count,:,:,1] = flx.variables['ICEC'][:,:]
   Xdata[count,:,:,2] = flx.variables['SST'][:,:]
   Xdata[count,:,:,3] = flx.variables['USWRF'][:,:]
+  Xdata[count,:,:,4] = flx.variables['TMPs'][:,:]
+  Xdata[count,:,:,5] = flx.variables['TMP2m'][:,:]
+  Xdata[count,:,:,6] = flx.variables['SPFH2m'][:,:]
+  Xdata[count,:,:,7] = flx.variables['U10m'][:,:]
+  Xdata[count,:,:,8] = flx.variables['V10m'][:,:]
+  Xdata[count,:,:,9] = flx.variables['SHTFL'][:,:]
+  Xdata[count,:,:,10] = flx.variables['LHTFL'][:,:]
+  Xdata[count,:,:,11] = flx.variables['PWAT'][:,:]
+  Xdata[count,:,:,12] = flx.variables['LAND'][:,:]
 
-  Xdata[count,:,:,4] = flx.variables['PRMSL'][:,:]
-  Xdata[count,:,:,5] = flx.variables['z1mb'][:,:]
-  Xdata[count,:,:,6] = flx.variables['z10mb'][:,:]
-  Xdata[count,:,:,7] = flx.variables['z200mb'][:,:]
-  Xdata[count,:,:,8] = flx.variables['z500mb'][:,:]
-  Xdata[count,:,:,9] = flx.variables['z700mb'][:,:]
-  Xdata[count,:,:,10] = flx.variables['z850mb'][:,:]
+  Xdata[count,:,:,13] = flx.variables['PRMSL'][:,:]
+  Xdata[count,:,:,14] = flx.variables['z1mb'][:,:]
+  Xdata[count,:,:,15] = flx.variables['z10mb'][:,:]
+  Xdata[count,:,:,16] = flx.variables['z200mb'][:,:]
+  Xdata[count,:,:,17] = flx.variables['z500mb'][:,:]
+  Xdata[count,:,:,18] = flx.variables['z700mb'][:,:]
+  Xdata[count,:,:,19] = flx.variables['z850mb'][:,:]
 
-  Xdata[count,:,:,11] = cos( (tag-ref_date)/dt * 2.*pi/365.2422)
-  Xdata[count,:,:,12] = sin( (tag-ref_date)/dt * 2.*pi/365.2422)
-  Xdata[count,:,:,13] = cos(2*(tag-ref_date)/dt * 2.*pi/365.2422)
-  Xdata[count,:,:,14] = sin(2*(tag-ref_date)/dt * 2.*pi/365.2422)
-  Xdata[count,:,:,15] = cos(3*(tag-ref_date)/dt * 2.*pi/365.2422)
-  Xdata[count,:,:,16] = sin(3*(tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,20] = cos( (tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,21] = sin( (tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,22] = cos(2*(tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,23] = sin(2*(tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,24] = cos(3*(tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,25] = sin(3*(tag-ref_date)/dt * 2.*pi/365.2422)
 
   # Remove means so as to have anomalies and something more nearly scaled
   Xdata[count] -= Xavg
@@ -103,17 +114,23 @@ while(tag <= end ):
   tag += 7*dt
 
 # hard-wire scaling:
-r = [15, 1,    5, 400, 4000, 4500, 2500,  800, 500, 350, 300, 1, 1, 1, 1, 1, 1]
-r = [15, 1.5, 40, 700, 6900, 9600, 5500, 1350, 770, 515, 380, 1, 1, 1, 1, 1, 1]
-r = [15, 1.2, 36, 600, 3800, 3100, 2225,  750, 500, 350, 300, 1, 1, 1, 1, 1, 1]
-r = [15, 1.2, 20, 600, 3800, 3100, 2225,  750, 500, 350, 300, 1, 1, 1, 1, 1, 1]
-r = [19, 1.2, 20, 600, 5000, 3400, 2500,  780, 530, 390, 340, 1, 1, 1, 1, 1, 1]
+#r = [15, 1,    5, 400, 4000, 4500, 2500,  800, 500, 350, 300, 1, 1, 1, 1, 1, 1]
+#r = [15, 1.5, 40, 700, 6900, 9600, 5500, 1350, 770, 515, 380, 1, 1, 1, 1, 1, 1]
+#r = [15, 1.2, 36, 600, 3800, 3100, 2225,  750, 500, 350, 300, 1, 1, 1, 1, 1, 1]
+#r = [15, 1.2, 20, 600, 3800, 3100, 2225,  750, 500, 350, 300, 1, 1, 1, 1, 1, 1]
+#r = [19, 1.2, 20, 600, 5000, 3400, 2500,  780, 530, 390, 340, 1, 1, 1, 1, 1, 1]
+#r = [19, 1.2, 20, 600, 5000, 3400, 2500,  780, 530, 390, 340, 1, 1, 1, 1, 1, 1]
+#r = np.ones((nlayer))
+r = [19, 1, 20, 600, 36, 25, 1.5e-2, 10, 10, 500, 500, 45, 2.e-4,
+        5000, 3400, 2500,  780, 530, 390, 340, 1, 1, 1, 1, 1, 1]
 
 for l in range(0,nlayer):
     Xdata[:,:,:,l] /= r[l]
     xmax = Xdata[:,:,:,l].max()
     xmin = Xdata[:,:,:,l].min()
     print('scaling ',l,Xdata[:,:,:,l].max(), Xdata[:,:,:,l].min(), '  ', r[l], r[l]*(xmax-xmin)/2., flush=True )
+
+#debug: sys.exit(0)
 
 # Get memory metrics: (current, peak)
 current, peak = tracemalloc.get_traced_memory()
@@ -151,9 +168,9 @@ print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
 #--------------------------------------------------------------------------------
 # compile, show, and train the unet -- read in an old one if available
-if (os.path.exists(nametag+'week1.joblib')):
+if (os.path.exists(nametag+'week2.joblib')):
   print("about to load joblib",flush=True)
-  unet = joblib.load(nametag+'week1.joblib')
+  unet = joblib.load(nametag+'week2.joblib')
 else:
   print("building the unet model", flush=True)
   unet = build_unet(input_shape=(ny,nx,nlayer), final = final, nchannel=1)
@@ -187,7 +204,7 @@ for period in range(0, 8):
   print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
   # save the unet
-  joblib.dump(unet, nametag+f"{period:02d}week1.joblib")
+  joblib.dump(unet, nametag+f"{period:02d}week2.joblib")
   # Get memory metrics: (current, peak)
   current, peak = tracemalloc.get_traced_memory()
   print(f"past joblib memory usage: {current / 10**6} Mb")
@@ -197,7 +214,7 @@ for period in range(0, 8):
 
 #--------------------------------------------------------------------------------
   # Visualize -- scaled fields
-  show(unet, Xval, yval, nvar, figname=nametag+f"{period:02d}.sample.png")
+  show(unet, Xval, yval, nvar, figname=nametag+f"{period:02d}.sample2.png")
 
 #--------------------------------------------------------------------------------
   # permutation evaluation of importance
