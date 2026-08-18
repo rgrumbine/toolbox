@@ -1,14 +1,14 @@
 #!/bin/sh
 ##ursa
-#SBATCH -J sstclim2
-#SBATCH -e sstclim2.err
-#SBATCH -o sstclim2.out
+#SBATCH -J iceclim2
+#SBATCH -e iceclim2.err
+#SBATCH -o iceclim2.out
 #SBATCH -t 7:55:00
 #SBATCH -q batch
 #SBATCH -A marine-cpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=56
+#SBATCH --cpus-per-task=64
 #SBATCH --mem=320g
 
 
@@ -17,5 +17,5 @@ export PYTHONPATH=/home/Robert.Grumbine/rgdev/toolbox/gefs
 
 cd $PYTHONPATH
 
-time python3 universal2.py 2 'sst' 'linear'
+time python3 universal2.py 1 'ice' 'linear'
 report-mem
