@@ -190,11 +190,11 @@ early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=1
 #---------------------------------------------------------------------
 # Now ready to iteratively fit the model, plot the next week's prediction, permute evaluate it
 
-for period in range(0, 8):
+for period in range(0, 4):
   history = unet.fit(
     Xtrain, ytrain,
     validation_data=(Xval, yval),
-    epochs=2,
+    epochs=4,
     batch_size=16,
     callbacks=[early_stopping]
   )

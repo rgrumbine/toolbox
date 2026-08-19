@@ -47,7 +47,7 @@ Xdata  = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
 tag   = datetime.datetime(1994,1,4)
 
 # for climatology -- epoch has the class
-atm = climate()
+atm = climate2()
 #debug: print("atm.epoch ",atm.x[0].epoch, flush = True)
 start = atm.x[0].epoch
 
@@ -63,29 +63,38 @@ print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 #debug: sys.exit(0)
 
 # RG: In general this will be the GDAS file
-flx = nc.Dataset('thinned/week.'+tag.strftime("%Y%m%d")+'.nc')
+flx = nc.Dataset('thinned/week2.'+tag.strftime("%Y%m%d")+'.nc')
 Xdata[0,:,:,0] = flx.variables['ICETK'][:,:]
 Xdata[0,:,:,1] = flx.variables['ICEC'][:,:]
 Xdata[0,:,:,2] = flx.variables['SST'][:,:]
 Xdata[0,:,:,3] = flx.variables['USWRF'][:,:]
+Xdata[0,:,:,4] = flx.variables['TMPs'][:,:]
+Xdata[0,:,:,5] = flx.variables['TMP2m'][:,:]
+Xdata[0,:,:,6] = flx.variables['SPFH2m'][:,:]
+Xdata[0,:,:,7] = flx.variables['U10m'][:,:]
+Xdata[0,:,:,8] = flx.variables['V10m'][:,:]
+Xdata[0,:,:,9] = flx.variables['SHTFL'][:,:]
+Xdata[0,:,:,10] = flx.variables['LHTFL'][:,:]
+Xdata[0,:,:,11] = flx.variables['PWAT'][:,:]
+Xdata[0,:,:,12] = flx.variables['LAND'][:,:]
 
-Xdata[0,:,:,4] = flx.variables['PRMSL'][:,:]
-Xdata[0,:,:,5] = flx.variables['z1mb'][:,:]
-Xdata[0,:,:,6] = flx.variables['z10mb'][:,:]
-Xdata[0,:,:,7] = flx.variables['z200mb'][:,:]
-Xdata[0,:,:,8] = flx.variables['z500mb'][:,:]
-Xdata[0,:,:,9] = flx.variables['z700mb'][:,:]
-Xdata[0,:,:,10] = flx.variables['z850mb'][:,:]
+Xdata[0,:,:,13] = flx.variables['PRMSL'][:,:]
+Xdata[0,:,:,14] = flx.variables['z1mb'][:,:]
+Xdata[0,:,:,15] = flx.variables['z10mb'][:,:]
+Xdata[0,:,:,16] = flx.variables['z200mb'][:,:]
+Xdata[0,:,:,17] = flx.variables['z500mb'][:,:]
+Xdata[0,:,:,18] = flx.variables['z700mb'][:,:]
+Xdata[0,:,:,19] = flx.variables['z850mb'][:,:]
 flx.close()
 
 # RG: Note that start should be epoch for forecasting, 19940101
 # RG: note that this should be 365.2422
-Xdata[0,:,:,11] = cos( (tag-start)/dt * 2.*pi/365.25)
-Xdata[0,:,:,12] = sin( (tag-start)/dt * 2.*pi/365.25)
-Xdata[0,:,:,13] = cos(2*(tag-start)/dt * 2.*pi/365.25)
-Xdata[0,:,:,14] = sin(2*(tag-start)/dt * 2.*pi/365.25)
-Xdata[0,:,:,15] = cos(3*(tag-start)/dt * 2.*pi/365.25)
-Xdata[0,:,:,16] = sin(3*(tag-start)/dt * 2.*pi/365.25)
+Xdata[0,:,:,20] = cos( (tag-start)/dt * 2.*pi/365.25)
+Xdata[0,:,:,21] = sin( (tag-start)/dt * 2.*pi/365.25)
+Xdata[0,:,:,22] = cos(2*(tag-start)/dt * 2.*pi/365.25)
+Xdata[0,:,:,23] = sin(2*(tag-start)/dt * 2.*pi/365.25)
+Xdata[0,:,:,24] = cos(3*(tag-start)/dt * 2.*pi/365.25)
+Xdata[0,:,:,25] = sin(3*(tag-start)/dt * 2.*pi/365.25)
 
 # Remove climatology so as to have anomalies 
 Xdata -= Xavg
