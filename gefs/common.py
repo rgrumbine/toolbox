@@ -117,6 +117,13 @@ def permute(unet, Xval, yval, nlayer):
       print(f"{i:02d}", 'importance', f"{importance[i]:11.4e}",
               f"{importance[i]/baseline_mse:11.4e}")
 
+#--------------------------------------------------------------------------------
+def downscale(field, nx, ny, ratio):
+    tmp = np.zeros((int(ny/ratio), int(nx/ratio)))
+    for k in range(0, int(ny/ratio) ):
+      for l in range(0, int(nx/ratio) ):
+        tmp[k,l] += field[k:k+ratio,l:l+ratio].sum()
+    return tmp
 
 #--------------------------------------------------------------------------------
 def show(unet, Xval, yval, nvar, figname = 'summary.png'):
@@ -154,9 +161,37 @@ def show(unet, Xval, yval, nvar, figname = 'summary.png'):
   plt.close()
 
 #--------------------------------------------------------------------------------
-def downscale(field, nx, ny, ratio):
-    tmp = np.zeros((int(ny/ratio), int(nx/ratio)))
-    for k in range(0, int(ny/ratio) ):
-      for l in range(0, int(nx/ratio) ):
-        tmp[k,l] += field[k:k+ratio,l:l+ratio].sum()
-    return tmp
+def show6(unet, Xval, yval, nvar, figname = 'summary.png'):
+  ''' show6(unet, Xval, yval, nvar, figname) -- make plot of initial field, 
+            predicted field, and observed field '''
+
+  # Extract a sample sequence to visualize
+  predictions = unet.predict(Xval)
+  #debug: print("show made prediction", flush=True)
+
+  sample_idx = 0
+  fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+
+  # Input Grid (t-1)
+  # RG: note 0-1 favors a 'Blues' color bar. 'seismic' for +-1
+  im0 = ax[0].imshow(Xval[sample_idx,:,:,nvar].squeeze(), cmap='seismic',
+          origin='lower', vmin=-1, vmax=1)
+  ax[0].set_title("Input Grid (t-1)")
+  fig.colorbar(im0, ax=ax[0])
+
+  # True Output Grid (t)
+  im1 = ax[1].imshow(yval[sample_idx].squeeze(), cmap='seismic',
+          origin='lower', vmin=-1, vmax=1)
+  ax[1].set_title("True Grid (t)")
+  fig.colorbar(im1, ax=ax[1])
+
+  # U-Net Prediction (t)
+  im2 = ax[2].imshow(predictions[sample_idx].squeeze(), cmap='seismic',
+          origin='lower', vmin=-1, vmax=1)
+  ax[2].set_title("U-Net Predicted Grid (t)")
+  fig.colorbar(im2, ax=ax[2])
+
+  plt.tight_layout()
+  plt.savefig(figname)
+  plt.close()
+

@@ -91,6 +91,25 @@ class climate2:
       self.x.append( epoch('climate/epoch1994_z700mb.nc') )
       self.x.append( epoch('climate/epoch1994_z850mb.nc') )
 
+class climate_trim:
+
+    def __init__(self):
+      self.x = []
+      self.x.append( epoch('climate/epoch1994_icec.nc') )
+      self.x.append( epoch('climate/epoch1994_sst.nc') )
+      self.x.append( epoch('climate/epoch1994_tmps.nc') )
+      self.x.append( epoch('climate/epoch1994_tmp2m.nc') )
+      self.x.append( epoch('climate/epoch1994_spfh2m.nc') )
+      self.x.append( epoch('climate/epoch1994_shtfl.nc') )
+      self.x.append( epoch('climate/epoch1994_lhtfl.nc') )
+      self.x.append( epoch('climate/epoch1994_pwat.nc') )
+      self.x.append( epoch('climate/epoch1994_land.nc') )
+
+      self.x.append( epoch('climate/epoch1994_prmsl.nc') )
+      self.x.append( epoch('climate/epoch1994_z200mb.nc') )
+      self.x.append( epoch('climate/epoch1994_z500mb.nc') )
+      self.x.append( epoch('climate/epoch1994_z700mb.nc') )
+      self.x.append( epoch('climate/epoch1994_z850mb.nc') )
 #atm = climate()
 #
 #ny = 768
