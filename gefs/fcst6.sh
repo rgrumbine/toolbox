@@ -3,7 +3,7 @@
 #SBATCH -J fcst6
 #SBATCH -e fcst6.err
 #SBATCH -o fcst6.out
-#SBATCH -t 0:07:00
+#SBATCH -t 0:10:00
 #SBATCH -q batch
 #SBATCH -A marine-cpu
 #SBATCH --nodes=1

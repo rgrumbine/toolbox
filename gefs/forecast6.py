@@ -20,25 +20,24 @@ import copy
 import datetime
 import time
 
-import tracemalloc
+import matplotlib.pyplot as plt
+#import tracemalloc
 import numpy as np
 import netCDF4 as nc
 
-import tensorflow as tf
+#import tensorflow as tf
 import joblib
 #--------------------------------------------------------------
-#from common import *
-from epoch import *
+from epoch import climate_trim
 #--------------------------------------------------------------
 
 tstart = time.time()
-
-tracemalloc.start()
 
 dt      = datetime.timedelta(1)
 nx      = 1536
 ny      =  768
 nlayer  =   20
+nlead   =    6
 
 # Get memory metrics: (current, peak)
 Xavg   = np.zeros((ny, nx, nlayer), dtype=np.float32)
@@ -55,12 +54,7 @@ for i in range(0, len(atm.x)):
     Xavg[:,:,i] = atm.x[i].climo(tag)
 
 tmp = time.time()
-print('time after computing climatology ', tmp-tstart)
-
-current, peak = tracemalloc.get_traced_memory()
-print(f"Memory usage after apportioning climate: {current / 10**6} Mb")
-print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
-#debug: sys.exit(0)
+print('time after computing climatology ', tmp-tstart, flush=True)
 
 # RG: In general this will be the GDAS file
 flx = nc.Dataset('thinned/week2.'+tag.strftime("%Y%m%d")+'.nc')
@@ -73,6 +67,12 @@ Xdata[0,:,:,5] = flx.variables['SHTFL'][:,:]
 Xdata[0,:,:,6] = flx.variables['LHTFL'][:,:]
 Xdata[0,:,:,7] = flx.variables['PWAT'][:,:]
 Xdata[0,:,:,8] = flx.variables['LAND'][:,:]
+land = Xdata[0,:,:,8].squeeze()
+seas = copy.deepcopy(land)
+seas -= 1
+seas[seas == -1] = 1
+#debug: print("land ",land.max(), land.min() )
+#debug: print("seas ",seas.max(), seas.min() )
 
 Xdata[0,:,:,9] = flx.variables['PRMSL'][:,:]
 Xdata[0,:,:,10] = flx.variables['z200mb'][:,:]
@@ -81,16 +81,15 @@ Xdata[0,:,:,12] = flx.variables['z700mb'][:,:]
 Xdata[0,:,:,13] = flx.variables['z850mb'][:,:]
 flx.close()
 
-# RG: Note that start should be epoch for forecasting, 19940101
-# RG: note that this should be 365.2422
-Xdata[0,:,:,14] = cos( (tag-start)/dt * 2.*pi/365.2422)
-Xdata[0,:,:,15] = sin( (tag-start)/dt * 2.*pi/365.2422)
+# RG: Note that start is the epoch for forecasting, 19940101
+Xdata[0,:,:,14] = cos(  (tag-start)/dt * 2.*pi/365.2422)
+Xdata[0,:,:,15] = sin(  (tag-start)/dt * 2.*pi/365.2422)
 Xdata[0,:,:,16] = cos(2*(tag-start)/dt * 2.*pi/365.2422)
 Xdata[0,:,:,17] = sin(2*(tag-start)/dt * 2.*pi/365.2422)
 Xdata[0,:,:,18] = cos(3*(tag-start)/dt * 2.*pi/365.2422)
 Xdata[0,:,:,19] = sin(3*(tag-start)/dt * 2.*pi/365.2422)
 
-# Remove climatology so as to have anomalies 
+# Remove climatology so as to have anomalies
 Xdata -= Xavg
 
 # hard-wired scaling:
@@ -100,6 +99,10 @@ for l in range(0,nlayer):
     Xdata[0,:,:,l] /= scale[l]
 
 #debug: sys.exit(0)
+
+if (seas.max() != 1 or seas.min() != 0):
+  print("seas bollixed",seas.max(), seas.min() )
+  sys.exit(1)
 
 #--------------------------------------------------------------------------------
 
@@ -117,72 +120,117 @@ else:
 # make a forecast
 #debug: print("Xdata shape:",Xdata.shape, flush=True)
 Xpred = unet.predict(Xdata)
-#debug: 
-print("Xpred shape:",Xpred.shape, flush=True)
+#debug: print("Xpred shape:",Xpred.shape, flush=True)
 
 tmp = time.time()
-print('time after making forecast ', tmp-tstart)
-current, peak = tracemalloc.get_traced_memory()
-print(f"After making prediction memory usage: {current / 10**6} Mb")
-print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
-
-#debug:
-print("predicted scaled",Xpred.max(), Xpred.min() , flush=True)
-#debug: sys.exit(0)
+print('time after making forecast ', tmp-tstart, flush=True)
 
 nvar = int(sys.argv[2])
 # unscale
-Xpred[0,:,:,0] *= scale[nvar]
-#debug:
-print("unscaled anomaly ",Xpred.max(), Xpred.min() , flush=True)
+for i in range(0, nlead):
+  Xpred[0,:,:,i] *= scale[nvar]
+#debug: print("unscaled anomaly ",Xpred.max(), Xpred.min() , flush=True)
 
-# add back in the climatology
 anomaly = copy.deepcopy(Xpred)
 
-Xpred[0,:,:,0]+= Xavg[:,:,nvar]
-#debug:
-print("final prediction",Xpred.max(), Xpred.min() , flush=True)
-print("climatology",Xavg[:,:,nvar].max(), Xavg[:,:,nvar].min() , flush=True)
-
-#--------------------------------------------------------------------
-# plot climatology, forecast, anomaly
-#plot Xavg[nvar]
-#plot Xpred
-#plot anomaly
-import matplotlib.pyplot as plt
-fig, ax = plt.subplots(1, 3, figsize=(15, 5))
-
-# climatology
-im0 = ax[0].imshow(Xavg[:,:,nvar].squeeze(), cmap='seismic', origin='lower')
-ax[0].set_title("Climatology")
-fig.colorbar(im0, ax=ax[0])
-
-# prediction
-im1 = ax[1].imshow(Xpred[0,:,:,0].squeeze(), cmap='seismic', origin='lower')
-ax[1].set_title("Prediction")
-fig.colorbar(im1, ax=ax[1])
-
-# anomaly
-im2 = ax[2].imshow(anomaly[0,:,:,0].squeeze(), cmap='seismic', origin='lower')
-ax[2].set_title("Anomaly")
-fig.colorbar(im2, ax=ax[2])
-
-plt.tight_layout()
-plt.savefig('fcst.png')
-plt.close()
-
-# Solo anomaly field with narrow bounds
-fig,ax = plt.subplots(1,1,figsize=(12,6))
-im = ax.imshow(anomaly[0,:,:,0].squeeze(), cmap='seismic', origin='lower',
-        vmin=-scale[nvar]/5., vmax=scale[nvar]/5.)
-ax.set_title('Anomaly')
-fig.colorbar(im, ax=ax)
-plt.tight_layout()
-plt.savefig('anomaly.png')
-plt.close()
+# add back in the climatology for each week
+for i in range(0, nlead):
+  Xpred[0,:,:,i] += Xavg[:,:,nvar]
+#debug: print("final prediction",Xpred.max(), Xpred.min() , flush=True)
+#debug: print("climatology",Xavg[:,:,nvar].max(), Xavg[:,:,nvar].min() , flush=True)
 
 #--------------------------------------------------------------------
 
+def ice_bounds(x):
+    x[x < 0.15] = 0
+    x[x > 1.0 ] = 1
+
+def score(x):
+    y = x
+    bias = y.sum()
+    y *= y
+    mse = y.sum()
+    return (bias, mse)
+
+
+#Unscale and re-add average
+persist = Xdata[0,:,:,nvar].squeeze()
+persist *= scale[nvar]
+persist += Xavg[:,:,nvar]
+
+if (nvar == 0):
+  ice_bounds(persist)
+
+for week in range(1, nlead+1):
+  tagp = tag + week*dt*7
+  #debug: print("tagp = ",tagp, flush=True)
+
+  Xclimo = atm.x[nvar].climo(tagp)
+  flx = nc.Dataset('thinned/week2.'+tagp.strftime("%Y%m%d")+'.nc')
+  if (nvar == 0):
+    Xobs = flx.variables['ICEC'][:,:]
+    ice_bounds(Xpred)
+    ice_bounds(Xclimo)
+    ice_bounds(Xobs)
+  elif (nvar == 1):
+    Xobs = flx.variables['SST'][:,:]
+  else:
+    print("nvar out of range ",nvar, flush=True)
+    sys.exit(1)
+  flx.close()
+  #debug: print("xobs ",Xobs.max(), Xobs.min() )
+
+
+  fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+
+  # climatology
+  im0 = ax[0].imshow(Xclimo.squeeze(), cmap='seismic', origin='lower')
+  ax[0].set_title("Climatology")
+  fig.colorbar(im0, ax=ax[0])
+
+  # prediction
+  im1 = ax[1].imshow(Xpred[0,:,:,week-1].squeeze(), cmap='seismic', origin='lower')
+  ax[1].set_title("Prediction")
+  fig.colorbar(im1, ax=ax[1])
+
+  # observed
+  im2 = ax[2].imshow(Xobs.squeeze(), cmap='seismic', origin='lower')
+  ax[2].set_title("Observed")
+  fig.colorbar(im2, ax=ax[2])
+
+  plt.tight_layout()
+  plt.savefig(f'fcst{week:d}.png')
+  plt.close()
+
+
+  fig, ax = plt.subplots(1,2,figsize=(12,5))
+
+  delta_persist = persist - Xobs
+  delta_persist *= seas
+  im0 = ax[0].imshow(delta_persist, cmap = 'seismic', origin='lower', vmin=-1, vmax = 1)
+  ax[0].set_title(tag.strftime("%Y%m%d")+' Persist - obs')
+  fig.colorbar(im0, ax=ax[0])
+
+  delta_fcst = Xpred[0,:,:,week-1].squeeze() - Xobs
+  delta_fcst *= seas
+  im1 = ax[1].imshow(delta_fcst, cmap = 'seismic', origin='lower', vmin=-1, vmax = 1)
+  ax[1].set_title(tagp.strftime("%Y%m%d")+' Forecast - obs')
+  fig.colorbar(im1, ax=ax[1])
+
+  delta_climo = Xclimo - Xobs
+  delta_climo *= seas
+
+  plt.tight_layout()
+  plt.savefig(f'delta{week:d}.png')
+  plt.close()
+
+  sp = score(delta_persist)
+  sfcst = score(delta_fcst)
+  sclim = score(delta_climo)
+  print(tagp.strftime("%Y%m%d"),week, sp[0], sp[1], '  ', sfcst[0], sfcst[1], '  ', sclim[0], sclim[1])
+  #debug: print('    ', week,delta_persist.max(), delta_fcst.max(), delta_climo.max() )
+
+#--------------------------------------------------------------------
 
 # write out .nc of target field
 #ncoutput(Xpred)
