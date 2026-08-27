@@ -43,7 +43,8 @@ nlead   =    6
 Xavg   = np.zeros((ny, nx, nlayer), dtype=np.float32)
 Xdata  = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
 
-tag   = datetime.datetime(1994,1,4)
+#tag   = datetime.datetime(1994,1,4)
+tag   = datetime.datetime(2025,6,3)
 
 # for climatology -- epoch has the class
 atm = climate_trim()
@@ -203,7 +204,7 @@ for week in range(1, nlead+1):
   plt.close()
 
 
-  fig, ax = plt.subplots(1,2,figsize=(12,5))
+  fig, ax = plt.subplots(1,3,figsize=(12,5))
 
   delta_persist = persist - Xobs
   delta_persist *= seas
@@ -219,6 +220,9 @@ for week in range(1, nlead+1):
 
   delta_climo = Xclimo - Xobs
   delta_climo *= seas
+  im2 = ax[2].imshow(delta_climo, cmap = 'seismic', origin='lower', vmin=-1, vmax = 1)
+  ax[2].set_title(tagp.strftime("%Y%m%d")+' Climatology - obs')
+  #fig.colorbar(im2, ax=ax[2])
 
   plt.tight_layout()
   plt.savefig(f'delta{week:d}.png')
@@ -227,7 +231,8 @@ for week in range(1, nlead+1):
   sp = score(delta_persist)
   sfcst = score(delta_fcst)
   sclim = score(delta_climo)
-  print(tagp.strftime("%Y%m%d"),week, sp[0], sp[1], '  ', sfcst[0], sfcst[1], '  ', sclim[0], sclim[1])
+  print(tagp.strftime("%Y%m%d"),week, f'{sp[0]:8.1f}, {sp[1]:8.1f}', '  ', 
+          f'{sfcst[0]:8.1f}, {sfcst[1]:8.1f}', '  ', f'{sclim[0]:8.1f}, {sclim[1]:8.1f}')
   #debug: print('    ', week,delta_persist.max(), delta_fcst.max(), delta_climo.max() )
 
 #--------------------------------------------------------------------
