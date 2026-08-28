@@ -2,7 +2,7 @@
 #SBATCH -J cur_rtofs
 #SBATCH -e cur_rtofs.err
 #SBATCH -o cur_rtofs.out
-#SBATCH -t 7:55:00
+#SBATCH -t 1:55:00
 #  #SBATCH -t 0:25:00
 #SBATCH -q batch
 #SBATCH -A marine-cpu
@@ -39,7 +39,7 @@ tag=`$HOME/bin/dtgfix3 $tag`
 
 #reverse -- now to past
 #export end=20250601
-export end=20260101
+export end=20260401
 
 cd rtofs
 while [ $tag -ge $end ]
