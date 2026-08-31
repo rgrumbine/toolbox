@@ -8,15 +8,15 @@ import netCDF4 as nc
 # Acquire basic data and average them
 start = datetime.datetime(1980,1,1)
 dt    = datetime.timedelta(1)
-end   = datetime.datetime(2025,12,31)
+end   = datetime.datetime(2026,5,31)
 #end   = datetime.datetime(1992,12,31)
 
 # Do this to be able to start with a week that follows from 1980/1/1 but
 #   doesn't require running through all earlier days -- some datagaps exist
-tmp = start
+#tmp = start
 #tmp = datetime.datetime(1992,3,31)
 #tmp = datetime.datetime(1994,1,1)
-#tmp = datetime.datetime(2012,1,31)
+tmp = datetime.datetime(2012,1,31)
 nwk = (tmp-start)/dt/7
 nwk = ceil(nwk)
 #debug: print(nwk,  (tmp-start)/dt/7, flush=True)
