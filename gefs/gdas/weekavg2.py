@@ -1,5 +1,5 @@
 import os
-from math import sin, cos, pi, ceil
+from math import sin, cos, pi
 import datetime
 
 import numpy as np
@@ -10,8 +10,8 @@ end   = datetime.datetime.today()
 dt    = datetime.timedelta(1)
 start = end - 6*dt
 
-nx = 1536*2
-ny =  768*2
+nx = 1536
+ny =  768
 nlayer  = 21
 
 Xdata = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
@@ -53,8 +53,8 @@ while(tag <= end ):
     Xdata[0,:,:,12] = flx.variables['PWAT_entireatmosphere_consideredasasinglelayer_'][0,:,:]
     Xdata[0,:,:,13] = flx.variables['LAND_surface'][0,:,:]
 
-    Xdata[0,:,:,2] = flx.variables['FDNSSTMP_surface'][0,:,:]
-    Xdata[0,:,:,5] = flx.variables['LANDFRC_surface'][0,:,:]
+    #Xdata[0,:,:,2] = flx.variables['FDNSSTMP_surface'][0,:,:]
+    #Xdata[0,:,:,5] = flx.variables['LANDFRC_surface'][0,:,:]
     flx.close()
 
     Xavg += Xdata[0]
@@ -69,6 +69,7 @@ while(tag <= end ):
   out.createVariable('ICEC', dtype, ('ny', 'nx') )
   out.variables['ICEC'][:,:] = Xavg[:,:,1]
 
+  # Since FDNSSTMP isn't in the GDAS file this will be zero. Train AI suitably
   out.createVariable('SST', dtype, ('ny', 'nx') )
   out.variables['SST'][:,:] = Xavg[:,:,2]
 
@@ -78,8 +79,8 @@ while(tag <= end ):
   out.createVariable('TMPs', dtype, ('ny', 'nx') )
   out.variables['TMPs'][:,:] = Xavg[:,:,4]
 
-  out.createVariable('LANDFRC', dtype, ('ny', 'nx') )
-  out.variables['LANDFRC'][:,:] = Xavg[:,:,5]
+  #out.createVariable('LANDFRC', dtype, ('ny', 'nx') )
+  #out.variables['LANDFRC'][:,:] = Xavg[:,:,5]
 
   out.createVariable('TMP2m', dtype, ('ny', 'nx') )
   out.variables['TMP2m'][:,:] = Xavg[:,:,6]
