@@ -3,7 +3,7 @@
 #SBATCH -J eval6
 #SBATCH -e eval6.err
 #SBATCH -o eval6.out
-#SBATCH -t 5:40:00
+#SBATCH -t 6:40:00
 #SBATCH -q batch
 #SBATCH -A marine-cpu
 #SBATCH --nodes=1

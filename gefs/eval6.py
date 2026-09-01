@@ -73,9 +73,9 @@ Xavg   = np.zeros((ny, nx, nlayer), dtype=np.float32)
 Xdata  = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
 
 tag   = datetime.datetime(1994,1,4)
-#tag   = datetime.datetime(2016,1,5)
-#while (tag < datetime.datetime(2025,12,31)):
-while (tag < datetime.datetime(2006,12,31)):
+tag   = datetime.datetime(2016,1,5)
+while (tag < datetime.datetime(2025,12,31)):
+#while (tag < datetime.datetime(2006,12,31)):
 
   for i in range(0, len(atm.x)):
       Xavg[:,:,i] = atm.x[i].climo(tag)
