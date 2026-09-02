@@ -1,5 +1,6 @@
+import sys
 import os
-from math import sin, cos, pi
+from math import sin, cos, pi, ceil
 import datetime
 
 import numpy as np
@@ -8,19 +9,25 @@ import netCDF4 as nc
 # Acquire basic data and average them
 end   = datetime.datetime.today()
 dt    = datetime.timedelta(1)
-end -= dt
-start = end - 6*dt
+start = datetime.datetime(1980,1,1)
+tmp = datetime.datetime(2026,6,16)
+nwk = (tmp - start)/dt/7
+nwk = ceil(nwk)
+start += nwk*dt*7
+#debug: print("start = ",start, flush=True)
+#debug: sys.exit(0)
+
 
 nx = 1536
 ny =  768
 nlayer  = 21
 
 Xdata = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
-Xavg  = np.zeros((ny, nx, nlayer), dtype=np.float32)
-dtype = Xavg.dtype
+dtype = Xdata.dtype
 
 tag   = start
-while(tag <= end ):
+while(tag <= end - 7*dt ):
+  Xavg  = np.zeros((ny, nx, nlayer), dtype=np.float32)
 
   fname = "week2."+tag.strftime("%Y%m%d")+".nc"
 
