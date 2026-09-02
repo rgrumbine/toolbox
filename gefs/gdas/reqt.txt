@@ -1,0 +1,6 @@
+joblib==1.5.1
+matplotlib
+netCDF4 
+numpy 
+tensorflow 
+dill
