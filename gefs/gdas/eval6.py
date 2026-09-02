@@ -59,15 +59,15 @@ start = atm.x[0].epoch
 
 #--------------------------------------------------------------------------------
 # read in the unet model
-print("\n\n\n")
-print("\n\n\n")
 print("About to try to load the joblib", flush=True)
 if (os.path.exists(sys.argv[1])):
-#    try:
+    try:
         unet = joblib.load(sys.argv[1])
-#    except:
-#        print("failed to load the unet model, aborting", flush=True)
-#        sys.exit(1)
+        tmp = time.time()
+        print('time after loading joblib ', tmp-tstart, flush=True)
+    except:
+        print("failed to load the unet model, aborting", flush=True)
+        sys.exit(1)
 else:
   print("could not find the unet model, aborting", flush=True)
   sys.exit(1)
