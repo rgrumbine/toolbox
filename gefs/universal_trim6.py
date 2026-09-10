@@ -35,8 +35,10 @@ print(nvar, nametag, final, flush=True)
 # Acquire data -- in time range of interest -- RG: argument to be
 #start = datetime.datetime(1980,1,1)
 #end   = datetime.datetime(1989,12,31)
-start = datetime.datetime(2007,1,2)
-end   = datetime.datetime(2016,12,31)
+#start = datetime.datetime(2007,1,2)
+#end   = datetime.datetime(2016,12,31)
+start = datetime.datetime(2016,1,5)
+end   = datetime.datetime(2025,12,31)
 
 # ---- From here down should not need to be changed between different runs -----
 dt      = datetime.timedelta(1)
@@ -175,7 +177,7 @@ early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=1
 #---------------------------------------------------------------------
 # Now ready to iteratively fit the model, plot the next week's prediction, permute evaluate it
 
-for period in range(0, 4):
+for period in range(0, 14):
   history = unet.fit(
     Xtrain, ytrain,
     validation_data=(Xval, yval),

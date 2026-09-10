@@ -3,8 +3,9 @@
 #SBATCH -J icetrim6
 #SBATCH -e icetrim6.err
 #SBATCH -o icetrim6.out
-#SBATCH -t 7:25:00
-#SBATCH -q batch
+#SBATCH -t 23:55:00
+##SBATCH -q batch
+#SBATCH -q long
 #SBATCH -A marine-cpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
