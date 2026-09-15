@@ -1,16 +1,16 @@
 #!/bin/sh
 ##Wcoss2
-#PBS -N eval
-#PBS -o eval.out
+#PBS -N fcst
+#PBS -o fcst.out
 #PBS -j oe
 #PBS -A ICE-DEV
 #PBS -q dev
 #PBS -l walltime=0:06:00
 #PBS -l select=1:ncpus=1:mem=16GB
 ##ursa
-#SBATCH -J eval
-#SBATCH -e eval.err
-#SBATCH -o eval.out
+#SBATCH -J fcst
+#SBATCH -e fcst.err
+#SBATCH -o fcst.out
 #SBATCH -t 0:06:00
 #SBATCH -q batch
 #SBATCH -A marine-cpu
@@ -28,4 +28,4 @@ export PYTHONPATH=$HOME/rgdev/toolbox/gefs/
 
 
 cd $PYTHONPATH/gdas
-time python3 eval6.py icetrim6.joblib 0
+time python3 fcst6.py u6.ice.joblib 0
