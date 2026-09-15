@@ -73,10 +73,11 @@ Xavg   = np.zeros((ny, nx, nlayer), dtype=np.float32)
 Xdata  = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
 
 tag   = datetime.datetime(1994,1,4)
-#tag   = datetime.datetime(2007,1,2)
 tag   = datetime.datetime(2007,1,2)
+tag   = datetime.datetime(2009,1,6)
 #while (tag < datetime.datetime(2025,12,31)):
-while (tag < datetime.datetime(2016,12,31)):
+#while (tag < datetime.datetime(2016,12,31)):
+while (tag < datetime.datetime(2009,12,31)):
 
   for i in range(0, len(atm.x)):
       Xavg[:,:,i] = atm.x[i].climo(tag)
@@ -119,6 +120,9 @@ while (tag < datetime.datetime(2016,12,31)):
   
   # Remove climatology so as to have anomalies
   Xdata -= Xavg
+  # Seas-only case
+  #for jjj in range(0, nlayer):
+  #    Xdata[0,:,:,jjj] *= seas
 
   # hard-wired scaling:
   scale =  [1, 20, 36, 25, 2.e-2, 500, 600, 50, 2.e-4,
