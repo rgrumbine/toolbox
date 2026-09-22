@@ -1,8 +1,8 @@
 #!/bin/sh
 ##ursa
-#SBATCH -J icetrim6
-#SBATCH -e icetrim6.err
-#SBATCH -o icetrim6.out
+#SBATCH -J icetrim2007
+#SBATCH -e icetrim2007.err
+#SBATCH -o icetrim2007.out
 #SBATCH -t 23:55:00
 ##SBATCH -q batch
 #SBATCH -q long
@@ -18,5 +18,6 @@ export PYTHONPATH=/home/Robert.Grumbine/rgdev/toolbox/gefs
 
 cd $PYTHONPATH
 
-time python3 universal_trim6.py 0 'ice' 'linear'
+#time python3 universal_trim6.py 0 'ice' 'linear'
+time python3 universal_trim2007.py 0 'ice' 'linear'
 report-mem

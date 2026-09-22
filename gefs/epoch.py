@@ -110,6 +110,27 @@ class climate_trim:
       self.x.append( epoch('climate/epoch1994_z500mb.nc') )
       self.x.append( epoch('climate/epoch1994_z700mb.nc') )
       self.x.append( epoch('climate/epoch1994_z850mb.nc') )
+
+class climate_trim2007:
+
+    def __init__(self):
+      self.x = []
+      self.x.append( epoch('climate_2007/epoch2007_ICEC.nc') )
+      self.x.append( epoch('climate_2007/epoch2007_FDNSSTMP.nc') )
+      self.x.append( epoch('climate_2007/epoch2007_TMPs.nc') )
+      self.x.append( epoch('climate_2007/epoch2007_TMP2m.nc') )
+      self.x.append( epoch('climate_2007/epoch2007_SPFH.nc') )
+      self.x.append( epoch('climate_2007/epoch2007_SHTFL.nc') )
+      self.x.append( epoch('climate_2007/epoch2007_LHTFL.nc') )
+      self.x.append( epoch('climate_2007/epoch2007_PWAT.nc') )
+      self.x.append( epoch('climate_2007/epoch2007_LAND.nc') )
+
+      self.x.append( epoch('climate_2007/epoch2007_PRMSL.nc') )
+      self.x.append( epoch('climate_2007/epoch2007_HGT_200mb.nc') )
+      self.x.append( epoch('climate_2007/epoch2007_HGT_500mb.nc') )
+      self.x.append( epoch('climate_2007/epoch2007_HGT_700mb.nc') )
+      self.x.append( epoch('climate_2007/epoch2007_HGT_850mb.nc') )
+
 #atm = climate()
 #
 #ny = 768
