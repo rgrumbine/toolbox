@@ -164,15 +164,25 @@ while (tag < datetime.datetime(2026,5,25)):
   #debug: print("climatology",Xavg[:,:,nvar].max(), Xavg[:,:,nvar].min() , flush=True)
 
   #--------------------------------------------------------------------
+  # Get the lat-lons
+  flx = nc.Dataset('thinned/flx.'+tag.strftime("%Y%m%d")+'.nc')
+  lats = flx.variables['latitude'][:]
+  lons = flx.variables['longitude'][:]
+  flx.close()
 
   for week in range(1, nlead+1):
     tagp = tag + week*dt*7
     
     # write out to netcdf
-    out = nc.Dataset("fcst_"+tagp.strftime("%Y%m%d"), "w")
+    out = nc.Dataset("fcst_"+tagp.strftime("%Y%m%d")+".nc", "w")
     out.createDimension('ny',ny)
     out.createDimension('nx',nx)
+    out.createVariable('latitude', dtype, ('ny') )
+    out.createVariable('longitude', dtype, ('nx') )
     out.createVariable('ICEC', dtype , ('ny', 'nx'))
+
+    out.variables['latitude'][:]  = lats[:]
+    out.variables['longitude'][:] = lons[:]
 
     Xout = Xpred[0,:,:,week-1].squeeze()
     ice_bounds(Xout)
