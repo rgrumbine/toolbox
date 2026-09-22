@@ -1,21 +1,20 @@
 #!/bin/sh
 
 module load intel wgrib2
-module load prod_envir
 #set -x
 
-#$COMROOT/gfs/v16.3/gdas.20260822/00/atmos
+#module load prod_envir
+#export COMROOT=/lfs/h2/emc/gfstemp/emc.global/comroot/retrov17_01_realtime/
 
-export COMROOT=/lfs/h2/emc/gfstemp/emc.global/comroot/retrov17_01_realtime/
-#export COMROOT=$HOME/noscrub/gdas/
+export COMROOT=$HOME/noscrub/gdas/
 
 cd /u/robert.grumbine/rgdev/toolbox/gefs/gdas/
 
 PDYm7=20260826
 tag=$PDYm7
 d=0
-while [ $d -lt 7 ] 
-#while [ $tag -le 20260830 ] 
+#while [ $d -lt 7 ] 
+while [ $tag -le 20260920 ] 
 do
   yy=`echo $tag | cut -c1-4`
   mm=`echo $tag | cut -c5-6`

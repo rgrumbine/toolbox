@@ -79,8 +79,8 @@ Xavg   = np.zeros((ny, nx, nlayer), dtype=np.float32)
 Xdata  = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
 
 #tag   = datetime.datetime(1994,1,4)
-tag   = datetime.datetime(2026,8,25)
-while (tag < datetime.datetime(2026,9,1)):
+tag   = datetime.datetime(2026,9,14)
+while (tag < datetime.datetime(2026,9,21)):
 
   # RG: change to enumerate
   for i,item in enumerate(atm.x):

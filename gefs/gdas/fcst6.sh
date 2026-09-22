@@ -22,7 +22,7 @@
 
 source $HOME/rg/env3.13/bin/activate
 #ursa
-export PYTHONPATH=/home/Robert.Grumbine/rgdev/toolbox/gefs
+export PYTHONPATH=$HOME/rgdev/toolbox/gefs
 #wcoss2
 export PYTHONPATH=$HOME/rgdev/toolbox/gefs/
 

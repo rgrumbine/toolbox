@@ -21,8 +21,9 @@
 #ursa: cd $HOME/clim_data/replay/thinned
 
 #wcoss2: 
-source $HOME/env3.12/bin/activate
+source $HOME/rg/env3.13/bin/activate
 cd $HOME/noscrub/thinned
 
 
+#RG: make end date an argument
 time python3 $HOME/rgdev/toolbox/gefs/gdas/weekavg2.py

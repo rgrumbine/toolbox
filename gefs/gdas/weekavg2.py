@@ -29,7 +29,8 @@ while(tag <= end ):
   out.createDimension('nx',nx)
 
   for count in range(0,7):
-
+    print(tag.strftime("%Y%m%d"))
+    
     prs = nc.Dataset('prs.'+tag.strftime("%Y%m%d")+'.nc')
     Xdata[0,:,:,14] = prs.variables['PRMSL_meansealevel'][0,:,:]
     Xdata[0,:,:,15] = prs.variables['HGT_1mb'][0,:,:]
@@ -63,6 +64,19 @@ while(tag <= end ):
     tag += dt
 
   Xavg /= 7
+
+  #RG: extract from flx and write out lat-lon
+  flx = nc.Dataset('flx.'+start.strftime("%Y%m%d")+'.nc')
+  lats = flx.variables['latitude']
+  lons = flx.variables['longitude']
+  flx.close()
+
+  out.createVariable('latitude', dtype, ('ny') )
+  out.variables['latitude'] = lats
+
+  out.createVariable('longitude', dtype, ('nx') )
+  out.variables['longitude'] = lats
+
 
   out.createVariable('ICETK', dtype, ('ny', 'nx') )
   out.variables['ICETK'][:,:] = Xavg[:,:,0]
