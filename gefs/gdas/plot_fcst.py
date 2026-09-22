@@ -19,16 +19,17 @@ lats = fin.variables['latitude'][:]
 lons = fin.variables['longitude'][:]
 fin.close()
 
+print('arg2:',sys.argv[2])
 fcst = nc.Dataset(sys.argv[2], 'r')
 data = fcst.variables['ICEC'][:,:]
 fcst.close()
 
 nx = len(lons)
 ny = len(lats)
-dl = lats[1:] - lats[0:-1]
-print("dl ",dl.max(), dl.min() )
+#debug: dl = lats[1:] - lats[0:-1]
+#debug: print("dl ",dl.max(), dl.min() )
 print("data ",data.max(), data.min(), data.sum()/nx/ny )
-print("histogram ",np.histogram(data, bins=[-5.e19,-1,0,1,1.01,1.e19]))
+print("histogram ",np.histogram(data, bins=[-5.e19,-1,0,0.5,1,1.01,1.e19]))
 print("datasq ",data.max()**2, data.min()**2 )
 
 #debug: sys.exit(0)
@@ -64,3 +65,6 @@ cb.set_label(title, fontsize=12)
 
 plt.savefig("scalar."+f"{domain:d}"+".png")
 plt.close()
+
+#-----------------------------------------------
+# geotiff

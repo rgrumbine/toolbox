@@ -79,8 +79,9 @@ Xavg   = np.zeros((ny, nx, nlayer), dtype=np.float32)
 Xdata  = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
 
 #tag   = datetime.datetime(1994,1,4)
-tag   = datetime.datetime(2026,9,14)
-while (tag < datetime.datetime(2026,9,21)):
+#tag   = datetime.datetime(2026,9,14)
+tag   = datetime.datetime(2026,5,19)
+while (tag < datetime.datetime(2026,5,25)):
 
   # RG: change to enumerate
   for i,item in enumerate(atm.x):
@@ -172,8 +173,11 @@ while (tag < datetime.datetime(2026,9,21)):
     out.createDimension('ny',ny)
     out.createDimension('nx',nx)
     out.createVariable('ICEC', dtype , ('ny', 'nx'))
+
     Xout = Xpred[0,:,:,week-1].squeeze()
+    ice_bounds(Xout)
     out.variables['ICEC'][:,:] = Xout[:,:]
+
     out.close()
 
     #--------------------------------------------------
