@@ -28,7 +28,7 @@ import netCDF4 as nc
 #import tensorflow as tf
 import joblib
 #--------------------------------------------------------------
-from epoch import climate_trim
+from epoch import climate_trim2007
 #--------------------------------------------------------------
 def ice_bounds(x):
     x[x < 0.15] = 0
@@ -53,7 +53,7 @@ nlayer  =   20
 nlead   =    6
 
 # for climatology -- epoch has the class
-atm = climate_trim()
+atm = climate_trim2007()
 #debug: print("atm.epoch ",atm.x[0].epoch, flush = True)
 start = atm.x[0].epoch
 
