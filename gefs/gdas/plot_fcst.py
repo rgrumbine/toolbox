@@ -17,12 +17,8 @@ matplotlib.use('agg')
 fin = nc.Dataset(sys.argv[1],'r')
 lats = fin.variables['latitude'][:]
 lons = fin.variables['longitude'][:]
+data = fin.variables['ICEC'][:,:]
 fin.close()
-
-print('arg2:',sys.argv[2])
-fcst = nc.Dataset(sys.argv[2], 'r')
-data = fcst.variables['ICEC'][:,:]
-fcst.close()
 
 nx = len(lons)
 ny = len(lats)
@@ -60,7 +56,7 @@ cs = ax.pcolormesh(lons, lats, data,
                          cmap = cmap,
                          transform= proj )
 cb = plt.colorbar(cs, extend='both', orientation='horizontal', shrink=0.5, pad=.04)
-title = sys.argv[3]
+title = sys.argv[2]
 cb.set_label(title, fontsize=12)
 
 plt.savefig("scalar."+f"{domain:d}"+".png")
