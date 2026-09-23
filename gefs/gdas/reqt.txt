@@ -4,3 +4,6 @@ netCDF4
 numpy 
 tensorflow 
 dill
+scipy
+rasterio
+cartopy
