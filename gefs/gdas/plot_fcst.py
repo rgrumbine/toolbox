@@ -18,13 +18,17 @@ fin = nc.Dataset(sys.argv[1],'r')
 lats = fin.variables['latitude'][:]
 lons = fin.variables['longitude'][:]
 data = fin.variables['ICEC'][:,:]
+#data = fin.variables['ICEC_surface'][0,:,:]
 fin.close()
 
 nx = len(lons)
 ny = len(lats)
-#debug: dl = lats[1:] - lats[0:-1]
-#debug: print("dl ",dl.max(), dl.min() )
-#debug: print("data ",data.max(), data.min(), data.sum()/nx/ny, flush=True )
+#debug: 
+dl = lats[1:] - lats[0:-1]
+#debug: 
+print("dl ",dl.max(), dl.min() )
+#debug: 
+print("data ",data.max(), data.min(), data.sum()/nx/ny, flush=True )
 #debug: print("histogram ",np.histogram(data, bins=[-5.e19,-1,0,0.5,1,1.01,1.e19]), flush=True)
 
 #debug: sys.exit(0)

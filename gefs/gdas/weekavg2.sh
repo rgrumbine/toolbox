@@ -1,12 +1,12 @@
 #!/bin/sh
 ##Wcoss2
-#PBS -N gdasavg
-#PBS -o gdasavg.out
-#PBS -j oe
-#PBS -A ICE-DEV
-#PBS -q dev
-#PBS -l walltime=0:40:00
-#PBS -l select=1:ncpus=1
+##PBS -N gdasavg
+##PBS -o gdasavg.out
+##PBS -j oe
+##PBS -A ICE-DEV
+##PBS -q dev
+##PBS -l walltime=0:40:00
+##PBS -l select=1:ncpus=1
 ##ursa
 #SBATCH -J weekavg2
 #SBATCH -e weekavg2.err
@@ -17,12 +17,14 @@
 #SBATCH -N 1
 #SBATCH --mem=8g
 
-#ursa: source $HOME/rg/env3.13/bin/activate
-#ursa: cd $HOME/clim_data/replay/thinned
+#ursa: 
+source $HOME/rg/env3.13/bin/activate
+#ursa: 
+cd $HOME/clim_data/replay/thinned
 
 #wcoss2: 
-source $HOME/rg/env3.13/bin/activate
-cd $HOME/noscrub/thinned
+#source $HOME/rg/env3.13/bin/activate
+#cd $HOME/noscrub/thinned
 
 
 #RG: make end date an argument

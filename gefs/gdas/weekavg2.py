@@ -1,5 +1,4 @@
 import os
-from math import sin, cos, pi
 import datetime
 
 import numpy as np
@@ -7,6 +6,7 @@ import netCDF4 as nc
 
 # Acquire basic data and average them
 end   = datetime.datetime.today()
+end   = datetime.datetime(2026,9,21)
 dt    = datetime.timedelta(1)
 end -= dt
 start = end - 6*dt
@@ -17,7 +17,17 @@ nlayer  = 21
 
 Xdata = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
 Xavg  = np.zeros((ny, nx, nlayer), dtype=np.float32)
+lats  = np.zeros((ny), dtype=np.float32)
+lons  = np.zeros((nx), dtype=np.float32)
 dtype = Xavg.dtype
+#RG: extract from flx and write out lat-lon
+flx = nc.Dataset('flx.'+start.strftime("%Y%m%d")+'.nc')
+lats[:] = flx.variables['latitude'][:]
+lons[:] = flx.variables['longitude'][:]
+flx.close()
+#debug: print("latitudes ",lats.max(), lats.min() )
+#debug: print("longitudes ",lons.max(), lons.min() )
+#debug: exit(0)
 
 tag   = start
 while(tag <= end ):
@@ -44,6 +54,7 @@ while(tag <= end ):
     flx = nc.Dataset('flx.'+tag.strftime("%Y%m%d")+'.nc')
     Xdata[0,:,:,0] = flx.variables['ICETK_surface'][0,:,:]
     Xdata[0,:,:,1] = flx.variables['ICEC_surface'][0,:,:]
+    print("icec input ",Xdata[0,:,:,1].max(), Xdata[0,:,:,1].min() )
     Xdata[0,:,:,2] = flx.variables['FDNSSTMP_surface'][0,:,:]
     Xdata[0,:,:,3] = flx.variables['USWRF_surface'][0,:,:]
     Xdata[0,:,:,4] = flx.variables['TMP_surface'][0,:,:]
@@ -63,19 +74,14 @@ while(tag <= end ):
     count += 1
     tag += dt
 
-  Xavg /= 7
-
-  #RG: extract from flx and write out lat-lon
-  flx = nc.Dataset('flx.'+start.strftime("%Y%m%d")+'.nc')
-  lats = flx.variables['latitude']
-  lons = flx.variables['longitude']
-  flx.close()
+  Xavg /= 7.
+  print("icec afer averaging ",Xavg[:,:,1].max(), Xavg[:,:,1].min() )
 
   out.createVariable('latitude', dtype, ('ny') )
-  out.variables['latitude'] = lats
+  out.variables['latitude'][:] = lats[:]
 
   out.createVariable('longitude', dtype, ('nx') )
-  out.variables['longitude'] = lats
+  out.variables['longitude'][:] = lons[:]
 
 
   out.createVariable('ICETK', dtype, ('ny', 'nx') )
