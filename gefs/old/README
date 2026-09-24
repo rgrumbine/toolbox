@@ -26,9 +26,25 @@ fast.py            -- 1 yr of ice training (before 'common')
 week2.py           -- 2 yr ice training (before 'common')
 week_ice.py        -- 60 epochs ice training 
 
+wk6.sh             -- run universal6 
+universal6.py      -- combined ice and sst training, 7 week lead
+climate6.py        -- universal6 but with full climate rather than mere 30 yr avg
+
+clice.sh           -- run universal1 for ice training
+clsst.sh           -- run universal1 for sst training
+universal1.py      -- combined ice, sst training for only 1 week lead
+
+clice2.sh          -- run universal2 for ice training
+clsst2.sh          -- run universal2 for sst training
+universal2.py      -- ice, sst training with somewhat trimmer set of variables than universal1
+
+fcst.sh            -- first attempt at running a forecast script
+forecast.py        -- first attempt at a forecast script
+forecast2.py       -- second attempt at a forecast script
+
+fcst6.sh           -- 6 week forecast control
+forecast6.py       -- make 6 week forecasts
+
 Robert Grumbine
 29 June 2026
 24 Sep 2026
-
-new.sh -- RM
-beta.sh -- RM
