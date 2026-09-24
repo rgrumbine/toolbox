@@ -22,6 +22,9 @@ fin = nc.Dataset(sys.argv[1],'r')
 lats = fin.variables['latitude'][:]
 lons = fin.variables['longitude'][:]
 data = fin.variables['ICEC'][:,:]
+#debug:
+#data = fin.variables['SST'][:,:]
+#data[data > 400] = 273.15
 #data = fin.variables['ICEC_surface'][0,:,:]
 fin.close()
 
