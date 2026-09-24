@@ -1,0 +1,34 @@
+avg.sh             -- run averager.py
+averager.py        -- compute the average of all thinned files in date range
+
+multi_permute.py   -- compute the permutation importance for a given model
+runpermute.sh      -- run multi_permute.py
+scan.py            -- scan for the existence of the thinned prs and flx files
+weekavg.py         -- compute weekly averages starting from 1/1/1980
+weekavg.sh         -- script to batch weekavg.py
+
+ursa.sh            -- run universal.py for ice, then sst. Only difference is arguments
+
+universal.py       -- header code for both ice and sst, predicts only week+1
+iceweek.py         -- run on sea ice concentration 
+sstweek.py         -- run on sea surface temperature
+
+run.sh             -- run multilayer_multitarget.py
+run2.sh             -- run multilayer_multitarget.py
+multilayer_multitarget.py  -- towards multiple targets (but uses only 1)
+
+runsst.sh          -- run sst.py
+sst.py             -- sst training (before 'common')
+
+fastice.sh         -- run fast.py
+fast.py            -- 1 yr of ice training (before 'common')
+
+week2.py           -- 2 yr ice training (before 'common')
+week_ice.py        -- 60 epochs ice training 
+
+Robert Grumbine
+29 June 2026
+24 Sep 2026
+
+new.sh -- RM
+beta.sh -- RM
