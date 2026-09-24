@@ -6,9 +6,13 @@ import netCDF4 as nc
 import matplotlib
 import matplotlib.pyplot as plt
 
-
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
+
+# geotiff -- framed by gemini
+import rasterio
+from rasterio.transform import from_origin
+from scipy.interpolate import griddata
 
 from regions import *
 
@@ -68,9 +72,6 @@ plt.close()
 
 #-----------------------------------------------
 # geotiff -- framed by gemini
-import rasterio
-from rasterio.transform import from_origin
-from scipy.interpolate import griddata
 
 lons2d = np.zeros((ny, nx))
 lats2d = np.zeros((ny, nx))

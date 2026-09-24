@@ -21,17 +21,16 @@ import copy
 import datetime
 import time
 
-import matplotlib.pyplot as plt
-#import tracemalloc
 import numpy as np
 import netCDF4 as nc
 
 #import tensorflow as tf
 import joblib
 #--------------------------------------------------------------
-from epoch import climate_trim
+from epoch import climate_trim2007
 #--------------------------------------------------------------
 def ice_bounds(x):
+    #debug: print("ice bounds x shape",x.shape)
     x[x < 0.15] = 0
     x[x > 1.0 ] = 1
 
@@ -54,8 +53,9 @@ nlayer  =   20
 nlead   =    6
 
 # for climatology -- epoch has the class
-atm = climate_trim()
-#debug: print("atm.epoch ",atm.x[0].epoch, flush = True)
+atm = climate_trim2007()
+#debug:
+print("atm.epoch ",atm.x[0].epoch, flush = True)
 start = atm.x[0].epoch
 
 #--------------------------------------------------------------------------------
@@ -78,9 +78,10 @@ dtype  = np.float32
 Xavg   = np.zeros((ny, nx, nlayer), dtype=np.float32)
 Xdata  = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
 
-#tag   = datetime.datetime(1994,1,4)
+#tag   = datetime.datetime(2025,9,16)
 #tag   = datetime.datetime(2026,5,19)
 tag   = datetime.datetime(2026,9,14)
+#while (tag < datetime.datetime(2025,9,21)):
 #while (tag < datetime.datetime(2026,5,25)):
 while (tag < datetime.datetime(2026,9,21)):
 
@@ -89,36 +90,50 @@ while (tag < datetime.datetime(2026,9,21)):
     Xavg[:,:,i] = item.climo(tag)
   #for i in range(0, len(atm.x)):
   #    Xavg[:,:,i] = atm.x[i].climo(tag)
-  
+
   tmp = time.time()
   print('time after computing climatology ', tmp-tstart, flush=True)
-  
+
   # RG: In general this will be the GDAS file
   flx = nc.Dataset('thinned/week2.'+tag.strftime("%Y%m%d")+'.nc')
   Xdata[0,:,:,0] = flx.variables['ICEC'][:,:]
-  Xdata[0,:,:,1] = flx.variables['SST'][:,:]
-  Xdata[0,:,:,2] = flx.variables['TMPs'][:,:]
-  Xdata[0,:,:,3] = flx.variables['TMP2m'][:,:]
-  Xdata[0,:,:,4] = flx.variables['SPFH2m'][:,:]
-  Xdata[0,:,:,5] = flx.variables['SHTFL'][:,:]
-  Xdata[0,:,:,6] = flx.variables['LHTFL'][:,:]
-  Xdata[0,:,:,7] = flx.variables['PWAT'][:,:]
-  Xdata[0,:,:,8] = flx.variables['LAND'][:,:]
-  land = Xdata[0,:,:,8].squeeze()
-  seas = copy.deepcopy(land)
-  seas -= 1
-  seas[seas == -1] = 1
-  #debug: print("land ",land.max(), land.min() )
-  #debug: print("seas ",seas.max(), seas.min() )
+  print("icec ",Xdata[0,:,:,0].max(), Xdata[0,:,:,0].min() )
   
+  # Special treatment because replay puts sst everywhere but v17 flags some points
+  sstmp = flx.variables['SST'][:,:]
+  sstmp[sstmp > 400] = 273.15
+  Xdata[0,:,:,1] = sstmp
+  print("sst ",Xdata[0,:,:,1].max(), Xdata[0,:,:,1].min() )
+
+  Xdata[0,:,:,2] = flx.variables['TMPs'][:,:]
+  print("tmps ",Xdata[0,:,:,2].max(), Xdata[0,:,:,2].min() )
+  Xdata[0,:,:,3] = flx.variables['TMP2m'][:,:]
+  print("tmp2m ",Xdata[0,:,:,3].max(), Xdata[0,:,:,3].min() )
+  Xdata[0,:,:,4] = flx.variables['SPFH2m'][:,:]
+  print("spfh ",Xdata[0,:,:,4].max(), Xdata[0,:,:,4].min() )
+  Xdata[0,:,:,5] = flx.variables['SHTFL'][:,:]
+  print("shtfl ",Xdata[0,:,:,5].max(), Xdata[0,:,:,5].min() )
+  Xdata[0,:,:,6] = flx.variables['LHTFL'][:,:]
+  print("lhtfl ",Xdata[0,:,:,6].max(), Xdata[0,:,:,6].min() )
+  Xdata[0,:,:,7] = flx.variables['PWAT'][:,:]
+  print("pwat ",Xdata[0,:,:,7].max(), Xdata[0,:,:,7].min() )
+  Xdata[0,:,:,8] = flx.variables['LAND'][:,:]
+  print("land ",Xdata[0,:,:,8].max(), Xdata[0,:,:,8].min() )
+
   Xdata[0,:,:,9] = flx.variables['PRMSL'][:,:]
+  print("prmsl ",Xdata[0,:,:,9].max(), Xdata[0,:,:,9].min() )
   Xdata[0,:,:,10] = flx.variables['z200mb'][:,:]
+  print("z200 ",Xdata[0,:,:,10].max(), Xdata[0,:,:,10].min() )
   Xdata[0,:,:,11] = flx.variables['z500mb'][:,:]
+  print("z500 ",Xdata[0,:,:,11].max(), Xdata[0,:,:,11].min() )
   Xdata[0,:,:,12] = flx.variables['z700mb'][:,:]
+  print("z700 ",Xdata[0,:,:,12].max(), Xdata[0,:,:,12].min() )
   Xdata[0,:,:,13] = flx.variables['z850mb'][:,:]
+  print("z850 ",Xdata[0,:,:,13].max(), Xdata[0,:,:,13].min() )
+
   flx.close()
 
-  # RG: Note that start is the epoch for forecasting, 19940101
+  # RG: Note that start is the epoch for forecasting
   Xdata[0,:,:,14] = cos(  (tag-start)/dt * 2.*pi/365.2422)
   Xdata[0,:,:,15] = sin(  (tag-start)/dt * 2.*pi/365.2422)
   Xdata[0,:,:,16] = cos(2*(tag-start)/dt * 2.*pi/365.2422)
@@ -136,10 +151,6 @@ while (tag < datetime.datetime(2026,9,21)):
       Xdata[0,:,:,l] /= scale[l]
 
   #debug: sys.exit(0)
-
-  if (seas.max() != 1 or seas.min() != 0):
-    print("seas bollixed",seas.max(), seas.min() )
-    sys.exit(1)
 
   #---------------------------------------------------------------------
   # make a forecast
@@ -187,7 +198,7 @@ while (tag < datetime.datetime(2026,9,21)):
 
     Xout = Xpred[0,:,:,week-1].squeeze()
     ice_bounds(Xout)
-    out.variables['ICEC'][:,:] = Xout[:,:]
+    out.variables['ICEC'][:,:] = Xout
 
     out.close()
 
