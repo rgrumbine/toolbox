@@ -1,5 +1,25 @@
 common.py          -- code shared between ice and sst
 getavg.py          -- utility to extract the average from averager.py output
+epoch.py           -- work with epochal climatologies
 
 Robert Grumbine
 24 September 2026
+
+
+weekavg2.sh       -- control for weekavg2.py
+weekavg2.py       -- compute weekly averages for somewhat expanded variable set
+
+universal_trim.py -- combined script for training on reduced variable set
+sst_trim.sh       -- control script for training sst
+
+universal_trim6.py -- train selected variable for 6 week predictions
+sst_trim6.sh       -- control script for training sst 6 week predictions
+ice_trim6.sh       -- control script for training ice 6 week predictions
+
+eval6.py           -- evaluate trained model for each of its 6 weekly predictions
+eval6.sh           -- control script for eval6.py
+
+universal_trim2007.py -- universal_trim6 but for 2007 climatology
+ 
+rerun.py           -- universal_trim2007 but with sin(lat), cos(lat), and land masking; for a clean retraining of the network.
+

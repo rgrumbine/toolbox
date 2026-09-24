@@ -61,6 +61,11 @@ def getclimo(Xclimo, fbase):
       k += 1
 
 def makeclimo(Xclimo, ftag, epoch, Xout, nx, ny, nvar):
+  ''' makeclimo(Xclimo, ftag, epoch, Xout, nx, ny, nvar):
+    given epoch climatology Xclimo, desired date ftag, epoch data of 
+    climatology, output array, dimensions, and which variable -- compute 
+    the epochal climatology for that variable on that day and return 
+    it in Xout '''
   dt      = datetime.timedelta(1)
   delta_d = (ftag - epoch)/dt
   Xout = np.zeros((ny,nx,nvar))
@@ -68,12 +73,13 @@ def makeclimo(Xclimo, ftag, epoch, Xout, nx, ny, nvar):
     evaluate_epoch(Xclimo[:,:,i,:], delta_d, Xout[:,:,i])
 
 def evaluate_epoch(Xclimo, delta_d, Xout):
+  '''evaluate_epoch: for epochal climatologies evaluate for given
+     delta from reference '''
   Xout  = Xclimo[1]
   Xout += Xclimo[0]*delta_d
-  Xout += Xclimo[2]*cos(  delta_d*2.*pi/365.25)
-  Xout += Xclimo[3]*sin(  delta_d*2.*pi/365.25)
-  Xout += Xclimo[4]*cos(2*delta_d*2.*pi/365.25)
-  Xout += Xclimo[5]*sin(2*delta_d*2.*pi/365.25)
-  Xout += Xclimo[6]*cos(3*delta_d*2.*pi/365.25)
-  Xout += Xclimo[7]*sin(3*delta_d*2.*pi/365.25)
-
+  Xout += Xclimo[2]*cos(  delta_d*2.*pi/365.2422)
+  Xout += Xclimo[3]*sin(  delta_d*2.*pi/365.2422)
+  Xout += Xclimo[4]*cos(2*delta_d*2.*pi/365.2422)
+  Xout += Xclimo[5]*sin(2*delta_d*2.*pi/365.2422)
+  Xout += Xclimo[6]*cos(3*delta_d*2.*pi/365.2422)
+  Xout += Xclimo[7]*sin(3*delta_d*2.*pi/365.2422)

@@ -119,10 +119,12 @@ def permute(unet, Xval, yval, nlayer):
 
 #--------------------------------------------------------------------------------
 def downscale(field, nx, ny, ratio):
+    ''' downscale(field, nx, ny, ratio): -- downscale a 2d field by a 
+            factor of ratioxratio and return in a new variable '''
     tmp = np.zeros((int(ny/ratio), int(nx/ratio)))
     for k in range(0, int(ny/ratio) ):
       for l in range(0, int(nx/ratio) ):
-        tmp[k,l] += field[k:k+ratio,l:l+ratio].sum()
+        tmp[k,l] += field[k*ratio:k*ratio+ratio,l*ratio:l*ratio+ratio].sum()/ratio/ratio
     return tmp
 
 #--------------------------------------------------------------------------------
@@ -194,4 +196,3 @@ def show6(unet, Xval, yval, nvar, figname = 'summary.png'):
   plt.tight_layout()
   plt.savefig(figname)
   plt.close()
-

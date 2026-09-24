@@ -29,18 +29,21 @@ print(nvar, nametag, final, flush=True)
 #debug: sys.exit(0)
 
 # Acquire data -- in time range of interest -- RG: argument to be
-#start = datetime.datetime(1980,1,1)
-#end   = datetime.datetime(1989,12,31)
+#Quick:
+start  = datetime.datetime(2009,1,6)
+end    = datetime.datetime(2010,3,30)
+#First decade:
 #start = datetime.datetime(2007,1,2)
 #end   = datetime.datetime(2016,12,31)
-start = datetime.datetime(2016,1,5)
-end   = datetime.datetime(2025,12,31)
+#Second decade:
+#start = datetime.datetime(2016,1,5)
+#end   = datetime.datetime(2025,12,31)
 
 # ---- From here down should not need to be changed between different runs -----
 dt      = datetime.timedelta(1)
 nx      = 1536
 ny      =  768
-nlayer  =   20
+nlayer  =   22
 ntarget = 1
 nlag    = 6
 nweeks  = int((end-start)/dt/7 + 1)
@@ -50,10 +53,25 @@ tracemalloc.start()
 
 Xdata = np.zeros((nweeks, ny, nx, nlayer), dtype=np.float32)
 Xavg  = np.zeros((ny, nx, nlayer), dtype=np.float32)
-# Get memory metrics: (current, peak)
-current, peak = tracemalloc.get_traced_memory()
-print(f"Memory usage after np.zeros: {current / 10**6} Mb")
-print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
+clat  = np.zeros((ny, nx), dtype=np.float32)
+slat  = np.zeros((ny, nx), dtype=np.float32)
+
+# to work with latitudes
+llfile = nc.Dataset('thinned/flx.19920101.nc','r')
+lats = llfile.variables['latitude'][:]
+llfile.close()
+rads = np.radians(lats)
+c = np.cos(rads)
+s = np.sin(rads)
+#orig
+#for j in range(0,ny):
+#    clat[j,:] = c
+#    slat[j,:] = s
+#From gemini:
+clat = np.tile(c[:, np.newaxis], (1, nx))
+slat = np.tile(s[:, np.newaxis], (1, nx))
+print("cos ",clat.max(), clat.min() )
+print("sin ",slat.max(), slat.min() )
 
 # Get, rather than compute, an average field
 #getavg.getavg(Xavg, 'thinned/average_1980.nc')
@@ -67,7 +85,6 @@ count = 0
 while(tag <= end ):
   print(count, "tag = ",tag, flush = True)
   # for climo:
-  # getavg.climo(Xavg, tag, 'thinned/climo_1980.nc')
   for i in range(0, len(atm.x)):
     Xavg[:,:,i] = atm.x[i].climo(tag)
     #debug: print(i,Xavg[:,:,i].max(), Xavg[:,:,i].min(), flush=True )
@@ -82,6 +99,9 @@ while(tag <= end ):
   Xdata[count,:,:,6] = flx.variables['LHTFL'][:,:]
   Xdata[count,:,:,7] = flx.variables['PWAT'][:,:]
   Xdata[count,:,:,8] = flx.variables['LAND'][:,:]
+  #seas is 1 over ocean, 0 over land
+  seas  = np.ones((ny, nx), dtype=np.float32)
+  seas -= Xdata[count,:,:,8]
 
   Xdata[count,:,:,9] = flx.variables['PRMSL'][:,:]
   Xdata[count,:,:,10] = flx.variables['z200mb'][:,:]
@@ -89,15 +109,19 @@ while(tag <= end ):
   Xdata[count,:,:,12] = flx.variables['z700mb'][:,:]
   Xdata[count,:,:,13] = flx.variables['z850mb'][:,:]
 
-  Xdata[count,:,:,14] = cos( (tag-ref_date)/dt * 2.*pi/365.2422)
-  Xdata[count,:,:,15] = sin( (tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,14] = cos(  (tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,15] = sin(  (tag-ref_date)/dt * 2.*pi/365.2422)
   Xdata[count,:,:,16] = cos(2*(tag-ref_date)/dt * 2.*pi/365.2422)
   Xdata[count,:,:,17] = sin(2*(tag-ref_date)/dt * 2.*pi/365.2422)
   Xdata[count,:,:,18] = cos(3*(tag-ref_date)/dt * 2.*pi/365.2422)
   Xdata[count,:,:,19] = sin(3*(tag-ref_date)/dt * 2.*pi/365.2422)
+  Xdata[count,:,:,20] = clat
+  Xdata[count,:,:,21] = slat
 
   # Remove means so as to have anomalies and something more nearly scaled
   Xdata[count] -= Xavg
+  for jjj in range(0,nlayer):
+    Xdata[count,:,:,jjj] *= seas
 
   count += 1
   tag += 7*dt
@@ -114,11 +138,6 @@ for l in range(0,nlayer):
             r[l], r[l]*(xmax-xmin)/2., flush=True )
 
 #debug: sys.exit(0)
-
-# Get memory metrics: (current, peak)
-current, peak = tracemalloc.get_traced_memory()
-print(f"Current memory usage: {current / 10**6} Mb")
-print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
 # Finally, set up the training and validation data
 split = int(count*0.8 + 0.5)
@@ -152,9 +171,9 @@ print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
 #--------------------------------------------------------------------------------
 # compile, show, and train the unet -- read in an old one if available
-if (os.path.exists(nametag+'trim6.joblib')):
+if (os.path.exists(nametag+'rerun.joblib')):
   print("about to load joblib",flush=True)
-  unet = joblib.load(nametag+'trim6.joblib')
+  unet = joblib.load(nametag+'rerun.joblib')
 else:
   print("building the unet model", flush=True)
   unet = build_unet(input_shape=(ny,nx,nlayer), final = final, nchannel=nlag)
@@ -175,7 +194,7 @@ early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
 #---------------------------------------------------------------------
 # Now ready to iteratively fit the model, plot the next week's prediction, permute evaluate it
 
-for period in range(0, 14):
+for period in range(0, 64):
   history = unet.fit(
     Xtrain, ytrain,
     validation_data=(Xval, yval),
@@ -189,7 +208,7 @@ for period in range(0, 14):
   print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
   # save the unet
-  joblib.dump(unet, nametag+f"{period:02d}trim6.joblib")
+  joblib.dump(unet, nametag+f"{period:02d}rerun.joblib")
   # Get memory metrics: (current, peak)
   current, peak = tracemalloc.get_traced_memory()
   print(f"past joblib memory usage: {current / 10**6} Mb")
