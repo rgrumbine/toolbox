@@ -1,0 +1,60 @@
+#!/bin/bash 
+#PBS -N copyrtofs
+#PBS -o copyrtofs
+#PBS -j oe
+#PBS -A XFER-DEV
+#PBS -q dev_transfer
+#PBS -l walltime=6:00:00
+#PBS -l select=1:ncpus=1
+
+#env > ~/rtofs.env.1
+
+echo zzz entered rtofs_hpss.sh 
+
+set -x
+echo zzz source modules
+source /usr/share/lmod/lmod/init/bash
+
+echo zzz try to load prod_envir
+module purge
+module reset
+
+export MODULEPATH_ROOT=/usr/share/modulefiles
+module load prod_envir
+echo zzz done trying to load prod_envir
+
+#to 7/29/2025
+#ops=$COMROOT/rtofs/v2.4/
+#from 7/30/2025
+ops=$COMROOT/rtofs/v2.5/
+echo zzz ops = $ops
+
+cd $ops
+base=$HOME/noscrub/model_intercompare/rtofs_cice/
+#tag=20250601
+tag=20260101
+end=`date +"%Y%m%d"`
+#end=`expr $end - 1`
+#end=`$HOME/bin/dtgfix3 $end`
+
+while [ $tag -le $end ]
+do
+  if [ ! -d ${base}/rtofs.$tag ] ; then
+    mkdir ${base}/rtofs.$tag 
+    if [ -d rtofs.$tag ] ; then
+      #find rtofs.$tag -name '*cice_inst*' | cpio -pamdv $base
+      #find rtofs.$tag -name '*2ds*_ice*' | cpio -pamdv $base
+      cp -p rtofs.$tag/*cice_inst* ${base}/rtofs.$tag
+      cp -p rtofs.$tag/*2ds*_ice* ${base}/rtofs.$tag
+    else
+      echo no rtofs for $tag
+    fi
+  else
+    echo already have $tag
+  fi
+
+  tag=`expr $tag + 1`
+  tag=`$HOME/bin/dtgfix3 $tag`
+done
+
+echo zzz leaving rtofs_hpss.sh 

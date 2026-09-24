@@ -49,7 +49,8 @@ fin.close()
 nos = []
 exptnos = open(sys.argv[3], "r", encoding='utf-8')
 for k in exptnos:
-  nos.append(int(k))
+  words = k.split()
+  nos.append(int(words[2]))
 jmax      = int(len(nos))
 
 # Establish basic parameters for conducting evolution:
