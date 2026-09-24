@@ -1,0 +1,5 @@
+common.py          -- code shared between ice and sst
+getavg.py          -- utility to extract the average from averager.py output
+
+Robert Grumbine
+24 September 2026

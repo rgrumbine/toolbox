@@ -1,0 +1,23 @@
+#!/bin/sh
+##ursa
+#SBATCH -J eval6
+#SBATCH -e eval6.err
+#SBATCH -o eval6.out
+#SBATCH -t 0:40:00
+#SBATCH -q batch
+#SBATCH -A marine-cpu
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=16g
+
+
+source $HOME/rg/env3.13/bin/activate
+export PYTHONPATH=/home/Robert.Grumbine/rgdev/toolbox/gefs
+
+cd $PYTHONPATH
+
+#time python3 eval6.py quick6/sst15quick.joblib 1
+#time python3 eval6.py sstquick.joblib 1
+time python3 eval6.py newclim/ice13trim6.joblib 0
+report-mem
