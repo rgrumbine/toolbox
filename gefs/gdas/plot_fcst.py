@@ -106,7 +106,7 @@ grid_val = griddata(
     (lons2d.ravel(), lats2d.ravel()), data.ravel(), (grid_lon, grid_lat), method='linear'
 )
 # Flip along the Y-axis so the top row corresponds to the northernmost latitude
-grid_val = np.flipud(grid_val)
+#grid_val = np.flipud(grid_val)
 
 # 4. Define the Spatial Reference System and Affine Transform
 # EPSG:4326 is standard WGS84 (Lat/Lon)
