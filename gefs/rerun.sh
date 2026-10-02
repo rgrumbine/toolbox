@@ -3,15 +3,15 @@
 #SBATCH -J rerun
 #SBATCH -e rerun.err
 #SBATCH -o rerun.out
-#SBATCH -t 6:55:00
-#SBATCH -q batch
-##SBATCH -q long
+#SBATCH -t 26:55:00
+##SBATCH -q batch
+#SBATCH -q long
 #SBATCH -A marine-cpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
-##SBATCH --mem=320g
-#SBATCH --mem=128g
+#SBATCH --mem=328g
+##SBATCH --mem=128g
 
 
 source $HOME/rg/env3.13/bin/activate

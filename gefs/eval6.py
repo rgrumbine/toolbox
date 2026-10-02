@@ -15,7 +15,7 @@ write out .nc
 
 import sys
 import os
-from math import sin, cos, pi
+from math import sin, cos, pi, floor
 import copy
 import datetime
 import time
@@ -35,11 +35,11 @@ def ice_bounds(x):
     x[x > 1.0 ] = 1
 
 def score(x):
-    y = x
+    y = x.copy()
     bias = y.sum()
     y *= y
-    mse = y.sum()
-    return (bias, mse)
+    sse = y.sum()
+    return (bias, sse)
 
 #--------------------------------------------------------------
 
@@ -49,7 +49,7 @@ tstart = time.time()
 dt      = datetime.timedelta(1)
 nx      = 1536
 ny      =  768
-nlayer  =   20
+nlayer  =   22
 nlead   =    6
 
 # for climatology -- epoch has the class
@@ -71,6 +71,26 @@ print('time after getting joblib ', tmp-tstart, flush=True)
 
 Xavg   = np.zeros((ny, nx, nlayer), dtype=np.float32)
 Xdata  = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
+clat  = np.zeros((ny, nx), dtype=np.float32)
+slat  = np.zeros((ny, nx), dtype=np.float32)
+
+# to work with latitudes
+llfile = nc.Dataset('thinned/flx.19920101.nc','r')
+lats = llfile.variables['latitude'][:]
+llfile.close()
+rads = np.radians(lats)
+c = np.cos(rads)
+s = np.sin(rads)
+#orig
+#for j in range(0,ny):
+#    clat[j,:] = c
+#    slat[j,:] = s
+#From gemini:
+clat = np.tile(c[:, np.newaxis], (1, nx))
+slat = np.tile(s[:, np.newaxis], (1, nx))
+print("cos ",clat.max(), clat.min() )
+print("sin ",slat.max(), slat.min() )
+
 
 tag   = datetime.datetime(1994,1,4)
 tag   = datetime.datetime(2007,1,2)
@@ -117,20 +137,20 @@ while (tag < datetime.datetime(2009,12,31)):
   Xdata[0,:,:,17] = sin(2*(tag-start)/dt * 2.*pi/365.2422)
   Xdata[0,:,:,18] = cos(3*(tag-start)/dt * 2.*pi/365.2422)
   Xdata[0,:,:,19] = sin(3*(tag-start)/dt * 2.*pi/365.2422)
+  Xdata[0,:,:,20] = clat
+  Xdata[0,:,:,21] = slat
   
-  # Remove climatology so as to have anomalies
+  # Remove climatology so as to have anomalies for the prediction
   Xdata -= Xavg
   # Seas-only case
-  #for jjj in range(0, nlayer):
-  #    Xdata[0,:,:,jjj] *= seas
+  for jjj in range(0, nlayer):
+      Xdata[0,:,:,jjj] *= seas
 
   # hard-wired scaling:
   scale =  [1, 20, 36, 25, 2.e-2, 500, 600, 50, 2.e-4,
-          5000,  750, 500, 380, 330, 1, 1, 1, 1, 1, 1]
+          5000,  750, 500, 380, 330, 1, 1, 1, 1, 1, 1, 1, 1]
   for l in range(0,nlayer):
       Xdata[0,:,:,l] /= scale[l]
-
-  #debug: sys.exit(0)
 
   if (seas.max() != 1 or seas.min() != 0):
     print("seas bollixed",seas.max(), seas.min() )
@@ -151,8 +171,6 @@ while (tag < datetime.datetime(2009,12,31)):
     Xpred[0,:,:,i] *= scale[nvar]
   #debug: print("unscaled anomaly ",Xpred.max(), Xpred.min() , flush=True)
 
-  anomaly = copy.deepcopy(Xpred)
-
   # add back in the climatology for each week
   for i in range(0, nlead):
     Xpred[0,:,:,i] += Xavg[:,:,nvar]
@@ -162,8 +180,8 @@ while (tag < datetime.datetime(2009,12,31)):
   #--------------------------------------------------------------------
 
   #Unscale and re-add average
-  persist = Xdata[0,:,:,nvar].squeeze()
-  persist *= scale[nvar]
+  persist = Xdata[0,:,:,nvar].copy() * scale[nvar]
+  #persist *= scale[nvar]
   persist += Xavg[:,:,nvar]
 
   if (nvar == 0):
@@ -177,7 +195,7 @@ while (tag < datetime.datetime(2009,12,31)):
     flx = nc.Dataset('thinned/week2.'+tagp.strftime("%Y%m%d")+'.nc')
     if (nvar == 0):
       Xobs = flx.variables['ICEC'][:,:]
-      ice_bounds(Xpred)
+      ice_bounds(Xpred[0,:,:,week-1])
       ice_bounds(Xclimo)
       ice_bounds(Xobs)
     elif (nvar == 1):
@@ -192,22 +210,22 @@ while (tag < datetime.datetime(2009,12,31)):
     fig, ax = plt.subplots(1, 3, figsize=(15, 5))
 
     # climatology
-    im0 = ax[0].imshow(Xclimo.squeeze(), cmap='seismic', origin='lower')
+    im0 = ax[0].imshow(Xclimo.squeeze()*seas, cmap='seismic', origin='lower')
     ax[0].set_title("Climatology")
     fig.colorbar(im0, ax=ax[0])
 
     # prediction
-    im1 = ax[1].imshow(Xpred[0,:,:,week-1].squeeze(), cmap='seismic', origin='lower')
+    im1 = ax[1].imshow(Xpred[0,:,:,week-1].squeeze()*seas, cmap='seismic', origin='lower')
     ax[1].set_title("Prediction")
     fig.colorbar(im1, ax=ax[1])
 
     # observed
-    im2 = ax[2].imshow(Xobs.squeeze(), cmap='seismic', origin='lower')
+    im2 = ax[2].imshow(Xobs.squeeze()*seas, cmap='seismic', origin='lower')
     ax[2].set_title("Observed")
     fig.colorbar(im2, ax=ax[2])
 
     plt.tight_layout()
-    plt.savefig(f'fcst{week:d}_'+tag.strftime("%Y%m%d")+'.png')
+    plt.savefig(f'fcst{week:d}_'+tag.strftime("%Y%m%d")+'.gif')
     plt.close()
 
 
@@ -215,27 +233,33 @@ while (tag < datetime.datetime(2009,12,31)):
 
     delta_persist = persist - Xobs
     delta_persist *= seas
-    im0 = ax[0].imshow(delta_persist, cmap = 'seismic', origin='lower', vmin=-1, vmax = 1)
-    ax[0].set_title(tag.strftime("%Y%m%d")+' Persist - obs')
-    fig.colorbar(im0, ax=ax[0])
 
     delta_fcst = Xpred[0,:,:,week-1].squeeze() - Xobs
     delta_fcst *= seas
-    im1 = ax[1].imshow(delta_fcst, cmap = 'seismic', origin='lower', vmin=-1, vmax = 1)
-    ax[1].set_title(tagp.strftime("%Y%m%d")+' Forecast - obs')
-    fig.colorbar(im1, ax=ax[1])
 
     delta_climo = Xclimo - Xobs
     delta_climo *= seas
-    im2 = ax[2].imshow(delta_climo, cmap = 'seismic', origin='lower', vmin=-1, vmax = 1)
+    
+    scale = floor(max(abs(delta_persist.max()),abs(delta_persist.min() ) ))
+    scale = max(1, scale)
+
+    im0 = ax[0].imshow(delta_persist, cmap = 'seismic', origin='lower', vmin=-1*scale, vmax = 1*scale)
+    ax[0].set_title(tag.strftime("%Y%m%d")+' Persist - obs')
+    fig.colorbar(im0, ax=ax[0])
+
+    im1 = ax[1].imshow(delta_fcst, cmap = 'seismic', origin='lower', vmin=-1*scale, vmax = 1*scale)
+    ax[1].set_title(tagp.strftime("%Y%m%d")+' Forecast - obs')
+    fig.colorbar(im1, ax=ax[1])
+
+    im2 = ax[2].imshow(delta_climo, cmap = 'seismic', origin='lower', vmin=-1*scale, vmax = 1*scale)
     ax[2].set_title(tagp.strftime("%Y%m%d")+' Climatology - obs')
     fig.colorbar(im2, ax=ax[2])
 
     plt.tight_layout()
-    plt.savefig(f'delta{week:d}_'+tag.strftime("%Y%m%d")+'.png')
+    plt.savefig(f'delta{week:d}_'+tag.strftime("%Y%m%d")+'.gif')
     plt.close()
 
-    sp = score(delta_persist)
+    sp    = score(delta_persist)
     sfcst = score(delta_fcst)
     sclim = score(delta_climo)
     print(tagp.strftime("%Y%m%d"),week, f'{sp[0]:8.1f}, {sp[1]:8.1f}', '  ', 

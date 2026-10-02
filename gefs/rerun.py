@@ -30,14 +30,14 @@ print(nvar, nametag, final, flush=True)
 
 # Acquire data -- in time range of interest -- RG: argument to be
 #Quick:
-start  = datetime.datetime(2009,1,6)
-end    = datetime.datetime(2010,3,30)
+#start  = datetime.datetime(2009,1,6)
+#end    = datetime.datetime(2010,3,30)
 #First decade:
 #start = datetime.datetime(2007,1,2)
 #end   = datetime.datetime(2016,12,31)
 #Second decade:
-#start = datetime.datetime(2016,1,5)
-#end   = datetime.datetime(2025,12,31)
+start = datetime.datetime(2016,1,5)
+end   = datetime.datetime(2025,12,31)
 
 # ---- From here down should not need to be changed between different runs -----
 dt      = datetime.timedelta(1)
@@ -128,7 +128,7 @@ while(tag <= end ):
 
 # hard-wire scaling:
 r = [1, 20, 36, 25, 2.e-2, 500, 600, 50, 2.e-4,
-        5000,  750, 500, 380, 330, 1, 1, 1, 1, 1, 1]
+        5000,  750, 500, 380, 330, 1, 1, 1, 1, 1, 1, 1, 1]
 
 for l in range(0,nlayer):
     Xdata[:,:,:,l] /= r[l]
@@ -194,7 +194,7 @@ early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
 #---------------------------------------------------------------------
 # Now ready to iteratively fit the model, plot the next week's prediction, permute evaluate it
 
-for period in range(0, 64):
+for period in range(0, 16):
   history = unet.fit(
     Xtrain, ytrain,
     validation_data=(Xval, yval),
