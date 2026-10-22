@@ -4,7 +4,6 @@ separate from processing for gridded data in a series due to matrix operations
 Summations optimized by Gemini
 
 """
-#from math import sin, cos
 import numpy as np
 import scipy
 
@@ -14,50 +13,26 @@ def sssum(freq1, freq2, n, n0 = 0):
   t = np.arange(n0, n0 + n)
   return float(np.sum(np.sin(freq1 * t) * np.sin(freq2 * t)))
 
-  #tsum = 0.
-  #for i in range(n0, n0+n):
-  #  tsum += sin(freq1*i)*sin(freq2*i)
-  #return tsum
-
 def scsum(freq1, freq2, n, n0 = 0):
   ''' scsum -- sum of sin(omega1*t)*cos(omega2*t) terms '''
   t = np.arange(n0, n0 + n)
   return float(np.sum(np.sin(freq1*t) * np.cos(freq2*t)))
-
-  #tsum = 0.
-  #for i in range(n0, n0+n):
-  #  tsum += sin(freq1*i)*cos(freq2*i)
-  #return tsum
 
 def ccsum(freq1, freq2, n, n0 = 0):
   ''' ccsum -- sum of cos(omega1*t)*cos(omega2*t) terms '''
   t = np.arange(n0, n0 + n)
   return float(np.sum(np.cos(freq1*t) * np.cos(freq2*t)))
 
-  #tsum = 0.
-  #for i in range(n0, n0+n):
-  #  tsum += cos(freq1*i)*cos(freq2*i)
-  #return tsum
-
 def sumsin(freq, t, n):
   ''' sumsin -- sum of sin(omega*t), t = vector '''
   t = np.arange(0, n)
   return float(np.sum(np.sin(freq*t)))
-
-  #tsum = 0.
-  #for i in range(0,n):
-  #  tsum += sin(freq*t[i])
-  #return tsum
 
 def sumcos(freq, t, n):
   ''' sumcos -- sum of cos(omega*t), t = vector '''
   t = np.arange(0, n)
   return float(np.sum(np.cos(freq*t)))
 
-  #tsum = 0.
-  #for i in range(0,n):
-  #  tsum += cos(freq*t[i])
-  #return tsum
 #***********************************************************----------!!
 
 def sinsum(n, freq, n0 = 0):
@@ -65,20 +40,10 @@ def sinsum(n, freq, n0 = 0):
   t = np.arange(n0, n0 + n)
   return float(np.sum(np.sin(freq*t)))
 
-  #tsum = 0.
-  #for i in range(n0,n0+n):
-  #  tsum += sin(freq*i)
-  #return tsum
-
 def cossum(n, freq, n0 = 0):
   ''' cossum -- sum of cos(omega*t), t = regular '''
   t = np.arange(n0, n0 + n)
   return float(np.sum(np.cos(freq*t)))
-
-  #tsum = 0.
-  #for i in range(n0,n0+n):
-  #  tsum += cos(freq*i)
-  #return tsum
 
 #***********************************************************----------!!
 # x is the data vector, a, b are cos, sin amplitudes, respectively

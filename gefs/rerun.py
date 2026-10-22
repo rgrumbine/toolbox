@@ -108,6 +108,7 @@ while(tag <= end ):
   Xdata[count,:,:,11] = flx.variables['z500mb'][:,:]
   Xdata[count,:,:,12] = flx.variables['z700mb'][:,:]
   Xdata[count,:,:,13] = flx.variables['z850mb'][:,:]
+  flx.close()
 
   Xdata[count,:,:,14] = cos(  (tag-ref_date)/dt * 2.*pi/365.2422)
   Xdata[count,:,:,15] = sin(  (tag-ref_date)/dt * 2.*pi/365.2422)
@@ -145,8 +146,8 @@ print('split, count ',split, count, flush=True)
 #debug: exit(0)
 
 # RG: Due to memory limits it would be better to go with not copying the data
-Xtrain = np.zeros((split, ny, nx, nlayer),dtype=np.float32)
-Xval   = np.zeros((count-split-nlag, ny, nx, nlayer),dtype=np.float32)
+#Xtrain = np.zeros((split, ny, nx, nlayer),dtype=np.float32)
+#Xval   = np.zeros((count-split-nlag, ny, nx, nlayer),dtype=np.float32)
 ytrain = np.zeros((split, ny, nx, nlag),dtype=np.float32)
 yval   = np.zeros((count-split-nlag, ny, nx, nlag),dtype=np.float32)
 

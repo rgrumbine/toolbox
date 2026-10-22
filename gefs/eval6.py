@@ -28,7 +28,7 @@ import netCDF4 as nc
 #import tensorflow as tf
 import joblib
 #--------------------------------------------------------------
-from epoch import climate_trim2007
+from epoch2 import climate_trim2007
 #--------------------------------------------------------------
 def ice_bounds(x):
     x[x < 0.15] = 0
@@ -130,7 +130,7 @@ while (tag < datetime.datetime(2009,12,31)):
   Xdata[0,:,:,13] = flx.variables['z850mb'][:,:]
   flx.close()
 
-  # RG: Note that start is the epoch for forecasting, 19940101
+  # RG: Note that start is the epoch for forecasting
   Xdata[0,:,:,14] = cos(  (tag-start)/dt * 2.*pi/365.2422)
   Xdata[0,:,:,15] = sin(  (tag-start)/dt * 2.*pi/365.2422)
   Xdata[0,:,:,16] = cos(2*(tag-start)/dt * 2.*pi/365.2422)
@@ -260,10 +260,14 @@ while (tag < datetime.datetime(2009,12,31)):
     plt.close()
 
     sp    = score(delta_persist)
-    sfcst = score(delta_fcst)
-    sclim = score(delta_climo)
+    spfcst = score(delta_fcst)
+    spclim = score(delta_climo)
+    if (spclim[1] > 1e4):
+      sp     /= seas.sum()
+      spfcst /= seas.sum()
+      spclim /= seas.sum()
     print(tagp.strftime("%Y%m%d"),week, f'{sp[0]:8.1f}, {sp[1]:8.1f}', '  ', 
-            f'{sfcst[0]:8.1f}, {sfcst[1]:8.1f}', '  ', f'{sclim[0]:8.1f}, {sclim[1]:8.1f}')
+            f'{spfcst[0]:8.1f}, {spfcst[1]:8.1f}', '  ', f'{spclim[0]:8.1f}, {spclim[1]:8.1f}')
     #debug: print('    ', week,delta_persist.max(), delta_fcst.max(), delta_climo.max() )
 
   tag += 7*dt

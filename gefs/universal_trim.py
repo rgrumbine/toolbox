@@ -90,6 +90,7 @@ while(tag <= end ):
   Xdata[count,:,:,11] = flx.variables['z500mb'][:,:]
   Xdata[count,:,:,12] = flx.variables['z700mb'][:,:]
   Xdata[count,:,:,13] = flx.variables['z850mb'][:,:]
+  flx.close()
 
   Xdata[count,:,:,14] = cos( (tag-ref_date)/dt * 2.*pi/365.2422)
   Xdata[count,:,:,15] = sin( (tag-ref_date)/dt * 2.*pi/365.2422)

@@ -1,6 +1,5 @@
 ''' class for working on epoch-based climatology '''
 import datetime
-import copy
 from math import pi
 
 import netCDF4 as nc
@@ -16,10 +15,14 @@ class epoch:
     for i in range(0, nfreq):
         freq[i] = 2.*pi/loy*(i+1)
 
-    def __init__(self, fname, nx=1536, ny=768):
+    def __init__(self, fname, nx=1536, ny=768, epoch_date = None):
         data = nc.Dataset(fname,'r')
         self.nx = nx
         self.ny = ny
+        # Gemini: Respect subclass class-attribute 'epoch' if epoch_date isn't passed
+        if epoch_date is not None:
+            self.epoch = epoch_date
+
         self.slope     = data.variables['slope'][:,:]
         self.intercept = data.variables['intercept'][:,:]
         self.ampl = np.zeros((self.nfreq, ny, nx))
@@ -37,16 +40,31 @@ class epoch:
         self.phas[3] = data.variables['cpy4_pha'][:,:]
         self.phas[4] = data.variables['cpy5_pha'][:,:]
         self.phas[5] = data.variables['cpy6_pha'][:,:]
-
+        #debug: print('phase limits 1cpy',self.phas[0].max(), self.phas[0].min(), flush=True )
 
     def climo(self, ftag):
         ''' climo(tag) -- return epoch-based climatology for date 'tag' '''
-        fsst = copy.deepcopy(self.intercept)
-        delta = (ftag - self.epoch).days
-        fsst += self.slope*delta
+        delta = (ftag - self.epoch).total_seconds()/86400.
+        #debug: print('climo ',ftag, self.epoch, delta)
+        fsst = self.intercept + self.slope*delta
+        #fsst = copy.deepcopy(self.intercept)
+        #fsst += self.slope*delta
         for i in range(0,self.nfreq):
             fsst += self.ampl[i]*np.cos(self.phas[i]*pi/180. + self.freq[i]*delta)
         return fsst
+
+    def __len__(self):
+        return len(self.x)
+
+    def __getitem__(self, idx):
+        return self.x[idx]
+
+class epoch1994(epoch):
+    epoch = datetime.datetime(1994,1,1)
+
+class epoch2007(epoch):
+    epoch = datetime.datetime(2007,1,1)
+
 
 class climate:
 
@@ -115,35 +133,35 @@ class climate_trim2007:
 
     def __init__(self):
       self.x = []
-      self.x.append( epoch('climate_2007/epoch2007_ICEC.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_FDNSSTMP.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_TMPs.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_TMP2m.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_SPFH.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_SHTFL.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_LHTFL.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_PWAT.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_LAND.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_ICEC.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_FDNSSTMP.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_TMPs.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_TMP2m.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_SPFH.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_SHTFL.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_LHTFL.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_PWAT.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_LAND.nc') )
 
-      self.x.append( epoch('climate_2007/epoch2007_PRMSL.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_HGT_200mb.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_HGT_500mb.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_HGT_700mb.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_HGT_850mb.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_PRMSL.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_HGT_200mb.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_HGT_500mb.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_HGT_700mb.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_HGT_850mb.nc') )
 
 class climate_verytrim2007:
 
     def __init__(self):
       self.x = []
-      self.x.append( epoch('climate_2007/epoch2007_ICEC.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_FDNSSTMP.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_TMPs.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_TMP2m.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_PRMSL.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_HGT_200mb.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_HGT_500mb.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_HGT_700mb.nc') )
-      self.x.append( epoch('climate_2007/epoch2007_HGT_850mb.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_ICEC.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_FDNSSTMP.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_TMPs.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_TMP2m.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_PRMSL.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_HGT_200mb.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_HGT_500mb.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_HGT_700mb.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_HGT_850mb.nc') )
 
 #atm = climate()
 #

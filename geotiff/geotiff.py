@@ -13,7 +13,7 @@ print(data.max(), data.min() )
 
 # 2. Define spatial reference parameters
 # - Top-left origin coordinates (X, Y) in your map units (e.g., longitude/latitude or meters)
-west, north = 0.0, 90.-1./24
+west, north = 0.0, -90.+1./24
 
 # - Pixel resolution (cell size in X and Y directions)
 pixel_size_x, pixel_size_y = 1./12, 1./12
