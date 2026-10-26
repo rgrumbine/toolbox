@@ -30,8 +30,10 @@ print(nvar, nametag, final, flush=True)
 
 # Acquire data -- in time range of interest -- RG: argument to be
 #Quick:
-start  = datetime.datetime(2009,1,6)
-end    = datetime.datetime(2014,10,31)
+#start  = datetime.datetime(2009,1,6)
+#end    = datetime.datetime(2014,7,31)
+start  = datetime.datetime(2014,1,7)
+end    = datetime.datetime(2019,5,31)
 #First decade:
 #start = datetime.datetime(2007,1,2)
 #end   = datetime.datetime(2016,12,31)
@@ -191,6 +193,7 @@ early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
 # Now ready to iteratively fit the model, plot the next week's prediction, permute evaluate it
 
 for period in range(0, 128):
+  print('period ',period,flush=True)
   history = unet.fit(
     Xtrain, ytrain,
     validation_data=(Xval, yval),
@@ -210,6 +213,7 @@ for period in range(0, 128):
   print(f"past joblib memory usage: {current / 10**6} Mb")
   print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
+  print("done with period {period:d}")
   #debug: sys.exit(0)
 
 #--------------------------------------------------------------------------------
@@ -218,7 +222,7 @@ for period in range(0, 128):
 
 #--------------------------------------------------------------------------------
   # permutation evaluation of importance
-  print(f"\n\nPeriod {period:02d} importances by information layer")
-  permute(unet, Xval, yval, nlayer)
+  #print(f"\n\nPeriod {period:02d} importances by information layer")
+  #permute(unet, Xval, yval, nlayer)
 
 #---------------------------------------------------------------------

@@ -76,9 +76,11 @@ tag   = datetime.datetime(1994,1,4)
 tag   = datetime.datetime(2007,1,2)
 tag   = datetime.datetime(2010,1,5)
 tag   = datetime.datetime(2015,1,6)
-#while (tag < datetime.datetime(2025,12,31)):
-while (tag < datetime.datetime(2015,12,31)):
+tag   = datetime.datetime(2020,1,7)
 #while (tag < datetime.datetime(2010,12,31)):
+#while (tag < datetime.datetime(2015,12,31)):
+while (tag < datetime.datetime(2020,12,31)):
+#while (tag < datetime.datetime(2025,12,31)):
 
   for i in range(0, len(atm.x)):
       Xavg[:,:,i] = atm.x[i].climo(tag)
