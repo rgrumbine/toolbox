@@ -32,8 +32,10 @@ print(nvar, nametag, final, flush=True)
 #Quick:
 #start  = datetime.datetime(2009,1,6)
 #end    = datetime.datetime(2014,7,31)
-start  = datetime.datetime(2014,1,7)
-end    = datetime.datetime(2019,5,31)
+#start  = datetime.datetime(2014,1,7)
+#end    = datetime.datetime(2019,5,31)
+start  = datetime.datetime(2019,1,1)
+end    = datetime.datetime(2024,3,31)
 #First decade:
 #start = datetime.datetime(2007,1,2)
 #end   = datetime.datetime(2016,12,31)
