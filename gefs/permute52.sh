@@ -3,7 +3,7 @@
 #SBATCH -J perm
 #SBATCH -e perm.err
 #SBATCH -o perm.out
-#SBATCH -t 0:55:00
+#SBATCH -t 0:35:00
 #SBATCH -q batch
 #SBATCH -A marine-cpu
 #SBATCH --nodes=1
