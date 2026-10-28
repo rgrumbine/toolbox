@@ -67,7 +67,10 @@ cs = ax.pcolormesh(lons, lats, data,
                          cmap = cmap,
                          transform= proj )
 cb = plt.colorbar(cs, extend='both', orientation='horizontal', shrink=0.5, pad=.04)
-title = sys.argv[2]
+try:
+    title = sys.argv[2]
+except:
+    title = "Sea ice concentration"
 cb.set_label(title, fontsize=12)
 
 plt.savefig("scalar."+f"{domain:d}"+".png")
