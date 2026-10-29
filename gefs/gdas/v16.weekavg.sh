@@ -23,7 +23,7 @@
 
 #wcoss2: 
 source $HOME/rg/env3.13/bin/activate
-cd $HOME/noscrub/thinned
+cd $HOME/noscrub/thinned.v16
 #==================================================================
 
 #RG: make end date an argument

@@ -95,7 +95,7 @@ while (tag < datetime.datetime.today() ):
   print('time after computing climatology ', tmp-tstart, flush=True)
 
   # RG: In general this will be the averaged GDAS file
-  flx = nc.Dataset('thinned/week2.'+tag.strftime("%Y%m%d")+'.nc')
+  flx = nc.Dataset('thinned.v17/week2.'+tag.strftime("%Y%m%d")+'.nc')
   Xdata[0,:,:,0] = flx.variables['ICEC'][:,:]
   print("icec ",Xdata[0,:,:,0].max(), Xdata[0,:,:,0].min() )
   
@@ -175,7 +175,7 @@ while (tag < datetime.datetime.today() ):
 
   #--------------------------------------------------------------------
   # Get the lat-lons
-  flx = nc.Dataset('thinned/flx.'+tag.strftime("%Y%m%d")+'.nc')
+  flx = nc.Dataset('thinned.v17/flx.'+tag.strftime("%Y%m%d")+'.nc')
   lats = flx.variables['latitude'][:]
   lons = flx.variables['longitude'][:]
   flx.close()
