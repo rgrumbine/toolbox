@@ -79,10 +79,11 @@ Xdata  = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
 
 #tag   = datetime.datetime(2025,9,16)
 #tag   = datetime.datetime(2026,5,19)
-tag   = datetime.datetime(2026,9,14)
+#tag   = datetime.datetime(2026,9,14)
+tag = datetime.datetime.today() - 6*dt 
 #while (tag < datetime.datetime(2025,9,21)):
 #while (tag < datetime.datetime(2026,5,25)):
-while (tag < datetime.datetime(2026,9,21)):
+while (tag < datetime.datetime.today() ):
 
   # RG: change to enumerate
   for i,item in enumerate(atm.x):
@@ -93,7 +94,7 @@ while (tag < datetime.datetime(2026,9,21)):
   tmp = time.time()
   print('time after computing climatology ', tmp-tstart, flush=True)
 
-  # RG: In general this will be the GDAS file
+  # RG: In general this will be the averaged GDAS file
   flx = nc.Dataset('thinned/week2.'+tag.strftime("%Y%m%d")+'.nc')
   Xdata[0,:,:,0] = flx.variables['ICEC'][:,:]
   print("icec ",Xdata[0,:,:,0].max(), Xdata[0,:,:,0].min() )
