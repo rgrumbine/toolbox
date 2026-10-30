@@ -1,3 +1,10 @@
+'''
+Compute the weekly average files for GDAS v16
+
+Robert Grumbine
+30 October 2026
+'''
+
 import os
 import datetime
 

@@ -1,0 +1,31 @@
+reqt.txt          -- required python modules
+
+# Links to the climate directory and the directory with week-averaged files for inpu
+climate_2007
+thinned
+
+# Extract needed variables from gdas archives and create files for input to weekavg
+flxget
+prsget
+v16.extract.sh
+v17.extract.sh
+
+# Make weekly average input files for the forecast program
+v16.weekavg.py
+v16.weekavg.sh
+v17.weekavg.py
+v17.weekavg.sh
+
+# Conduct 6 week forecast with v17 or replay
+fcst6.py
+fcst6.sh
+
+# Conduct 52 week forecast with v17 or replay inupts
+v17.fcst52.py
+v17.fcst52.sh
+
+# Plot NH from netcdf output of the fcst
+plot_fcst.py
+
+Robert Grumbine
+30 October 2026

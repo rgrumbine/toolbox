@@ -1,3 +1,10 @@
+'''
+Plot in the northern hemisphere a week's forecast
+
+Robert Grumbine
+30 October 2026
+'''
+
 import sys
 
 import numpy as np
@@ -14,6 +21,7 @@ import rasterio
 from rasterio.transform import from_origin
 from scipy.interpolate import griddata
 
+# This is in ocean_ice_evaluation/plotting -- add to your PYTHONPATH
 from regions import *
 
 matplotlib.use('agg')

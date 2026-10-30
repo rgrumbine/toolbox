@@ -19,6 +19,9 @@
 #PBS -l walltime=0:09:00
 #PBS -l select=1:ncpus=1:mem=16GB
 
+# Robert Grumbine
+# 30 October 2026
+
 #ursa
 #source $HOME/rg/env3.13/bin/activate
 #export PYTHONPATH=$HOME/rgdev/toolbox/gefs

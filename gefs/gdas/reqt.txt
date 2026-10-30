@@ -1,4 +1,4 @@
-joblib==1.5.1
+joblib
 matplotlib
 netCDF4 
 numpy 
@@ -7,3 +7,4 @@ dill
 scipy
 rasterio
 cartopy
+#Robert Grumbine 30 October 2026
