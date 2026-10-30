@@ -5,11 +5,9 @@ Robert Grumbine
 30 October 2026
 '''
 import copy
-import datetime
 from math import floor, ceil
 
 import numpy as np
-import netCDF4 as nc
 
 import cartopy.crs as ccrs
 import matplotlib
