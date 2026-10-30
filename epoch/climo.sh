@@ -9,6 +9,9 @@
 #SBATCH -N 1
 #SBATCH --mem=8g
 
+# Robert Grumbine
+# 30 October 2026
+
 source $HOME/rg/env3.13/bin/activate
 
 cd /home/Robert.Grumbine/rgdev/toolbox/epoch/

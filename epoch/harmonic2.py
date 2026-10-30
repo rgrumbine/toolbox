@@ -3,6 +3,9 @@ processing for simple time series of grids
 separate from processing for gridded data in a series due to matrix operations
 Summations optimized by Gemini
 
+Robert Grumbine
+30 October 2026
+
 """
 import numpy as np
 import scipy

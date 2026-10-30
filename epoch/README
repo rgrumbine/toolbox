@@ -1,0 +1,28 @@
+ncoutput.py     -- writing .nc output
+epoch.py        -- epoch class (copy of file in toolbox/gefs)
+functions.py    -- utility functions
+
+# Make maps from epochal climatology file
+maps.py
+map2007.py
+
+# Compute climatology for given dates and compare
+days.py
+
+# Versions of harmonic analysis, #3 includes simultaneous solution for trends
+harmonic_grid.py
+harmonic2.py
+harmonic3.py
+
+
+# Compute harmonics separately from slope/intercept
+climo.py
+climo.sh
+
+# Solve for harmonics, slope, intercept simultaneously
+climo_trend.py
+climo_trend.sh
+
+
+Robert Grumbine
+30 October 2026

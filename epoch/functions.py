@@ -1,5 +1,8 @@
 '''
 # collection bin for miscellaneous functions
+
+Robert Grumbine
+30 October 2026
 '''
 import copy
 import datetime
