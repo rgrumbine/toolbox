@@ -29,9 +29,6 @@ rerun.py           -- universal_trim2007 but with sin(lat), cos(lat),
                          network. 'trim' climatology
 rerun.sh           -- run rerun.py
 
-eval6.py           -- evaluate rerun.py results
-eval6.sh           -- run above
-
 sst.py             -- from rerun.py, tailored to sst
 sst.sh             -- running above
 
