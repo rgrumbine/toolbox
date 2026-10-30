@@ -1,4 +1,8 @@
-''' class for working on epoch-based climatology '''
+''' class for working on epoch-based climatology 
+Robert Grumbine
+24 September 2026
+'''
+
 import datetime
 from math import pi
 

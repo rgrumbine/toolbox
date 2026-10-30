@@ -1,4 +1,8 @@
-''' unet for GEFS sea ice prediction from many atmospheric fields '''
+''' unet for GEFS sea ice prediction from many atmospheric fields 
+13 week predicton, not using sin, cos(lat)
+Robert Grumbine
+29 September 2026
+'''
 
 import sys
 import os

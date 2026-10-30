@@ -1,3 +1,8 @@
+"""
+Robert Grumbine
+30 October 2026
+"""
+
 import os
 from math import sin, cos, pi, ceil
 import datetime

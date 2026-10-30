@@ -1,4 +1,8 @@
-''' unet for GEFS sea ice prediction from many atmospheric fields '''
+''' 
+unet for GEFS sea ice prediction from many atmospheric fields 
+Robert Grumbine
+24 September 2026
+'''
 
 import numpy as np
 import matplotlib.pyplot as plt

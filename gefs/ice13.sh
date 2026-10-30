@@ -13,6 +13,8 @@
 ##SBATCH --mem=328g
 #SBATCH --mem=128g
 
+# Robert Grumbine
+# 29 September 2026
 
 source $HOME/rg/env3.13/bin/activate
 export PYTHONPATH=/home/Robert.Grumbine/rgdev/toolbox/gefs

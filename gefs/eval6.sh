@@ -11,6 +11,8 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=16g
 
+# Robert Grumbine
+# 29 September 2026
 
 source $HOME/rg/env3.13/bin/activate
 export PYTHONPATH=/home/Robert.Grumbine/rgdev/toolbox/gefs

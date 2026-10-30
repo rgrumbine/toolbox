@@ -21,5 +21,34 @@ eval6.sh           -- control script for eval6.py
 
 universal_trim2007.py -- universal_trim6 but for 2007 climatology
  
-rerun.py           -- universal_trim2007 but with sin(lat), cos(lat), and land masking; for a clean retraining of the network.
+
+below noted 30 October 2026 
+
+rerun.py           -- universal_trim2007 but with sin(lat), cos(lat), 
+                         and land masking; for a clean retraining of the 
+                         network. 'trim' climatology
+rerun.sh           -- run rerun.py
+
+eval6.py           -- evaluate rerun.py results
+eval6.sh           -- run above
+
+sst.py             -- from rerun.py, tailored to sst
+sst.sh             -- running above
+
+ice13.py           -- from rerun.py, 'verytrim' climatology, for 13 week ice prediction
+ice13.sh           -- run above
+eval13.py          -- evaluate the quality of ice13 model, 'verytrim': 
+                          RG stats and graphics
+eval13.sh          -- run above
+
+
+ice52.py           -- from ice13.py, 'verytrim' climatology, for 52 week ice prediction
+ice52.sh           -- run above
+eval52.py          -- evaluate the quality of ice52 model, 'verytrim': 
+                          RG stats and graphics
+eval52.sh          -- run above
+permute52.py       -- offline evaluation of permutation importance of model inputs
+permute52.sh       -- run above
+
+score.py           -- run on output of eval*.py to find count of wins
 

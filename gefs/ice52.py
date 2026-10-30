@@ -1,4 +1,7 @@
-''' unet for GEFS sea ice prediction from many atmospheric fields '''
+''' unet for GEFS sea ice prediction from many atmospheric fields 
+Robert Grumbine
+30 October 2026
+'''
 
 import sys
 import os

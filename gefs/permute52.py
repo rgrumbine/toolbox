@@ -1,4 +1,7 @@
-''' unet for GEFS sea ice prediction from many atmospheric fields '''
+''' permutation evaluation of importance of input variables
+Robert Grumbine
+30 October 2026
+'''
 
 import sys
 import os

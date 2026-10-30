@@ -11,6 +11,9 @@ rescale (ic-climo)/scale
 get model
 make prediction
 write out .nc
+
+Robert Grumbine
+30 October 2026
 '''
 
 import sys

@@ -1,16 +1,7 @@
 '''
-get date of IC / to forecast from
-get climatology
-compute climatology for date
-
-get IC (will be input netcdf of required files, but for now read in a week):
-  find week
-  read in for ic
-rescale (ic-climo)/scale
-
-get model
-make prediction
-write out .nc
+get model and evaluate it for given period
+Robert Grumbine
+29 September 2026
 '''
 
 import sys

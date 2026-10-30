@@ -1,16 +1,7 @@
 '''
-get date of IC / to forecast from
-get climatology
-compute climatology for date
+Robert Grumbine
+29 September 2026
 
-get IC (will be input netcdf of required files, but for now read in a week):
-  find week
-  read in for ic
-rescale (ic-climo)/scale
-
-get model
-make prediction
-write out .nc
 '''
 
 import sys
@@ -28,7 +19,7 @@ import netCDF4 as nc
 #import tensorflow as tf
 import joblib
 #--------------------------------------------------------------
-from epoch2 import climate_trim2007
+from epoch import climate_trim2007
 #--------------------------------------------------------------
 def ice_bounds(x):
     x[x < 0.15] = 0

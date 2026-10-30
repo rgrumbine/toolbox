@@ -1,6 +1,11 @@
+'''
+Scan output of eval for wins by ai over persistence, climatology and wins of climatology over persistence
+Robert Grumbine
+30 October 2026
+'''
+
 import sys
 import datetime
-
 
 import numpy as np
 import matplotlib
