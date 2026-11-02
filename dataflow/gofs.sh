@@ -9,14 +9,15 @@ if [ ! -d $models/gofs ] ; then
         mkdir -p $models/gofs
 fi      
 cd $models/gofs
+fallback=20260901
 
 tag=`date +"%Y%m%d"`
-  tag=`expr $tag - 1`
-  tag=`$HOME/bin/dtgfix3 $tag`
-  tag=`expr $tag - 1`
-  tag=`$HOME/bin/dtgfix3 $tag`
+tag=`expr $tag - 1`
+tag=`$HOME/bin/dtgfix3 $tag`
+tag=`expr $tag - 1`
+tag=`$HOME/bin/dtgfix3 $tag`
 
-while [ $tag -gt 20250101 ]
+while [ $tag -gt $fallback ]
 do
 
   if [ ! -d gofs.$tag ] ; then

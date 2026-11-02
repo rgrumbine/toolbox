@@ -8,8 +8,9 @@ cd $HOME/rgdev/edges/
 #Wcoss2:  
 #RG: better to use prod_envir, but dev/dcom is issue
 base=/lfs/h1/ops/dev/dcom/
+fallback=20260901
 
-tag=20241231
+tag=$fallback
 
 while [ $tag -le `date +"%Y%m%d"` ]
 do

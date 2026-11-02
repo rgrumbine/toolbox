@@ -3,7 +3,8 @@
 set -e
 echo zzz entered gefs_clean.sh
 
-tag=20230501
+fallback=20260901
+tag=$fallback
 end=`date +"%Y%m%d"`
 #end=20220609
 
