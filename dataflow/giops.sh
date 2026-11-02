@@ -16,7 +16,8 @@ tag=`date +"%Y%m%d"`
   tag=`expr $tag - 1`
   tag=`$HOME/bin/dtgfix3 $tag`
 
-while [ $tag -gt 20231120 ]
+fallback=20260901
+while [ $tag -gt $fallback ]
 do
 
   if [ ! -d giops.$tag ] ; then

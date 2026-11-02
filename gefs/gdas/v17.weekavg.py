@@ -1,6 +1,4 @@
-import sys
 import os
-from math import sin, cos, pi, ceil
 import datetime
 
 import numpy as np
@@ -8,26 +6,30 @@ import netCDF4 as nc
 
 # Acquire basic data and average them
 end   = datetime.datetime.today()
+#end   = datetime.datetime(2026,9,21)
 dt    = datetime.timedelta(1)
-start = datetime.datetime(1980,1,1)
-tmp = datetime.datetime(2026,6,16)
-nwk = (tmp - start)/dt/7
-nwk = ceil(nwk)
-start += nwk*dt*7
-#debug: print("start = ",start, flush=True)
-#debug: sys.exit(0)
-
+start = end - 6*dt
 
 nx = 1536
 ny =  768
 nlayer  = 21
 
 Xdata = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
-dtype = Xdata.dtype
+Xavg  = np.zeros((ny, nx, nlayer), dtype=np.float32)
+lats  = np.zeros((ny), dtype=np.float32)
+lons  = np.zeros((nx), dtype=np.float32)
+dtype = Xavg.dtype
+#RG: extract latlon from flx and write out lat-lon
+flx = nc.Dataset('flx.'+start.strftime("%Y%m%d")+'.nc')
+lats[:] = flx.variables['latitude'][:]
+lons[:] = flx.variables['longitude'][:]
+flx.close()
+#debug: print("latitudes ",lats.max(), lats.min() )
+#debug: print("longitudes ",lons.max(), lons.min() )
+#debug: exit(0)
 
 tag   = start
-while(tag <= end - 7*dt ):
-  Xavg  = np.zeros((ny, nx, nlayer), dtype=np.float32)
+while(tag <= end ):
 
   fname = "week2."+tag.strftime("%Y%m%d")+".nc"
 
@@ -36,7 +38,8 @@ while(tag <= end - 7*dt ):
   out.createDimension('nx',nx)
 
   for count in range(0,7):
-
+    print(tag.strftime("%Y%m%d"))
+    
     prs = nc.Dataset('prs.'+tag.strftime("%Y%m%d")+'.nc')
     Xdata[0,:,:,14] = prs.variables['PRMSL_meansealevel'][0,:,:]
     Xdata[0,:,:,15] = prs.variables['HGT_1mb'][0,:,:]
@@ -50,7 +53,8 @@ while(tag <= end - 7*dt ):
     flx = nc.Dataset('flx.'+tag.strftime("%Y%m%d")+'.nc')
     Xdata[0,:,:,0] = flx.variables['ICETK_surface'][0,:,:]
     Xdata[0,:,:,1] = flx.variables['ICEC_surface'][0,:,:]
-    Xdata[0,:,:,2] = flx.variables['FDNSSTMP_surface'][0,:,:]
+    print("icec input ",Xdata[0,:,:,1].max(), Xdata[0,:,:,1].min() )
+    #v16 doesn't have: Xdata[0,:,:,2] = flx.variables['FDNSSTMP_surface'][0,:,:]
     Xdata[0,:,:,3] = flx.variables['USWRF_surface'][0,:,:]
     Xdata[0,:,:,4] = flx.variables['TMP_surface'][0,:,:]
     Xdata[0,:,:,6] = flx.variables['TMP_2maboveground'][0,:,:]
@@ -69,7 +73,15 @@ while(tag <= end - 7*dt ):
     count += 1
     tag += dt
 
-  Xavg /= 7
+  Xavg /= 7.
+  print("icec afer averaging ",Xavg[:,:,1].max(), Xavg[:,:,1].min() )
+
+  out.createVariable('latitude', dtype, ('ny') )
+  out.variables['latitude'][:] = lats[:]
+
+  out.createVariable('longitude', dtype, ('nx') )
+  out.variables['longitude'][:] = lons[:]
+
 
   out.createVariable('ICETK', dtype, ('ny', 'nx') )
   out.variables['ICETK'][:,:] = Xavg[:,:,0]
@@ -77,8 +89,8 @@ while(tag <= end - 7*dt ):
   out.createVariable('ICEC', dtype, ('ny', 'nx') )
   out.variables['ICEC'][:,:] = Xavg[:,:,1]
 
-  out.createVariable('SST', dtype, ('ny', 'nx') )
-  out.variables['SST'][:,:] = Xavg[:,:,2]
+  #v16 doesn't have: out.createVariable('SST', dtype, ('ny', 'nx') )
+  #v16 doesn't have: out.variables['SST'][:,:] = Xavg[:,:,2]
 
   out.createVariable('USWRF', dtype, ('ny', 'nx') )
   out.variables['USWRF'][:,:] = Xavg[:,:,3]

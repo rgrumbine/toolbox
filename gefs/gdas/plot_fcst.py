@@ -1,3 +1,10 @@
+'''
+Plot in the northern hemisphere a week's forecast
+
+Robert Grumbine
+30 October 2026
+'''
+
 import sys
 
 import numpy as np
@@ -14,6 +21,7 @@ import rasterio
 from rasterio.transform import from_origin
 from scipy.interpolate import griddata
 
+# This is in ocean_ice_evaluation/plotting -- add to your PYTHONPATH
 from regions import *
 
 matplotlib.use('agg')
@@ -67,7 +75,10 @@ cs = ax.pcolormesh(lons, lats, data,
                          cmap = cmap,
                          transform= proj )
 cb = plt.colorbar(cs, extend='both', orientation='horizontal', shrink=0.5, pad=.04)
-title = sys.argv[2]
+try:
+    title = sys.argv[2]
+except:
+    title = "Sea ice concentration"
 cb.set_label(title, fontsize=12)
 
 plt.savefig("scalar."+f"{domain:d}"+".png")
@@ -106,7 +117,7 @@ grid_val = griddata(
     (lons2d.ravel(), lats2d.ravel()), data.ravel(), (grid_lon, grid_lat), method='linear'
 )
 # Flip along the Y-axis so the top row corresponds to the northernmost latitude
-grid_val = np.flipud(grid_val)
+#grid_val = np.flipud(grid_val)
 
 # 4. Define the Spatial Reference System and Affine Transform
 # EPSG:4326 is standard WGS84 (Lat/Lon)

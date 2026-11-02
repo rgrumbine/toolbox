@@ -13,7 +13,7 @@ cd $HOME/noscrub/gefs/
 
 
 cyc=00
-tag=20250801
+tag=20260901
 end=`date +"%Y%m%d"`
 #end=20231231
 

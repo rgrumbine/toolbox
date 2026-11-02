@@ -1,4 +1,7 @@
-''' unet for GEFS sea ice prediction from many atmospheric fields '''
+''' unet for GEFS sea ice prediction from many atmospheric fields 
+Robert Grumbine
+24 September 2026 
+'''
 
 import sys
 import os
@@ -35,10 +38,8 @@ print(nvar, nametag, final, flush=True)
 # Acquire data -- in time range of interest -- RG: argument to be
 #start = datetime.datetime(1980,1,1)
 #end   = datetime.datetime(1989,12,31)
-#start = datetime.datetime(2007,1,2)
-#end   = datetime.datetime(2016,12,31)
-start = datetime.datetime(2016,1,5)
-end   = datetime.datetime(2025,12,31)
+start = datetime.datetime(2002,1,1)
+end   = datetime.datetime(2011,12,31)
 
 # ---- From here down should not need to be changed between different runs -----
 dt      = datetime.timedelta(1)
@@ -46,7 +47,7 @@ nx      = 1536
 ny      =  768
 nlayer  =   20
 ntarget = 1
-nlag    = 6
+nlag    = 1
 nweeks  = int((end-start)/dt/7 + 1)
 print('nweeks = ',nweeks, flush=True)
 
@@ -92,6 +93,7 @@ while(tag <= end ):
   Xdata[count,:,:,11] = flx.variables['z500mb'][:,:]
   Xdata[count,:,:,12] = flx.variables['z700mb'][:,:]
   Xdata[count,:,:,13] = flx.variables['z850mb'][:,:]
+  flx.close()
 
   Xdata[count,:,:,14] = cos( (tag-ref_date)/dt * 2.*pi/365.2422)
   Xdata[count,:,:,15] = sin( (tag-ref_date)/dt * 2.*pi/365.2422)
@@ -123,25 +125,24 @@ current, peak = tracemalloc.get_traced_memory()
 print(f"Current memory usage: {current / 10**6} Mb")
 print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
+
 # Finally, set up the training and validation data
 split = int(count*0.8 + 0.5)
+#split = 365
 print('split, count ',split, count, flush=True)
 #debug: exit(0)
 
 # RG: Due to memory limits it would be better to go with not copying the data
 Xtrain = np.zeros((split, ny, nx, nlayer),dtype=np.float32)
 Xval   = np.zeros((count-split-nlag, ny, nx, nlayer),dtype=np.float32)
-ytrain = np.zeros((split, ny, nx, nlag),dtype=np.float32)
-yval   = np.zeros((count-split-nlag, ny, nx, nlag),dtype=np.float32)
+ytrain = np.zeros((split, ny, nx, 1),dtype=np.float32)
+yval   = np.zeros((count-split-nlag, ny, nx, 1),dtype=np.float32)
 
 # Now for training and validation
 Xtrain = Xdata[:split]
-Xval   = Xdata[split:count-nlag]
-for i in range(1,nlag+1):
-  ytrain[:,:,:,i-1] = Xdata[i:split+i, :,:, nvar] # icec in next month
-
-for i in range(1,nlag+1):
-  yval[:,:,:,i-1]   = Xdata[split+i:count-nlag+i, :,:, nvar]
+Xval   = Xdata[split:count-1-nlag]
+ytrain = Xdata[1:split+1, :,:, nvar] # icec in next month
+yval   = Xdata[split+1:count-nlag, :,:, nvar]
 
 del Xdata
 
@@ -155,12 +156,12 @@ print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
 #--------------------------------------------------------------------------------
 # compile, show, and train the unet -- read in an old one if available
-if (os.path.exists(nametag+'trim6.joblib')):
+if (os.path.exists(nametag+'trim.joblib')):
   print("about to load joblib",flush=True)
-  unet = joblib.load(nametag+'trim6.joblib')
+  unet = joblib.load(nametag+'trim.joblib')
 else:
   print("building the unet model", flush=True)
-  unet = build_unet(input_shape=(ny,nx,nlayer), final = final, nchannel=nlag)
+  unet = build_unet(input_shape=(ny,nx,nlayer), final = final, nchannel=1)
   unet.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
 
 unet.summary() # print the model description
@@ -177,7 +178,7 @@ early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=1
 #---------------------------------------------------------------------
 # Now ready to iteratively fit the model, plot the next week's prediction, permute evaluate it
 
-for period in range(0, 14):
+for period in range(0, 6):
   history = unet.fit(
     Xtrain, ytrain,
     validation_data=(Xval, yval),
@@ -191,7 +192,7 @@ for period in range(0, 14):
   print(f"Peak memory usage: {peak / 10**6} Mb", flush=True)
 
   # save the unet
-  joblib.dump(unet, nametag+f"{period:02d}trim6.joblib")
+  joblib.dump(unet, nametag+f"{period:02d}trim.joblib")
   # Get memory metrics: (current, peak)
   current, peak = tracemalloc.get_traced_memory()
   print(f"past joblib memory usage: {current / 10**6} Mb")
@@ -201,7 +202,7 @@ for period in range(0, 14):
 
 #--------------------------------------------------------------------------------
   # Visualize -- scaled fields
-  #show6(unet, Xval, yval, nvar, figname=nametag+f"{period:02d}.sample6.png")
+  show(unet, Xval, yval, nvar, figname=nametag+f"{period:02d}.sample2.png")
 
 #--------------------------------------------------------------------------------
   # permutation evaluation of importance
