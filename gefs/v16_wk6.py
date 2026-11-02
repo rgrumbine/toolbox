@@ -199,7 +199,7 @@ for period in range(0, 12):
   history = unet.fit(
     Xtrain, ytrain,
     validation_data=(Xval, yval),
-    epochs=16,
+    epochs=4,
     batch_size=16,
     callbacks=[early_stopping]
   )

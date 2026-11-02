@@ -19,5 +19,5 @@ export PYTHONPATH=/home/Robert.Grumbine/rgdev/toolbox/gefs
 
 cd $PYTHONPATH
 
-time python3 eval_v16.py icev16_6.joblib 0
+time python3 eval_v16.py ice00v16_6.joblib 0
 report-mem
