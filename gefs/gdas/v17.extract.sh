@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# GDAS v16 version
+# GDAS v17 version
 # Robert Grumbine
 # 29 October 2026
 
@@ -9,7 +9,7 @@ module load intel wgrib2
 
 export HOME=/u/robert.grumbine/
 
-export COMROOT=$HOME/noscrub/gdas.v16/
+export COMROOT=$HOME/noscrub/gdas.v17/
 
 cd /u/robert.grumbine/rgdev/toolbox/gefs/gdas/ #for prsget flxget
 
@@ -21,21 +21,24 @@ do
   mm=`echo $tag | cut -c5-6`
   dd=`echo $tag | cut -c7-8`
   
-  base=$COMROOT/gdas.$tag/00/atmos/
 
   #PRS
-  if [ ! -f thinned.v16/prs.${yy}${mm}${dd}.nc ] ; then
-    wgrib2 $base/gdas.t00z.master.grb2f000 | grep -f prsget | wgrib2 -i $base/gdas.t00z.master.grb2f000 \
+  base=$COMROOT/gdas.$tag/00/analysis/atmos/
+  #/u/robert.grumbine//noscrub/gdas.v17/gdas.20261103/00/analysis/atmos/gdas.t00z.master.analysis.grib2
+  if [ ! -f thinned.v17/prs.${yy}${mm}${dd}.nc ] ; then
+    wgrib2 $base/gdas.t00z.master.analysis.grib2 | grep -f prsget | wgrib2 -i $base/gdas.t00z.master.analysis.grib2 \
 	    -new_grid gaussian 0:1536:0.234375 89.820709:768 a.grib2 
-    wgrib2 a.grib2 -netcdf thinned.v16/prs.${yy}${mm}${dd}.nc
+    wgrib2 a.grib2 -netcdf thinned.v17/prs.${yy}${mm}${dd}.nc
     rm a.grib2
   fi
     
   #FLX
-  if [ ! -f thinned.v16/flx.${yy}${mm}${dd}.nc ] ; then
-    wgrib2 $base/gdas.t00z.sfluxgrbf000.grib2 | grep -f flxget | wgrib2 -i $base/gdas.t00z.sfluxgrbf000.grib2 \
+  base=$COMROOT/gdas.$tag/00/model/atmos/master
+  #/u/robert.grumbine//noscrub/gdas.v17/gdas.20261103/00/model/atmos/master/gdas.t00z.sflux.f000.grib2
+  if [ ! -f thinned.v17/flx.${yy}${mm}${dd}.nc ] ; then
+    wgrib2 $base/gdas.t00z.sflux.f000.grib2 | grep -f flxget | wgrib2 -i $base/gdas.t00z.sflux.f000.grib2 \
 	    -new_grid gaussian 0:1536:0.234375 89.820709:768 b.grib2
-    wgrib2 b.grib2 -netcdf thinned.v16/flx.${yy}${mm}${dd}.nc
+    wgrib2 b.grib2 -netcdf thinned.v17/flx.${yy}${mm}${dd}.nc
     rm b.grib2
   fi
 

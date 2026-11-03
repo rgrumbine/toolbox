@@ -23,8 +23,8 @@
 
 #wcoss2: 
 source $HOME/rg/env3.13/bin/activate
-cd $HOME/noscrub/thinned.v16
+cd $HOME/noscrub/thinned.v17
 #==================================================================
 
 #RG: make end date an argument
-time python3 $HOME/rgdev/toolbox/gefs/gdas/v16.weekavg.py
+time python3 $HOME/rgdev/toolbox/gefs/gdas/v17.weekavg.py

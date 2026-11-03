@@ -27,9 +27,11 @@
 #export PYTHONPATH=$HOME/rgdev/toolbox/gefs
 #wcoss2
 source $HOME/rg/env3.13/bin/activate
+export EXDIR=$HOME/rgdev/toolbox/gefs/gdas
 export PYTHONPATH=$HOME/rgdev/toolbox/gefs/
 
 
 cd $PYTHONPATH/gdas
-time python3 fcst52.py iceice52.joblib 0
-report-mem
+
+time python3 $EXDIR/v17.fcst52.py iceice52.joblib 0
+#ursa: report-mem
