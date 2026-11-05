@@ -3,10 +3,10 @@
 #SBATCH -J ice52
 #SBATCH -e ice52.err
 #SBATCH -o ice52.out
-##SBATCH -t 26:55:00
-##SBATCH -q long
-#SBATCH -t 2:55:00
-#SBATCH -q batch
+#SBATCH -t 26:55:00
+#SBATCH -q long
+##SBATCH -t 2:55:00
+##SBATCH -q batch
 #SBATCH -A marine-cpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1

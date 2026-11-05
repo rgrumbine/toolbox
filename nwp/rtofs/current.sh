@@ -41,6 +41,7 @@ tag=`$HOME/bin/dtgfix3 $tag`
 #export end=20250601
 export end=20260901
 
+set -x
 cd rtofs
 while [ $tag -ge $end ]
 do
@@ -48,12 +49,14 @@ do
   yy=`echo $tag | cut -c1-4`
   mm=`echo $tag | cut -c5-6`
   dd=`echo $tag | cut -c7-8`
-  if [ ! -f $OUTDIR/out.$tag -o $overwrite == 'T' ] ; then
+  if [ ! -s $OUTDIR/out.$tag -o $overwrite == 'T' ] ; then
     echo processing $tag
     time python3 rtofs_2ds.py $yy $mm $dd > $OUTDIR/out.$tag
   else
     echo already have $tag
+    ls -l $OUTDIR/out.$tag
   fi
+
   if [ -f nwp_${tag}_000.png ] ; then
     mv nwp_${tag}_*.png $OUTDIR
   fi  

@@ -18,7 +18,7 @@ cd /home/Robert.Grumbine/rgdev/toolbox/epoch/
 
 for parm in PRMSL_meansealevel \
     PWAT_entireatmosphere_consideredasasinglelayer_ \
-    TMP_surface ICETK_surface LANDFRC_surface TMP_2maboveground SPFH_2maboveground \
+    ICETK_surface LANDFRC_surface SPFH_2maboveground \
     UGRD_10maboveground VGRD_10maboveground SHTFL_surface LHTFL_surface \
     USWRF_surface LAND_surface ICEC_surface FDNSSTMP_surface
 #for parm in PRMSL_meansealevel 
@@ -30,6 +30,21 @@ do
     mv epoch2007.nc epoch2007_${trim}.nc
   fi
 done
+
+parm=TMP_surface
+trim=TMPs
+if [ ! -f  epoch2007_${trim}.nc ] ; then
+  time python3 climo_trend.py $parm
+  mv epoch2007.nc epoch2007_${trim}.nc
+fi
+
+parm=TMP_2maboveground
+trim=TMP2m
+if [ ! -f  epoch2007_${trim}.nc ] ; then
+  time python3 climo_trend.py $parm
+  mv epoch2007.nc epoch2007_${trim}.nc
+fi
+
 
 for parm in HGT_1mb HGT_10mb HGT_200mb HGT_500mb HGT_700mb HGT_850mb 
 do

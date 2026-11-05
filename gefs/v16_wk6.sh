@@ -3,16 +3,17 @@
 #SBATCH -J ice6
 #SBATCH -e ice6.err
 #SBATCH -o ice6.out
-#SBATCH -t 7:55:00
+#SBATCH -t 23:55:00
+#SBATCH -q long
+##SBATCH -q batch
 #SBATCH -A marine-cpu
 ##SBATCH -p u1-gh
 ##SBATCH -q gpuwf
 #SBATCH -p u1-compute
-#SBATCH -q batch
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
-#SBATCH --mem=360g
+#SBATCH --mem=288g
 ##SBATCH --mem=128g
 
 # Robert Grumbine

@@ -40,11 +40,11 @@ print(nvar, nametag, final, flush=True)
 #start  = datetime.datetime(2019,1,1)
 #end    = datetime.datetime(2024,3,31)
 #First decade:
-start = datetime.datetime(2007,1,2)
-end   = datetime.datetime(2016,12,31)
+#start = datetime.datetime(2007,1,2)
+#end   = datetime.datetime(2016,12,31)
 #Second decade:
-#start = datetime.datetime(2016,1,5)
-#end   = datetime.datetime(2025,12,31)
+start = datetime.datetime(2016,1,5)
+end   = datetime.datetime(2025,12,31)
 
 # ---- From here down should not need to be changed between different runs -----
 dt      = datetime.timedelta(1)
@@ -199,7 +199,7 @@ for period in range(0, 12):
   history = unet.fit(
     Xtrain, ytrain,
     validation_data=(Xval, yval),
-    epochs=4,
+    epochs=6,
     batch_size=16,
     callbacks=[early_stopping]
   )
