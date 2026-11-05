@@ -46,7 +46,7 @@ time   $EXDIR/gefs_thin.sh   # this winds up cleaning yesterday and before,
 #While large volumes, these are disk to disk copy from com to my space
 time $EXDIR/riops.sh           # --  6.5 Gb/day, from hpss
 time $EXDIR/gofs.sh            # -- 13.3 Gb/day, from hpss
-time $EXDIR/giops.sh           # -- 28 Gb/day, from hpss 
+#time $EXDIR/giops.sh           # -- 28 Gb/day, from hpss 
 
 /opt/pbs/bin/qsub $EXDIR/rtofs_cice_copy.sh # -- 27 Gb/day, 15:45, from comroot
 

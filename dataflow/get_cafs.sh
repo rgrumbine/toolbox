@@ -1,6 +1,7 @@
 #!/bin/sh
 
 echo entered get_cafs.sh
+fallback=20261001
 
 models=$HOME/noscrub/model_intercompare/
 if [ ! -d $models/cafs ] ; then
@@ -10,7 +11,7 @@ cd $models/cafs
 
 
 base=`pwd`
-tag=20260401
+tag=$fallback
 while [ $tag -lt `date +"%Y%m%d"` ]
 do
 
