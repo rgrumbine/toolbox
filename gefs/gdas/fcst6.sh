@@ -25,7 +25,14 @@ source $HOME/rg/env3.13/bin/activate
 export PYTHONPATH=$HOME/rgdev/toolbox/gefs
 #wcoss2
 export PYTHONPATH=$HOME/rgdev/toolbox/gefs/
+export EXDIR=$PYTHONPATH/gdas
 
 
-cd $PYTHONPATH/gdas
-time python3 fcst6.py icetrim6.joblib 0
+tag=${tag:-`date +"%Y%m%d"`}
+
+# need this for links to climate, thinned directories, and the model
+cd $EXDIR
+time python3 v16fcst.py icev16_6.joblib 0
+mkdir ~/noscrub/gefs.sample/fcst.$tag
+mv fcst_*.nc ~/noscrub/gefs.sample/fcst.$tag
+
