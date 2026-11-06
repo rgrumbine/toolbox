@@ -5,10 +5,10 @@
 # 29 October 2026
 
 module load intel wgrib2
-#set -x
+
+set -x
 
 export HOME=/u/robert.grumbine/
-
 export COMROOT=$HOME/noscrub/gdas.v16/
 
 cd /u/robert.grumbine/rgdev/toolbox/gefs/gdas/ #for prsget flxget
