@@ -19,7 +19,7 @@ startdate -= 17*dt
 # First date of OIv2
 #enddate = datetime.date(1981,9,1)
 # current from here back:
-enddate = datetime.date(2024,3,1)
+enddate = datetime.date(2025,1,1)
 
 #---------------------------------------------------------
 import urllib

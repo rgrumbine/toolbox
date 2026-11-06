@@ -42,6 +42,8 @@ tag   = start
 while(tag <= end ):
 
   fname = "week2."+tag.strftime("%Y%m%d")+".nc"
+  if (os.path.exists(fname)):
+      sys.exit(0)
 
   out = nc.Dataset(fname,"w")
   out.createDimension('ny',ny)

@@ -29,10 +29,12 @@ export EXDIR=$PYTHONPATH/gdas
 
 
 tag=${tag:-`date +"%Y%m%d"`}
+yy=`echo $tag | cut -c1-4`
+mm=`echo $tag | cut -c5-6`
+dd=`echo $tag | cut -c7-8`
 
 # need this for links to climate, thinned directories, and the model
 cd $EXDIR
-time python3 v16fcst.py icev16_6.joblib 0
-mkdir ~/noscrub/gefs.sample/fcst.$tag
+time python3 v16fcst.py icev16_6.joblib 0  $yy $mm $dd
+mkdir -p ~/noscrub/gefs.sample/fcst.$tag
 mv fcst_*.nc ~/noscrub/gefs.sample/fcst.$tag
-
