@@ -27,4 +27,10 @@ cd $HOME/noscrub/thinned.v17
 #==================================================================
 
 #RG: make end date an argument
-time python3 $HOME/rgdev/toolbox/gefs/gdas/v17.weekavg.py
+tag=${tag:-`date +"%Y%m%d"`}
+
+yy=`echo $tag | cut -c1-4`
+mm=`echo $tag | cut -c5-6`
+dd=`echo $tag | cut -c7-8`
+
+time python3 $HOME/rgdev/toolbox/gefs/gdas/v17.weekavg.py $yy $mm $dd

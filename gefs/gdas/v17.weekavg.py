@@ -1,3 +1,4 @@
+import sys
 import os
 import datetime
 
@@ -5,8 +6,11 @@ import numpy as np
 import netCDF4 as nc
 
 # Acquire basic data and average them
-end   = datetime.datetime.today()
-#end   = datetime.datetime(2026,9,21)
+try:
+    end = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
+except:
+    end   = datetime.datetime.today()
+
 dt    = datetime.timedelta(1)
 start = end - 6*dt
 

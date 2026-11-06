@@ -31,7 +31,15 @@ export EXDIR=$HOME/rgdev/toolbox/gefs/gdas
 export PYTHONPATH=$HOME/rgdev/toolbox/gefs/
 
 
-cd $PYTHONPATH/gdas
+cd $EXDIR
 
-time python3 $EXDIR/v17.fcst52.py iceice52.joblib 0
+tag=${tag:-`date +"%Y%m%d"`}
+
+yy=`echo $tag | cut -c1-4`
+mm=`echo $tag | cut -c5-6`
+dd=`echo $tag | cut -c7-8`
+
+time python3 $EXDIR/v17.fcst52.py iceice52.joblib 0 $yy $mm $dd
 #ursa: report-mem
+mkdir -p ~/noscrub/gefs.sample/v17.fcst.$tag
+mv fcst_*.nc ~/noscrub/gefs.sample/v17.fcst.$tag
