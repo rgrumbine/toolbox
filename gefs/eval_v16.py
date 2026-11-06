@@ -75,14 +75,15 @@ print('time after getting joblib ', tmp-tstart, flush=True)
 Xavg   = np.zeros((ny, nx, nlayer), dtype=np.float32)
 Xdata  = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
 
-#tag   = datetime.datetime(2007,1,2)
-tag   = datetime.datetime(2010,1,5)
+tag   = datetime.datetime(2007,1,2)
+#tag   = datetime.datetime(2010,1,5)
 #tag   = datetime.datetime(2015,1,6)
+#tag   = datetime.datetime(2020,1,7)
 #tag   = datetime.datetime(2023,1,3)
-while (tag < datetime.datetime(2010,12,31)):
+#while (tag < datetime.datetime(2010,12,31)):
 #while (tag < datetime.datetime(2015,12,31)):
 #while (tag < datetime.datetime(2020,12,31)):
-#while (tag < datetime.datetime(2023,12,31)):
+while (tag < datetime.datetime(2025,12,31)):
 
   for i in range(0, len(atm.x)):
       Xavg[:,:,i] = atm.x[i].climo(tag)
