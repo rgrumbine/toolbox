@@ -14,6 +14,7 @@ export COMROOT=$HOME/noscrub/gdas.v17/
 cd /u/robert.grumbine/rgdev/toolbox/gefs/gdas/ #for prsget flxget
 
 tag=${tag:-`date +"%Y%m%d"`}
+#tag=20261010
 d=0
 while [ $d -lt 7 ] 
 do

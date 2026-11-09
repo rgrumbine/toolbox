@@ -34,7 +34,7 @@ export PYTHONPATH=$HOME/rgdev/toolbox/gefs/
 cd $EXDIR
 
 tag=${tag:-`date +"%Y%m%d"`}
-#tag=20261105
+#tag=20261108
 #while [ $tag -ge 20260708 ]
 #do
 yy=`echo $tag | cut -c1-4`

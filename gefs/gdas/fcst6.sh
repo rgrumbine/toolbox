@@ -30,7 +30,7 @@ export EXDIR=$PYTHONPATH/gdas
 cd $EXDIR
 
 tag=${tag:-`date +"%Y%m%d"`}
-#tag=20261104
+#tag=20261108
 #for tag in 20261102 20261101 20261031 20261030 20261029
 #do
 
