@@ -47,15 +47,15 @@ while (tag < end):
   #domain = 0
   #x = globe()
   #proj = ccrs.PlateCarree()
-  #domain = 1
-  #x = nh()
-  #proj = ccrs.NorthPolarStereo(central_longitude = x.central_longitude)
+  domain = 1
+  x = nh()
+  proj = ccrs.NorthPolarStereo(central_longitude = x.central_longitude)
   #domain = 2
   #x = sh()
   #proj = ccrs.SouthPolarStereo(central_longitude = x.central_longitude)
-  domain = 8
-  x = gulf_stl()
-  proj = ccrs.NorthPolarStereo(central_longitude = x.central_longitude)
+  #domain = 8
+  #x = gulf_stl()
+  #proj = ccrs.NorthPolarStereo(central_longitude = x.central_longitude)
 
   #--------------------------------------------------
   ax  = plt.axes(projection = proj)
