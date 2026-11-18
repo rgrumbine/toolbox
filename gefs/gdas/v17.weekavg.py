@@ -1,3 +1,4 @@
+import sys
 import os
 import datetime
 
@@ -5,8 +6,11 @@ import numpy as np
 import netCDF4 as nc
 
 # Acquire basic data and average them
-end   = datetime.datetime.today()
-#end   = datetime.datetime(2026,9,21)
+try:
+    end = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]) )
+except:
+    end   = datetime.datetime.today()
+
 dt    = datetime.timedelta(1)
 start = end - 6*dt
 
@@ -54,7 +58,7 @@ while(tag <= end ):
     Xdata[0,:,:,0] = flx.variables['ICETK_surface'][0,:,:]
     Xdata[0,:,:,1] = flx.variables['ICEC_surface'][0,:,:]
     print("icec input ",Xdata[0,:,:,1].max(), Xdata[0,:,:,1].min() )
-    #v16 doesn't have: Xdata[0,:,:,2] = flx.variables['FDNSSTMP_surface'][0,:,:]
+    Xdata[0,:,:,2] = flx.variables['FDNSSTMP_surface'][0,:,:]
     Xdata[0,:,:,3] = flx.variables['USWRF_surface'][0,:,:]
     Xdata[0,:,:,4] = flx.variables['TMP_surface'][0,:,:]
     Xdata[0,:,:,6] = flx.variables['TMP_2maboveground'][0,:,:]
@@ -89,8 +93,8 @@ while(tag <= end ):
   out.createVariable('ICEC', dtype, ('ny', 'nx') )
   out.variables['ICEC'][:,:] = Xavg[:,:,1]
 
-  #v16 doesn't have: out.createVariable('SST', dtype, ('ny', 'nx') )
-  #v16 doesn't have: out.variables['SST'][:,:] = Xavg[:,:,2]
+  out.createVariable('SST', dtype, ('ny', 'nx') )
+  out.variables['SST'][:,:] = Xavg[:,:,2]
 
   out.createVariable('USWRF', dtype, ('ny', 'nx') )
   out.variables['USWRF'][:,:] = Xavg[:,:,3]

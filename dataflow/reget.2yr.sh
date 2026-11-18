@@ -7,6 +7,8 @@
 #PBS -l walltime=6:00:00
 #PBS -l select=1:ncpus=1
 
+fallback=20261001
+
 ssmi_file=./b012/xx001
 amsre_file=./b021/xx254
 amsr2_file=./b021/xx248
@@ -16,8 +18,7 @@ set -x
 # Span back to 'dawn of time'
 #name change 26 Feb 2020
 #  what is now dcom_prod was dcom_us007003
-
-end_date=20260501
+end_date=$fallback
 
 start_date=`date +"%Y%m%d"`
 start_date=`expr $start_date - 1`

@@ -167,13 +167,15 @@ class climate_verytrim2007:
       self.x.append( epoch2007('climate_2007/epoch2007_HGT_700mb.nc') )
       self.x.append( epoch2007('climate_2007/epoch2007_HGT_850mb.nc') )
 
-#atm = climate()
-#
-#ny = 768
-#nx = 1536
-#Xavg = np.zeros((ny, nx, 11))
-#
-#tag = datetime.datetime(1994,1,1)
-#for i in range(0, len(atm.x)):
-#    Xavg[:,:,i] = atm.x[i].climo(tag)
-#    print(i,Xavg[:,:,i].max(), Xavg[:,:,i].min() )
+class climate_v16_2007:
+
+    def __init__(self):
+      self.x = []
+      self.x.append( epoch2007('climate_2007/epoch2007_ICEC.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_TMPs.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_TMP2m.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_PRMSL.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_HGT_200mb.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_HGT_500mb.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_HGT_700mb.nc') )
+      self.x.append( epoch2007('climate_2007/epoch2007_HGT_850mb.nc') )

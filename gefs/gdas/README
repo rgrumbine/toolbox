@@ -16,16 +16,19 @@ v16.weekavg.sh
 v17.weekavg.py
 v17.weekavg.sh
 
-# Conduct 6 week forecast with v17 or replay
-fcst6.py
+# Conduct 6 week forecast with v16
+v16fcst.py
 fcst6.sh
 
 # Conduct 52 week forecast with v17 or replay inupts
 v17.fcst52.py
 v17.fcst52.sh
 
-# Plot NH from netcdf output of the fcst
-plot_fcst.py
+# Plot NH from netcdf output 
+plot.py    -- plot a single file
+plot6.py   -- plot 6 wk forecast
+plot52.py  -- plot 52 wk forecast
 
 Robert Grumbine
 30 October 2026
+10 November 2026

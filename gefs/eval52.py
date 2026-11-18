@@ -75,16 +75,16 @@ print('time after getting joblib ', tmp-tstart, flush=True)
 Xavg   = np.zeros((ny, nx, nlayer), dtype=np.float32)
 Xdata  = np.zeros((1, ny, nx, nlayer), dtype=np.float32)
 
-tag   = datetime.datetime(1994,1,4)
+#tag   = datetime.datetime(1994,1,4)
 tag   = datetime.datetime(2007,1,2)
-tag   = datetime.datetime(2010,1,5)
-tag   = datetime.datetime(2015,1,6)
-tag   = datetime.datetime(2023,1,3)
+#tag   = datetime.datetime(2010,1,5)
+#tag   = datetime.datetime(2015,1,6)
+#tag   = datetime.datetime(2023,1,3)
 #tag   = datetime.datetime(2025,1,7)
 #while (tag < datetime.datetime(2010,12,31)):
 #while (tag < datetime.datetime(2015,12,31)):
 #while (tag < datetime.datetime(2020,12,31)):
-while (tag < datetime.datetime(2023,12,31)):
+while (tag < datetime.datetime(2024,12,31)):
 
   for i in range(0, len(atm.x)):
       Xavg[:,:,i] = atm.x[i].climo(tag)
@@ -189,51 +189,51 @@ while (tag < datetime.datetime(2023,12,31)):
     #debug: print("xobs ",Xobs.max(), Xobs.min() )
 
 
-    fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+    #fig, ax = plt.subplots(1, 3, figsize=(15, 5))
 
-    # climatology
-    im0 = ax[0].imshow(Xclimo.squeeze(), cmap='seismic', origin='lower')
-    ax[0].set_title("Climatology")
-    fig.colorbar(im0, ax=ax[0])
+    ## climatology
+    #im0 = ax[0].imshow(Xclimo.squeeze(), cmap='seismic', origin='lower')
+    #ax[0].set_title("Climatology")
+    #fig.colorbar(im0, ax=ax[0])
 
     # prediction
-    im1 = ax[1].imshow(Xpred[0,:,:,week-1].squeeze(), cmap='seismic', origin='lower')
-    ax[1].set_title("Prediction")
-    fig.colorbar(im1, ax=ax[1])
+    #im1 = ax[1].imshow(Xpred[0,:,:,week-1].squeeze(), cmap='seismic', origin='lower')
+    #ax[1].set_title("Prediction")
+    #fig.colorbar(im1, ax=ax[1])
 
-    # observed
-    im2 = ax[2].imshow(Xobs.squeeze(), cmap='seismic', origin='lower')
-    ax[2].set_title("Observed")
-    fig.colorbar(im2, ax=ax[2])
+    ## observed
+    #im2 = ax[2].imshow(Xobs.squeeze(), cmap='seismic', origin='lower')
+    #ax[2].set_title("Observed")
+    #fig.colorbar(im2, ax=ax[2])
 
-    plt.tight_layout()
-    plt.savefig(f'fcst{week:d}_'+tag.strftime("%Y%m%d")+'.png')
-    plt.close()
+    #plt.tight_layout()
+    #plt.savefig(f'fcst{week:d}_'+tag.strftime("%Y%m%d")+'.png')
+    #plt.close()
 
 
-    fig, ax = plt.subplots(1,3,figsize=(12,5))
+    #fig, ax = plt.subplots(1,3,figsize=(12,5))
 
     delta_persist = persist - Xobs
     delta_persist *= seas
-    im0 = ax[0].imshow(delta_persist, cmap = 'seismic', origin='lower', vmin=-1, vmax = 1)
-    ax[0].set_title(tag.strftime("%Y%m%d")+' Persist - obs')
-    fig.colorbar(im0, ax=ax[0])
+    #im0 = ax[0].imshow(delta_persist, cmap = 'seismic', origin='lower', vmin=-1, vmax = 1)
+    #ax[0].set_title(tag.strftime("%Y%m%d")+' Persist - obs')
+    #fig.colorbar(im0, ax=ax[0])
 
     delta_fcst = Xpred[0,:,:,week-1].squeeze() - Xobs
     delta_fcst *= seas
-    im1 = ax[1].imshow(delta_fcst, cmap = 'seismic', origin='lower', vmin=-1, vmax = 1)
-    ax[1].set_title(tagp.strftime("%Y%m%d")+' Forecast - obs')
-    fig.colorbar(im1, ax=ax[1])
+    #im1 = ax[1].imshow(delta_fcst, cmap = 'seismic', origin='lower', vmin=-1, vmax = 1)
+    #ax[1].set_title(tagp.strftime("%Y%m%d")+' Forecast - obs')
+    #fig.colorbar(im1, ax=ax[1])
 
     delta_climo = Xclimo - Xobs
     delta_climo *= seas
-    im2 = ax[2].imshow(delta_climo, cmap = 'seismic', origin='lower', vmin=-1, vmax = 1)
-    ax[2].set_title(tagp.strftime("%Y%m%d")+' Climatology - obs')
-    fig.colorbar(im2, ax=ax[2])
+    #im2 = ax[2].imshow(delta_climo, cmap = 'seismic', origin='lower', vmin=-1, vmax = 1)
+    #ax[2].set_title(tagp.strftime("%Y%m%d")+' Climatology - obs')
+    #fig.colorbar(im2, ax=ax[2])
 
-    plt.tight_layout()
-    plt.savefig(f'delta{week:d}_'+tag.strftime("%Y%m%d")+'.png')
-    plt.close()
+    #plt.tight_layout()
+    #plt.savefig(f'delta{week:d}_'+tag.strftime("%Y%m%d")+'.png')
+    #plt.close()
 
     sp    = score(delta_persist)
     sfcst = score(delta_fcst)

@@ -4,7 +4,7 @@ Compute the weekly average files for GDAS v16
 Robert Grumbine
 30 October 2026
 '''
-
+import sys
 import os
 import datetime
 
@@ -12,7 +12,10 @@ import numpy as np
 import netCDF4 as nc
 
 # Acquire basic data and average them
-end   = datetime.datetime.today()
+try:
+    end = datetime.datetime(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))
+except:
+    end   = datetime.datetime.today()
 #end   = datetime.datetime(2026,9,21)
 dt    = datetime.timedelta(1)
 start = end - 6*dt
@@ -39,6 +42,8 @@ tag   = start
 while(tag <= end ):
 
   fname = "week2."+tag.strftime("%Y%m%d")+".nc"
+  if (os.path.exists(fname)):
+      sys.exit(0)
 
   out = nc.Dataset(fname,"w")
   out.createDimension('ny',ny)

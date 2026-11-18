@@ -11,7 +11,7 @@
 ##SBATCH -J weekavg2
 ##SBATCH -e weekavg2.err
 ##SBATCH -o weekavg2.out
-##SBATCH -t 0:05:00
+##SBATCH -t 0:15:00
 ##SBATCH -q batch
 ##SBATCH -A marine-cpu
 ##SBATCH -N 1
@@ -23,8 +23,20 @@
 
 #wcoss2: 
 source $HOME/rg/env3.13/bin/activate
-cd $HOME/noscrub/thinned.v16
+cd $HOME/noscrub/thinned.v17
 #==================================================================
 
 #RG: make end date an argument
-time python3 $HOME/rgdev/toolbox/gefs/gdas/v16.weekavg.py
+tag=${tag:-`date +"%Y%m%d"`}
+#tag=20261107
+#while [ $tag -ge 20261010 ]
+#do
+yy=`echo $tag | cut -c1-4`
+mm=`echo $tag | cut -c5-6`
+dd=`echo $tag | cut -c7-8`
+
+time python3 $HOME/rgdev/toolbox/gefs/gdas/v17.weekavg.py $yy $mm $dd
+
+tag=`expr $tag - 1 `
+tag=`$HOME/bin/dtgfix3 $tag`
+#done

@@ -5,7 +5,7 @@
 #SBATCH -o ice52.out
 ##SBATCH -t 26:55:00
 ##SBATCH -q long
-#SBATCH -t 2:55:00
+#SBATCH -t 1:55:00
 #SBATCH -q batch
 #SBATCH -A marine-cpu
 #SBATCH --nodes=1

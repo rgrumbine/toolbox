@@ -38,10 +38,8 @@ fin.close()
 
 nx = len(lons)
 ny = len(lats)
-#debug: 
-dl = lats[1:] - lats[0:-1]
-#debug: 
-print("dl ",dl.max(), dl.min() )
+#debug: dl = lats[1:] - lats[0:-1]
+#debug: print("dl ",dl.max(), dl.min() )
 #debug: 
 print("data ",data.max(), data.min(), data.sum()/nx/ny, flush=True )
 #debug: print("histogram ",np.histogram(data, bins=[-5.e19,-1,0,0.5,1,1.01,1.e19]), flush=True)
@@ -54,6 +52,9 @@ print("data ",data.max(), data.min(), data.sum()/nx/ny, flush=True )
 domain = 1
 x = nh()
 proj = ccrs.NorthPolarStereo(central_longitude = x.central_longitude)
+#domain = 2
+#x = sh()
+#proj = ccrs.SouthPolarStereo(central_longitude = x.central_longitude)
 
 #--------------------------------------------------
 ax  = plt.axes(projection = proj)
@@ -81,8 +82,10 @@ except:
     title = "Sea ice concentration"
 cb.set_label(title, fontsize=12)
 
-plt.savefig("scalar."+f"{domain:d}"+".png")
+plt.savefig("icec."+f"{domain:d}."+title+".png")
 plt.close()
+
+sys.exit(0)
 
 #-----------------------------------------------
 # geotiff -- framed by gemini
