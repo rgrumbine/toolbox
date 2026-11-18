@@ -1,0 +1,10 @@
+total 14756
+-rw-r--r-- 1 robert.grumbine couple     9092 Sep  3  2025 Historical_TSI_Reconstruction.txt
+-rw-r--r-- 1 robert.grumbine couple   414518 Sep  3  2025 input
+lrwxrwxrwx 1 robert.grumbine couple       18 Oct 28 19:32 nh -> ../nnregression/nh
+-rw-r--r-- 1 robert.grumbine couple     4784 Apr  9  2026 predict2.py
+-rw-r--r-- 1 robert.grumbine couple     4226 Sep 26  2025 predict_ice.py
+-rw-r--r-- 1 robert.grumbine couple     2975 Sep  3  2025 predict.py
+-rw-r--r-- 1 robert.grumbine couple  3709119 Sep  3  2025 sorce_tsi_L3_c06h_latest.txt
+-rw-r--r-- 1 robert.grumbine couple   933249 Sep  3  2025 sorce_tsi_L3_c24h_latest.txt
+-rw-r--r-- 1 robert.grumbine couple 10011586 Sep  3  2025 tsi_v03r00_daily_s18740509_e20241231_c20250228.nc
